@@ -41,7 +41,9 @@
  */
 /**
 * 成环检测： 1. Set  2. 快慢指针
+* Ref: https://leetcode-cn.com/problems/happy-number/solution/kuai-le-shu-by-leetcode-solution/
 */
+// 解一：Set
 var isHappy = function(n) {
     const set = {}; // <number, true|undefined>
     function recursion(num) {
