@@ -47,11 +47,14 @@
  * @return {boolean}
  */
 var isPowerOfThree = function(n) {
+    // Ref: https://leetcode-cn.com/problems/power-of-three/solution/3de-mi-by-leetcode/
+    // 解一：循环迭代
     /**
      * 注意点：
      * 1. 1 是 3^0; 
      * 2. n 被整除到最后是 1;
      */
+    /* 
     while (n != 0) {
         if (n % 3 === 0) { 
             n = n / 3;
@@ -60,7 +63,20 @@ var isPowerOfThree = function(n) {
         }
     }
     return n === 1;
+     */
+    // 解二：进制转换
+    /**
+     * 思路
+     * 2^0 = 1; 2^1 = 10; 2^2 = 100; 2^3 = 1000; ...
+     * 2^0 = 1; 3^1 = 10; 3^2 = 100; 3^3 = 1000; ...
+     * 注意点
+     * 1. 是 2^0 开始
+     * 2. 正则中要有 ^ 和 $ 约束
+     * 
+     */
+    return /^10*$/.test((n).toString(3));
+    
 };
 // @lc code=end
-console.assert('isPowerOfThree: ', isPowerOfThree(27));
+console.assert('isPowerOfThree: ', isPowerOfThree(45));
 
