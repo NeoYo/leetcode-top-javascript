@@ -1,6 +1,6 @@
 # Leetcode Top Javascript
 
-━(*｀∀´*)ノ亻! Leetcode 上一些热门题目的 JavaScript 解答
+🚲 🚲 🚲 Leetcode 上一些热门题目的 JavaScript 解答
 
 关于数据结构与算法的想法
 
