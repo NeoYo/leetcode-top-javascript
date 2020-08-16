@@ -107,8 +107,7 @@ var lengthOfLIS = function (nums) {
                 }
             }
             if (mid === target) {
-                debugger;
-                sortedNums = sortedNums.slice();
+                // Case: [4,10,4,3,8,9]
             } else if (target > sortedNums[mid]) {
                 sortedNums[mid + 1] = target;
             } else if (target < sortedNums[mid]) {
@@ -123,9 +122,5 @@ var lengthOfLIS = function (nums) {
     }
     return sortedNums.length;
 };
-
-// lengthOfLIS([10,9,2,5,3,7,101,18]);
-// lengthOfLIS([2, 2]);
-lengthOfLIS([4,10,4,3,8,9]);
 
 // @lc code=end
