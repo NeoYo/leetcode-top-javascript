@@ -95,9 +95,6 @@ var fourSumCount = function(A, B, C, D) {
             时间复杂度：
                 T(n) = O(n^2) + O(n^2) = O(n^2)
             代码如下：
-            代码注意点：
-                1) x < N 或者 A.length
-                2) 
     */
     let ABMap = {};
     const N = A.length;
@@ -115,6 +112,7 @@ var fourSumCount = function(A, B, C, D) {
     for (let z = 0; z < N; z++) {
         for (let t = 0; t < N; t++) {
             if (ABMap[(C[z] + D[t])] > 0) {
+                // null > 0 => false
                 count += ABMap[(C[z] + D[t])];
             }
         }
