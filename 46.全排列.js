@@ -56,6 +56,11 @@ var permute = function(nums) {
     const res = [];
     dfs(nums.length, res, nums, []);
     return res;
+    /**
+    * 解二：回溯法
+    * 这道题，其实用回溯算法，更好理解
+    * Ref: https://labuladong.gitbook.io/algo/suan-fa-si-wei-xi-lie/hui-su-suan-fa-xiang-jie-xiu-ding-ban
+    */
 };
 // @lc code=end
 permute([1, 2, 3])

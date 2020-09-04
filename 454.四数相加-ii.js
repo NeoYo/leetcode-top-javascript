@@ -82,7 +82,7 @@ var fourSumCount = function(A, B, C, D) {
 
         3. Map 优化
             思路：
-                1）建 ABMap 和 BCMap
+                1）建 ABMap
                     A = [ 1, 2] B = [-2, -1]
                     ABMap = {
                         1: true,    // -(1-2)
