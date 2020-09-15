@@ -46,6 +46,11 @@
         代码如下:
         Ref: https://leetcode-cn.com/problems/3sum/solution/3sumpai-xu-shuang-zhi-zhen-yi-dong-by-jyd/            
 
+        排序法用的目的在于去重
+
+        -1 -1 -1 -1 -1 0 0 0 0 0 1 1 1 1 1
+               -1          0         1
+               
 难点:
     需要去重的情况有哪些？
     
@@ -90,7 +95,7 @@ var threeSum = function(nums) {
     if(nums == null || len < 3) return ans;
     nums.sort((a, b) => a - b); // 排序
     for (let i = 0; i < len ; i++) {
-        // if(nums[i] === nums[i-1]) continue; // 去重3
+        if(nums[i] === nums[i-1]) continue; // 去重3
         let L = i+1;
         let R = len-1;
         while(L < R){
