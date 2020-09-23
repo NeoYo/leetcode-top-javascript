@@ -36,6 +36,7 @@
         这道题实际是 Kadane算法 的应用。
         基础题目：最大子序和 https://leetcode-cn.com/problems/maximum-subarray/
         推导 Kadane算法 的文章： https://juejin.im/post/6844904066032599053#heading-2
+        参考题解：https://leetcode-cn.com/problems/maximum-product-subarray/solution/hua-jie-suan-fa-152-cheng-ji-zui-da-zi-xu-lie-by-g/
 
         在最大子序和的基础上，有以下不同
             1. 该题求的是最大乘积
