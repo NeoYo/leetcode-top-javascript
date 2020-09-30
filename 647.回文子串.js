@@ -184,6 +184,8 @@
                     _________ 
                       已知范围
 
+        更多细节：
+            aaa 只是对长度是奇数的回文串作处理，再加上偶数长度的回文串处理，aaa 转换为 a#a#a
 
     参考资料：
         1. Leetcode 官方题解 https://leetcode-cn.com/problems/palindromic-substrings/solution/hui-wen-zi-chuan-by-leetcode-solution/
