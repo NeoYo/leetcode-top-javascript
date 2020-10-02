@@ -52,15 +52,21 @@
  * 进阶:
  * 如果多次调用这个函数，你将如何优化你的算法？
  * 
+ * 标签: 位运算
  */
-
+/**
+    笔记:
+        汉明重量: 二进制表达式中数字位数为 ‘1’ 的个数
+    参考资料:
+        LeetCode 官方题解 https://leetcode-cn.com/problems/number-of-1-bits/solution/wei-1de-ge-shu-by-leetcode/
+ */
 // @lc code=start
 /**
  * @param {number} n - a positive integer
  * @return {number}
  */
+// 解一: 位移
 var hammingWeight = function(n) {
-    // 解一: 位移
     let cnt = 0;
     for (let i = 0; i < 32; i++) {
         if ((n & 1) === 1) {
@@ -68,9 +74,18 @@ var hammingWeight = function(n) {
         }
         n = n >> 1;
     }
-    return cnt;
-    // 解二: (n & n - 1) 可以消去最低位 1                
-    // 解三: 准备32个掩码
+    return cnt;    
 };
+/* 
+// 解二: (n & n - 1) 可以消去最低位 1
+var hammingWeight = function(n) {
+    let cnt = 0;
+    while (n != 0) {
+        cnt++;
+        n = n & (n - 1);
+    }
+    return cnt;
+};
+ */
 // @lc code=end
 
