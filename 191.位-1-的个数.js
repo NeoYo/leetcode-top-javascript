@@ -77,7 +77,8 @@ var hammingWeight = function(n) {
     return cnt;    
 };
 /* 
-// 解二: (n & n - 1) 可以消去最低位 1
+// 解二: n & (n - 1) 可以消去最低位 1
+//      n & (n - 1) 比移位更快，移位要处理全部 0 和 1，该方法每次都直接处理 1
 var hammingWeight = function(n) {
     let cnt = 0;
     while (n != 0) {
