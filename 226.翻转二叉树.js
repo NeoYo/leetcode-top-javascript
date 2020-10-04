@@ -37,9 +37,19 @@
  * 这个问题是受到 Max Howell 的 原问题 启发的 ：
  * 
  * 谷歌：我们90％的工程师使用您编写的软件(Homebrew)，但是您却无法在面试时在白板上写出翻转二叉树这道题，这太糟糕了。
- * 
+ * 标签: 树
  */
+/*
+    递归法关键
+        在于把左子树和右子树当做整体且已知
+                        4
+                      /   \
+        invertTree(右子树)  invertTree(左子树)
 
+        在这个函数只是把左右子树交换了，左子树和右子树，扔进 invertTree ，就得到已交换的
+        左子树和右子树，就是整体法，扔进 invertTree 是假设已知返回的就是已交换的
+
+ */
 // @lc code=start
 /**
  * Definition for a binary tree node.
@@ -56,6 +66,7 @@ var invertTree = function(root) {
     if (root == null) {
         return null; // 注意：这里只能返回 null, 是 LeetCode 测试用例要求的==
     }
+
     // 只需把 left 和 right 交换即可
     const temp = root.left;
     root.left = invertTree(root.right);
