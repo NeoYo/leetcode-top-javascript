@@ -75,7 +75,7 @@
            / \
           3   5
         先知道左右子树中是否包含目标节点，再判断当前节点，左子树-右子树-当前节点，使用后序遍历
-        在递归过程中，还需要判断携带当前子节点，是否刚好就是 p 或 q
+        在递归过程中，还需要判断当前节点，是否刚好就是 p 或 q
 */
 
 /**
@@ -88,35 +88,35 @@ var lowestCommonAncestor = function(root, p, q) {
     if (root == null) {
         return;
     }
-    // 使用后序遍历
+    // 0. 使用后序遍历
     const leftChildTree = lowestCommonAncestor(root.left, p, q);
     // console.log('leftChildTree: ', leftChildTree);
     const rightChildTree = lowestCommonAncestor(root.right, p, q);
     // console.log('rightChildTree: ', rightChildTree);
 
-    // 已发现左右子树，存在最近公共祖先
+    // 1. 已找到了最近公共祖先，在左子树或右子树中
     if (leftChildTree && leftChildTree.val != null) {
         return leftChildTree;
     } else if (rightChildTree && rightChildTree.val != null) {
         return rightChildTree;
     }
-    // 左子树或右子树已满足条件
+    // 2. 已找到至少一个目标节点，在左子树或右子树中
     if (leftChildTree === true || rightChildTree === true) { 
-        // 另一个满足条件的节点，就是当前节点
+        // 2.1 另一个目标节点，就是当前节点
         if (root === p || root === q) {
             return root;
         }
-        // 左子树和右子树都含有目标节点，当前即为所求
+        // 2.2 左子树和右子树都含有目标节点，当前即为所求
         if (leftChildTree && rightChildTree) {
             return root;
         }
+        // 2.3 告诉上一层函数，找到了一个目标节点
         return true;
     }
-    // 普通情况，判断是否满足条件
+    // 3. 找到当前节点就是目标节点
     if (root === p || root === q) {
         return true;
-    } else {
-        return false;
     }
+    return;
 };
 // @lc code=end
