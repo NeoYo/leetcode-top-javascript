@@ -113,6 +113,12 @@
 
             Result: Math.max(4+5, 8) = Math.max(9, 8) = 9
         参考 iweiwei1419 的 Java 版 https://leetcode-cn.com/problems/house-robber-iii/solution/shu-xing-dp-ru-men-wen-ti-by-liweiwei1419/
+
+    注意点
+        1. const memory = {} 会导致，每个 node 作为 key 都相同，因为 memory[node] = memory[node.toString()] = memory[[Object object]]
+            解决方法：使用 new Map(); 
+            参考：https://www.hacksparrow.com/javascript/object-as-objects-key.html#:~:text=The%20short%20answer%20is%20%22no,stringified%20to%20%5Bobject%20Object%5D%20.
+        2. 判断空 root.left && dfs(root.left.left) || 0， 最后面要加 || 0
  */
 // @lc code=start
 /**
