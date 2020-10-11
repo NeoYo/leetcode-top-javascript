@@ -25,12 +25,14 @@
  * num1 和num2 都不包含任何前导零
  * 你不能使用任何內建 BigInteger 库， 也不能直接将输入的字符串转换为整数形式
  * 
+ * 标签：数学 字符串
  * 
  */
 
 /**
     题解：
         模拟我们手算两数相加
+        逐位相加逐位累加
 
     知识点：
         1. js 中数组的 push，pop 就是栈 T(n) = O(1)，最后再 Array.prototype.reverse 降低时间复杂度
@@ -50,9 +52,9 @@
  * @return {string}
  */
 var addStrings = function(num1, num2) {
-    let num1Idx = num1.length - 1,  // num1 从后往前指针
-        num2Idx = num2.length - 1,  // num2 从后往前指针
-        addOne = 0;                 // 满十进位+1
+    let num1Idx = num1.length - 1,  // num1 从后往前指针（从低位到高位）
+        num2Idx = num2.length - 1,  // num2 从后往前指针（从低位到高位）
+        addOne = false;             // 满十进位+1
     const zeroCharCode = '0'.charCodeAt(0);
     const ans = [];
     while (num1Idx >= 0 || num2Idx >= 0 || addOne != false) {

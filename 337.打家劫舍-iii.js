@@ -52,7 +52,7 @@
         树问题的突破点关键在于:
             A. 选先序还是后序
             B. 目标值与传递值
-            C. 递归过程中对传递值的处理（递归过程是在每个节点间的转移）
+            C. 值的转移与处理 （递归过程中对传递值的处理，递归过程是在每个节点间的转移）
         
     题解
         根据题意，打家劫舍要求的是最高金额，这是目标值，传递值也可猜测是金额的和（B）
@@ -119,6 +119,10 @@
             解决方法：使用 new Map(); 
             参考：https://www.hacksparrow.com/javascript/object-as-objects-key.html#:~:text=The%20short%20answer%20is%20%22no,stringified%20to%20%5Bobject%20Object%5D%20.
         2. 判断空 root.left && dfs(root.left.left) || 0， 最后面要加 || 0
+
+    参考资料
+        通用思路团灭打家劫舍问题 https://leetcode-cn.com/problems/house-robber-iii/solution/tong-yong-si-lu-tuan-mie-da-jia-jie-she-wen-ti-b-2/
+        
  */
 // @lc code=start
 /**
