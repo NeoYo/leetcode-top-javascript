@@ -76,13 +76,23 @@
         3. eggs K=1, floors N >= 1, 结果为 N，因为只能从下往上，因为只有一个蛋
 
     递归公式（递推公式）
+        前后两个蛋之间存在某种必然的联系~
                     eggs floors
         superEggDrop(K,    N)
         
         K, N 的条件下，在 X 层扔，会出现的情形
-            1. 鸡蛋不碎: superEggDrop(K, N-X)    // N-X 范围是 (X, N]
-            2. 鸡蛋碎了: superEggDrop(K-1, X-1)  // X 已经扔过，所以是 [0, X-1]
+            1. 鸡蛋不碎: superEggDrop(K, N-X)    // X 层和以下的不需要验证了，N-X 范围是 (X, N]
+            2. 鸡蛋碎了: superEggDrop(K-1, X-1)  // X 层以下的楼层，X 已经扔过，所以是 [0, X-1]
 
+        以 superEggDrop(2,  6) 为例
+                            (2,   5)           有2个蛋，需要筛选 5层
+              /    /           |          \          \
+            /     /            |            \          \
+          /      /             |              \          \
+    (2,4)(1,0) (2,3)(1,1) (2,2)(1,2)    (2,1)(1,3)    (2,0)(1,4)
+     |    |  
+一楼没碎 一楼碎了 ....
+    
         不受控制的碎与不碎
             真实情况，可能碎，也可能不碎，不受我们控制，但是真实情况只可能两种中的一种
             取两种中的最大值，可以保证计算得到的步数，一定能得到楼层 F
@@ -101,8 +111,9 @@
             
         
  */
-// @lc code=start
 /**
+ * 解一：递归
+ *      超时
  * @param {number} K eggs
  * @param {number} N floors
  * @return {number}
@@ -117,5 +128,41 @@ var superEggDrop = function(K, N) {
     }
     return nextStep;
 };
+// @lc code=start
+/**
+ * 解二：动态规划
+ *      Time Limit Exceeded 94/121 cases passed (N/A)
+ *      Testcase 10 10000
+ * @param {number} K eggs
+ * @param {number} N floors
+ * @return {number}
+ */
+var superEggDrop = function(K, N) {
+    // 0. 初始化dp容器
+    const DP = Array(K+1).fill(null).map(_ => Array(N+1).fill(Infinity));
+    // 1. 初始化边界值
+    DP[0][0] = 0;
+    for (let k = 1; k <= K; k++) {
+        DP[k][0] = 0;
+        DP[k][1] = 1;  // N = 1
+    }
+    for (let n = 1; n <= N; n++) {
+        DP[0][n] = 0;
+        DP[1][n] = n;  // K = 1
+    }
+    // 2. 状态转移
+    for (let k = 2; k <= K; k++) { 
+        for (let n = 2; n <= N; n++) {
+            let nextStep = Infinity;
+            for (let X = 1; X <= n; X++) {
+                nextStep = Math.min(nextStep, Math.max(DP[k-1][X-1], DP[k][n-X]) + 1)
+            }
+            DP[k][n] = nextStep;
+        }
+    }
+    // console.log('DP: ', DP);
+    return DP[K][N];
+};
 // @lc code=end
+superEggDrop(2, 6) // Use for vscode debug
 
