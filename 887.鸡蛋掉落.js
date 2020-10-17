@@ -77,6 +77,7 @@
 
     递归公式（递推公式）
         前后两个蛋之间存在某种必然的联系~
+        此时此刻手上的蛋在第几层扔，会对 F 产生的影响
                     eggs floors
         superEggDrop(K,    N)
         
@@ -108,8 +109,47 @@
             for (let i = 1; X <= N; X++) {
                 superEggDrop(K, N) = Math.min(superEggDrop(K, N), Math.max(superEggDrop(K-1, X-1), superEggDrop(K, N-X)))
             }
-            
+
+        函数 y = DP[k-1][x-1] x ∈ [1, n]
+        趋势 DP[k-1][x-1] 中 k-1 个鸡蛋下，x-1 楼层增加， DP[k-1][x-1] 只会递增或保持不变 (楼层增加了，需要辨别的更多，可能保持不变或递增)
+                         
+        函数 y = DP[k][n-X] x ∈ [1, n]
+        趋势 DP[k][n-X] 中 k 个鸡蛋下，X 增加，n-X 表示楼层不断减少， DP[k-1][x-1] 只会递减或保持不变
+
+            y = DP[k][n-X]          y = DP[k-1][x-1]
+                    \                  /
+                      \               /
+                        \            /
+                          \         /
+                            \  —— —— 
+                             /\         —— —— —— —— —— 这个点就是所求
+                            /  \
+                      —— ——     \ 
+                     /           —— ——
+                    /                  \
         
+        升级了我对二分查找的认知
+
+        以前整理了使用二分查找3个条件：索引、有序、静态            
+        这次发现“有序”，不一定是从小到大或从大到小，每个索引上的值，都能判断当前索引偏左了，或者偏右了，或者刚好命中，也可以使用二分查找
+
+        let nextStep = Infinity;
+        for (let X = 1; X <= n; X++) {
+            nextStep = Math.min(nextStep, Math.max(DP[k-1][X-1], DP[k][n-X]) + 1)
+        }
+
+        let l = 0,
+            r = nums.length - 1;
+        while (l < r) {
+            const mid = l + ((r - l)>>1);
+            if (nums[mid] > nums[mid + 1]) {
+                r = mid;
+            } else {
+                l = mid + 1;
+            }
+        }
+        return l;
+                
  */
 /**
  * 解一：递归
@@ -133,6 +173,7 @@ var superEggDrop = function(K, N) {
  * 解二：动态规划
  *      Time Limit Exceeded 94/121 cases passed (N/A)
  *      Testcase 10 10000
+ * 重要：画出状态转移表！
  * @param {number} K eggs
  * @param {number} N floors
  * @return {number}
@@ -163,6 +204,57 @@ var superEggDrop = function(K, N) {
     // console.log('DP: ', DP);
     return DP[K][N];
 };
+/**
+ * 解三：在DP的基础上，二分查找的灵活应用
+ * @param {number} K eggs
+ * @param {number} N floors
+ * @return {number}
+ */
+var superEggDrop = function(K, N) {
+    // 0. 初始化dp容器
+    const DP = Array(K+1).fill(null).map(_ => Array(N+1).fill(Infinity));
+    // 1. 初始化边界值
+    DP[0][0] = 0;
+    for (let k = 1; k <= K; k++) {
+        DP[k][0] = 0;
+        DP[k][1] = 1;  // N = 1
+    }
+    for (let n = 1; n <= N; n++) {
+        DP[0][n] = 0;
+        DP[1][n] = n;  // K = 1
+    }
+    // 2. 状态转移
+    for (let k = 2; k <= K; k++) { 
+        for (let n = 2; n <= N; n++) {
+            // let nextStep = Infinity;
+            // for (let X = 1; X <= n; X++) {
+            //     nextStep = Math.min(nextStep, Math.max(DP[k-1][X-1], DP[k][n-X]) + 1)
+            // }
+            // 改写为二分查找
+            const eggBreak = (x) => (DP[k-1][x-1]); // /
+            const notBreak = (x) => (DP[k][n-x]);   // \
+            let l = 1,
+                r = n;
+            while (l < r) {
+                const mid = l + ((r - l)>>1);
+                if (eggBreak(mid) === notBreak(mid)) {
+                    l = mid;
+                    break;
+                }
+                if (eggBreak(mid) > notBreak(mid)) {
+                    r = mid - 1;
+                } else {
+                    l = mid + 1;
+                }
+            }
+            // return l;
+            DP[k][n] = Math.max(notBreak(l), eggBreak(l)) + 1;
+        }
+    }
+    // console.log('DP: ', DP);
+    return DP[K][N];
+};
 // @lc code=end
-superEggDrop(2, 6) // Use for vscode debug
+// superEggDrop(2, 6) // Use for vscode debug
+superEggDrop(2, 7) // Use for vscode debug
 
