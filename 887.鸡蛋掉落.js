@@ -70,12 +70,12 @@
         liweiwei1419 动态规划 https://leetcode-cn.com/problems/super-egg-drop/solution/dong-tai-gui-hua-zhi-jie-shi-guan-fang-ti-jie-fang/
         这篇文章讲了、递归 -> 递归+备忘录 -> 动态规划 -> 动态规划+二分查找，讲得很好！
 
-    动态规划（递归）初始值
+    一、动态规划（递归）初始值
         1. eggs K=0 或 floors N=0, 结果为0，因为没有鸡蛋可以扔，或者有鸡蛋没有楼层扔，只能等于 0
         2. floors N=1, eggs K >= 1, 结果为 1，因为只能扔一次，只能在floor 1 楼扔 1 <= X <= N = 1
         3. eggs K=1, floors N >= 1, 结果为 N，因为只能从下往上，因为只有一个蛋
 
-    递归公式（递推公式）
+    二、推导递归公式（递推公式）
         前后两个蛋之间存在某种必然的联系~
         此时此刻手上的蛋在第几层扔，会对 F 产生的影响
                     eggs floors
@@ -85,7 +85,7 @@
             1. 鸡蛋不碎: superEggDrop(K, N-X)    // X 层和以下的不需要验证了，N-X 范围是 (X, N]
             2. 鸡蛋碎了: superEggDrop(K-1, X-1)  // X 层以下的楼层，X 已经扔过，所以是 [0, X-1]
 
-        以 superEggDrop(2,  6) 为例
+        以 superEggDrop(2,  5) 为例
                             (2,   5)           有2个蛋，需要筛选 5层
               /    /           |          \          \
             /     /            |            \          \
@@ -93,7 +93,8 @@
     (2,4)(1,0) (2,3)(1,1) (2,2)(1,2)    (2,1)(1,3)    (2,0)(1,4)
      |    |  
 一楼没碎 一楼碎了 ....
-    
+[2,5]=4 [0, 1)=0
+楼层
         不受控制的碎与不碎
             真实情况，可能碎，也可能不碎，不受我们控制，但是真实情况只可能两种中的一种
             取两种中的最大值，可以保证计算得到的步数，一定能得到楼层 F
@@ -109,6 +110,14 @@
             for (let i = 1; X <= N; X++) {
                 superEggDrop(K, N) = Math.min(superEggDrop(K, N), Math.max(superEggDrop(K-1, X-1), superEggDrop(K, N-X)))
             }
+
+        递推公式
+            将 superEggDrop 改为 DP 即可
+            for (let X = 1; X <= n; X++) {
+                DP[k][n] = Math.min(DP[k][n], Math.max(DP[k-1][X-1], DP[k][n-X]) + 1)
+            }
+            
+    三、二分查找的应用
 
         函数 y = DP[k-1][x-1] x ∈ [1, n]
         趋势 DP[k-1][x-1] 中 k-1 个鸡蛋下，x-1 楼层增加， DP[k-1][x-1] 只会递增或保持不变 (楼层增加了，需要辨别的更多，可能保持不变或递增)
@@ -128,7 +137,7 @@
                      /           —— ——
                     /                  \
         
-        升级了我对二分查找的认知
+        补充了我对二分查找的理解
 
         以前整理了使用二分查找3个条件：索引、有序、静态            
         这次发现“有序”，不一定是从小到大或从大到小，每个索引上的值，都能判断当前索引偏左了，或者偏右了，或者刚好命中，也可以使用二分查找
@@ -137,6 +146,8 @@
         for (let X = 1; X <= n; X++) {
             nextStep = Math.min(nextStep, Math.max(DP[k-1][X-1], DP[k][n-X]) + 1)
         }
+
+        改为二分查找
 
         let l = 0,
             r = nums.length - 1;
@@ -157,13 +168,13 @@
             let right = nums.length - 1;
 
             while (left <= right) {
-                let mid = left + (right - left) / 2;
+                let mid = left + ((right - left) >> 1);
                 if (nums[mid] == target) {
-                return mid;
+                    return mid;
                 } else if (nums[mid] < target) {
-                left = mid + 1;
+                    left = mid + 1;
                 } else {
-                right = mid - 1;
+                    right = mid - 1;
                 }
             }
             return -1;
