@@ -44,7 +44,19 @@
     解零：归并排序（递归法）
         T(n) = O(nlogn)
         S(n) = O(logn)  递归函数栈，不满足常数级空间复杂度
- */
+    步骤：
+        一、找中点
+        二、递归返回处理
+            /**
+               以
+                   2   3   4   6
+                   1   5   7   8
+               为例
+                       2——3 ——4 6
+                       |     / /\
+               null -> 1    5   7 —— 8
+               cursor
+            */
 /**
  * @param {ListNode} head
  * @return {ListNode}
@@ -63,16 +75,6 @@ var sortList = function(head) {
     let left = sortList(head);
     let right = sortList(tmp);
     // 二、递归返回处理
-    /**
-        以
-            2   3   3   4
-            1   5   7   8
-        为例
-                2——3 ——4 6
-                |     / /\
-        null -> 1    5   7 —— 8
-        cursor
-     */
     let cursor = new ListNode();
     const res = cursor;
     while (left != null && right != null) {
@@ -91,7 +93,13 @@ var sortList = function(head) {
 /**
     解一：归并排序（非递归）
         T(n) = O(nlogn)
-        S(n) = O(1)
+        S(n) = O(1) 满足常数级空间复杂度
+
+        排序链表，归并排序非递归解法，是先分后合，假设已知合并后的子结果，自顶向下的思考方式
+        实际上代码运行是自底向上的，我们把分那部分交给递归函数，实际上也可以我们自己来做
+        递归解法，每次都一分为二：8-4-2-1
+        实际代码运行是从最小的单位 1 和 1 对比，间隔 2；再 2 和 2 对比，间隔 4，即 1-2-4-8
+        运行代码待补充
 */
 /**
  * @param {ListNode} head
