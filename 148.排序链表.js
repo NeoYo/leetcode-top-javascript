@@ -44,10 +44,13 @@
     解零：归并排序（递归法）
         T(n) = O(nlogn)
         S(n) = O(logn)  递归函数栈，不满足常数级空间复杂度
-    步骤：
-        一、找中点
-        二、递归返回处理
-            /**
+
+        思路
+            一、分: 快慢指针分中点
+            二、递归: 未知整体当已知，交给递归来处理
+            三、合: left,right,cursor三指针串起排序链表
+
+            其中第三步 (归：回来的意思，并：多合一，排序：处理方式)
                以
                    2   3   4   6
                    1   5   7   8
@@ -56,7 +59,6 @@
                        |     / /\
                null -> 1    5   7 —— 8
                cursor
-            */
 /**
  * @param {ListNode} head
  * @return {ListNode}
@@ -64,7 +66,7 @@
 var sortList = function(head) {
     if (head == null || head.next == null)
         return head;
-    // 一、找中点
+    // 一、分: 快慢指针分中点
     let fast = head.next, slow = head;
     while (fast != null && fast.next != null) {
         slow = slow.next;
@@ -72,9 +74,10 @@ var sortList = function(head) {
     }
     let tmp = slow.next;
     slow.next = null;
+    // 二、递归: 未知整体当已知，交给递归来处理
     let left = sortList(head);
     let right = sortList(tmp);
-    // 二、递归返回处理
+    // 三、合: left,right,cursor三指针串起排序链表
     let cursor = new ListNode();
     const res = cursor;
     while (left != null && right != null) {
