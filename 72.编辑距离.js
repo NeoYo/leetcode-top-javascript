@@ -115,11 +115,11 @@ var minDistance = function(word1, word2) {
     // 三、状态转移
     for (let i = 1; i < word1L + 1; i++) {
         for (let j = 1; j < word2L + 1; j++) {
-            let left = DP[i - 1][j] + 1;
-            let down = DP[i][j - 1] + 1;
-            let left_down = DP[i - 1][j - 1];
+            let left = DP[i - 1][j] + 1;    // <- 新增
+            let down = DP[i][j - 1] + 1;    // 删除
+            let left_down = DP[i - 1][j - 1];   // 替换 || 跳过
             if (word1[i - 1] != word2[j - 1]) {
-                left_down += 1;
+                left_down += 1; // 替换
             }
             DP[i][j] = Math.min(left, Math.min(down, left_down));
         }
