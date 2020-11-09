@@ -2,7 +2,7 @@
 
 👨‍💻‍👨‍💻‍ Leetcode 上一些热门题目的 JavaScript 题解和代码
 
-<img src="./assets/progress.jpg" width="385" height="234"/>
+<a href="https://leetcode-cn.com/u/yoweixi/" target="_blank"><img src="./assets/progress.jpg" width="385" height="234"/></a>
 
 ## 关于数据结构与算法的想法
 
