@@ -45,7 +45,26 @@
  * 
  * 
  */
+/**
+   零、参考资料 https://leetcode-cn.com/problems/trapping-rain-water/solution/jie-yu-shui-by-leetcode/
+   一、暴力法
+       T(n) = O(n^2)
+       S(n) = O(1)
+       以每一个元素为中心，从左右扩散
+   二、单调栈
+       T(n) = O(n)
+       S(n) = O(n)
+       代码如下，对应着参考资料的 动态编程
 
+
+       leftMax     // 单调不减栈
+                   // 记录左边数组的最大值
+
+
+       rightMax
+                   // 单调不增栈
+                   // 记录右边数组的最大值
+*/
 // @lc code=start
 /**
  * @param {number[]} height

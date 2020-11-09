@@ -75,7 +75,7 @@
            (n-1)/n 怎么得来的
            let choice = n; // 表示在 n 个数（选择）里随机选一个
            while (choice > 0) {     // choice > 0 表示可以选择的个数大于 0
-               let j = Math.floor(Math.random() * choice);  // 索引是随机的，索引刚好不命中 数 a ，可能性是 (n-1)/n ， 换一种说法就是 数 a 不在这个 choose-- 这个位置上
+               let j = Math.floor(Math.random() * choice);  // 索引是随机的，arr[j] 刚好不等于 数 a ，可能性是 (n-1)/n ， 换一种说法就是 数 a 不在这个 choose-- 这个位置上
                choice--;   // 由于数组是以 0 作为下标，需要往左偏移
                [arr[j], arr[choice]] = [arr[choice], arr[j]];
            }
@@ -87,6 +87,7 @@
                choice--;   // 由于数组是以 0 作为下标，需要往左偏移
                [arr[j], arr[choice]] = [arr[choice], arr[j]];
            }
+        参考： https://juejin.im/post/6890513616236363790
 */
 // @lc code=start
 /**
