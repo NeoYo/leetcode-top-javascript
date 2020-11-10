@@ -22,7 +22,7 @@
 > License: 自由转载-非商用-非衍生-保持署名
 
 ## 题目
-### 1.两数之和<a href="./src/1.两数之和.js" style="float:right;opacity:0.5;">🖋</a>
+### 1.两数之和<a href="./src/1.两数之和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -80,7 +80,7 @@ var twoSum = function(nums, target) {
 ```
 </details>
 
-### 10.正则表达式匹配<a href="./src/10.正则表达式匹配.js" style="float:right;opacity:0.5;">🖋</a>
+### 10.正则表达式匹配<a href="./src/10.正则表达式匹配.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -212,7 +212,7 @@ const equal = (sChar, pChar) => (
 ```
 </details>
 
-### 103.二叉树的锯齿形层次遍历<a href="./src/103.二叉树的锯齿形层次遍历.js" style="float:right;opacity:0.5;">🖋</a>
+### 103.二叉树的锯齿形层次遍历<a href="./src/103.二叉树的锯齿形层次遍历.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -309,7 +309,7 @@ var zigzagLevelOrder = function(root) {
 ```
 </details>
 
-### 116.填充每个节点的下一个右侧节点指针<a href="./src/116.填充每个节点的下一个右侧节点指针.js" style="float:right;opacity:0.5;">🖋</a>
+### 116.填充每个节点的下一个右侧节点指针<a href="./src/116.填充每个节点的下一个右侧节点指针.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -430,7 +430,7 @@ var connect = function(root) {
 ```
 </details>
 
-### 124.二叉树中的最大路径和<a href="./src/124.二叉树中的最大路径和.js" style="float:right;opacity:0.5;">🖋</a>
+### 124.二叉树中的最大路径和<a href="./src/124.二叉树中的最大路径和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -550,7 +550,7 @@ var maxPathSum = function(root) {
 ```
 </details>
 
-### 130.被围绕的区域<a href="./src/130.被围绕的区域.js" style="float:right;opacity:0.5;">🖋</a>
+### 130.被围绕的区域<a href="./src/130.被围绕的区域.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -694,7 +694,7 @@ solve([["X","O","X","O","X","O"],["O","X","O","X","O","X"],["X","O","X","O","X",
 ```
 </details>
 
-### 131.分割回文串<a href="./src/131.分割回文串.js" style="float:right;opacity:0.5;">🖋</a>
+### 131.分割回文串<a href="./src/131.分割回文串.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -832,7 +832,7 @@ var partition = function (s) {
 ```
 </details>
 
-### 134.加油站<a href="./src/134.加油站.js" style="float:right;opacity:0.5;">🖋</a>
+### 134.加油站<a href="./src/134.加油站.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -966,7 +966,7 @@ var canCompleteCircuit = function(gas, cost) {
 ```
 </details>
 
-### 136.只出现一次的数字<a href="./src/136.只出现一次的数字.js" style="float:right;opacity:0.5;">🖋</a>
+### 136.只出现一次的数字<a href="./src/136.只出现一次的数字.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -1052,7 +1052,7 @@ var singleNumber = function(nums) {
 ```
 </details>
 
-### 139.单词拆分<a href="./src/139.单词拆分.js" style="float:right;opacity:0.5;">🖋</a>
+### 139.单词拆分<a href="./src/139.单词拆分.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -1179,7 +1179,7 @@ var wordBreak = function(s, wordDict) {
 ```
 </details>
 
-### 146.lru缓存机制<a href="./src/146.lru缓存机制.js" style="float:right;opacity:0.5;">🖋</a>
+### 146.lru缓存机制<a href="./src/146.lru缓存机制.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -1369,7 +1369,7 @@ cache.get(2);       // 返回 -1 (未找到)
 ```
 </details>
 
-### 148.排序链表<a href="./src/148.排序链表.js" style="float:right;opacity:0.5;">🖋</a>
+### 148.排序链表<a href="./src/148.排序链表.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -1494,7 +1494,7 @@ var sortList = function(head) {
 ```
 </details>
 
-### 15.三数之和<a href="./src/15.三数之和.js" style="float:right;opacity:0.5;">🖋</a>
+### 15.三数之和<a href="./src/15.三数之和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -1626,7 +1626,7 @@ var threeSum = function(nums) {
 ```
 </details>
 
-### 150.逆波兰表达式求值<a href="./src/150.逆波兰表达式求值.js" style="float:right;opacity:0.5;">🖋</a>
+### 150.逆波兰表达式求值<a href="./src/150.逆波兰表达式求值.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -1761,7 +1761,7 @@ evalRPN(["10","6","9","3","+","-11","*","/","*","17","+","5","+"], 22);
 ```
 </details>
 
-### 151.翻转字符串里的单词<a href="./src/151.翻转字符串里的单词.js" style="float:right;opacity:0.5;">🖋</a>
+### 151.翻转字符串里的单词<a href="./src/151.翻转字符串里的单词.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -1940,7 +1940,7 @@ var reverseWords = function(s) {
 ```
 </details>
 
-### 152.乘积最大子数组<a href="./src/152.乘积最大子数组.js" style="float:right;opacity:0.5;">🖋</a>
+### 152.乘积最大子数组<a href="./src/152.乘积最大子数组.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -2025,7 +2025,7 @@ var maxProduct = function(nums) {
 ```
 </details>
 
-### 16.最接近的三数之和<a href="./src/16.最接近的三数之和.js" style="float:right;opacity:0.5;">🖋</a>
+### 16.最接近的三数之和<a href="./src/16.最接近的三数之和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -2121,7 +2121,7 @@ var threeSumClosest = function(nums, target) {
 ```
 </details>
 
-### 160.相交链表<a href="./src/160.相交链表.js" style="float:right;opacity:0.5;">🖋</a>
+### 160.相交链表<a href="./src/160.相交链表.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -2269,7 +2269,7 @@ var getIntersectionNode = function(headA, headB) {
 ```
 </details>
 
-### 162.寻找峰值<a href="./src/162.寻找峰值.js" style="float:right;opacity:0.5;">🖋</a>
+### 162.寻找峰值<a href="./src/162.寻找峰值.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -2393,7 +2393,7 @@ var findPeakElement = function(nums) {
 ```
 </details>
 
-### 169.多数元素<a href="./src/169.多数元素.js" style="float:right;opacity:0.5;">🖋</a>
+### 169.多数元素<a href="./src/169.多数元素.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -2523,7 +2523,7 @@ majorityElement([3, 2, 3])
 ```
 </details>
 
-### 171.excel表列序号<a href="./src/171.excel表列序号.js" style="float:right;opacity:0.5;">🖋</a>
+### 171.excel表列序号<a href="./src/171.excel表列序号.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -2618,7 +2618,7 @@ titleToNumber('A')
 ```
 </details>
 
-### 172.阶乘后的零<a href="./src/172.阶乘后的零.js" style="float:right;opacity:0.5;">🖋</a>
+### 172.阶乘后的零<a href="./src/172.阶乘后的零.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -2718,7 +2718,7 @@ var trailingZeroes = function(n) {
 ```
 </details>
 
-### 175.组合两个表.sql<a href="./src/175.组合两个表.sql" style="float:right;opacity:0.5;">🖋</a>
+### 175.组合两个表.sql<a href="./src/175.组合两个表.sql" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -2739,7 +2739,7 @@ on Person.PersonId = Address.PersonId;
 ```
 </details>
 
-### 189.旋转数组<a href="./src/189.旋转数组.js" style="float:right;opacity:0.5;">🖋</a>
+### 189.旋转数组<a href="./src/189.旋转数组.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -2827,7 +2827,7 @@ var rotate = function(nums, k) {
 ```
 </details>
 
-### 190.颠倒二进制位<a href="./src/190.颠倒二进制位.js" style="float:right;opacity:0.5;">🖋</a>
+### 190.颠倒二进制位<a href="./src/190.颠倒二进制位.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -2909,7 +2909,7 @@ var reverseBits = function(n) {
 ```
 </details>
 
-### 191.位-1-的个数<a href="./src/191.位-1-的个数.js" style="float:right;opacity:0.5;">🖋</a>
+### 191.位-1-的个数<a href="./src/191.位-1-的个数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -3011,7 +3011,7 @@ var hammingWeight = function(n) {
 ```
 </details>
 
-### 198.打家劫舍<a href="./src/198.打家劫舍.js" style="float:right;opacity:0.5;">🖋</a>
+### 198.打家劫舍<a href="./src/198.打家劫舍.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -3119,7 +3119,7 @@ function rob(nums) {
 ```
 </details>
 
-### 2.两数相加<a href="./src/2.两数相加.js" style="float:right;opacity:0.5;">🖋</a>
+### 2.两数相加<a href="./src/2.两数相加.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -3195,7 +3195,7 @@ var addTwoNumbers = function (l1, l2) {
 ```
 </details>
 
-### 200.岛屿数量<a href="./src/200.岛屿数量.js" style="float:right;opacity:0.5;">🖋</a>
+### 200.岛屿数量<a href="./src/200.岛屿数量.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -3295,7 +3295,7 @@ numIslands([["1","1","1","1","0"],["1","1","0","1","0"],["1","1","0","0","0"],["
 ```
 </details>
 
-### 202.快乐数<a href="./src/202.快乐数.js" style="float:right;opacity:0.5;">🖋</a>
+### 202.快乐数<a href="./src/202.快乐数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -3369,7 +3369,7 @@ var isHappy = function(n) {
 ```
 </details>
 
-### 204.计数质数<a href="./src/204.计数质数.js" style="float:right;opacity:0.5;">🖋</a>
+### 204.计数质数<a href="./src/204.计数质数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -3466,7 +3466,7 @@ var countPrimes = function(n) {
 ```
 </details>
 
-### 206.反转链表<a href="./src/206.反转链表.js" style="float:right;opacity:0.5;">🖋</a>
+### 206.反转链表<a href="./src/206.反转链表.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -3594,7 +3594,7 @@ function reverseList(head) {
 ```
 </details>
 
-### 207.课程表<a href="./src/207.课程表.js" style="float:right;opacity:0.5;">🖋</a>
+### 207.课程表<a href="./src/207.课程表.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -3690,7 +3690,7 @@ canFinish(2, [[1,0],[0,1]]);
 ```
 </details>
 
-### 210.课程表-ii<a href="./src/210.课程表-ii.js" style="float:right;opacity:0.5;">🖋</a>
+### 210.课程表-ii<a href="./src/210.课程表-ii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -3797,7 +3797,7 @@ var findOrder = function (numCourses, prerequisites) {
 ```
 </details>
 
-### 215.数组中的第k个最大元素<a href="./src/215.数组中的第k个最大元素.js" style="float:right;opacity:0.5;">🖋</a>
+### 215.数组中的第k个最大元素<a href="./src/215.数组中的第k个最大元素.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -3934,7 +3934,7 @@ var findKthLargest = function(nums, k) {
 ```
 </details>
 
-### 221.最大正方形<a href="./src/221.最大正方形.js" style="float:right;opacity:0.5;">🖋</a>
+### 221.最大正方形<a href="./src/221.最大正方形.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -4079,7 +4079,7 @@ var maximalSquare = function(matrix) {
 ```
 </details>
 
-### 225.用队列实现栈<a href="./src/225.用队列实现栈.js" style="float:right;opacity:0.5;">🖋</a>
+### 225.用队列实现栈<a href="./src/225.用队列实现栈.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -4233,7 +4233,7 @@ LinkedList.prototype.first = function() {
 ```
 </details>
 
-### 226.翻转二叉树<a href="./src/226.翻转二叉树.js" style="float:right;opacity:0.5;">🖋</a>
+### 226.翻转二叉树<a href="./src/226.翻转二叉树.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -4320,7 +4320,7 @@ var invertTree = function(root) {
 ```
 </details>
 
-### 230.二叉搜索树中第k小的元素<a href="./src/230.二叉搜索树中第k小的元素.js" style="float:right;opacity:0.5;">🖋</a>
+### 230.二叉搜索树中第k小的元素<a href="./src/230.二叉搜索树中第k小的元素.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -4412,7 +4412,7 @@ var kthSmallest = function(root, k) {
 ```
 </details>
 
-### 231.2-的幂<a href="./src/231.2-的幂.js" style="float:right;opacity:0.5;">🖋</a>
+### 231.2-的幂<a href="./src/231.2-的幂.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -4496,7 +4496,7 @@ isPowerOfTwo(2);
 ```
 </details>
 
-### 232.用栈实现队列<a href="./src/232.用栈实现队列.js" style="float:right;opacity:0.5;">🖋</a>
+### 232.用栈实现队列<a href="./src/232.用栈实现队列.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -4634,7 +4634,7 @@ MyQueue.prototype.empty = function() {
 ```
 </details>
 
-### 234.回文链表<a href="./src/234.回文链表.js" style="float:right;opacity:0.5;">🖋</a>
+### 234.回文链表<a href="./src/234.回文链表.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -4715,7 +4715,7 @@ var isPalindrome = function(head) {
 ```
 </details>
 
-### 235.二叉搜索树的最近公共祖先<a href="./src/235.二叉搜索树的最近公共祖先.js" style="float:right;opacity:0.5;">🖋</a>
+### 235.二叉搜索树的最近公共祖先<a href="./src/235.二叉搜索树的最近公共祖先.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -4859,7 +4859,7 @@ var lowestCommonAncestor = function(root, p, q) {
 ```
 </details>
 
-### 236.二叉树的最近公共祖先<a href="./src/236.二叉树的最近公共祖先.js" style="float:right;opacity:0.5;">🖋</a>
+### 236.二叉树的最近公共祖先<a href="./src/236.二叉树的最近公共祖先.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -4992,7 +4992,7 @@ var lowestCommonAncestor = function (root, p, q) {
 ```
 </details>
 
-### 237.删除链表中的节点<a href="./src/237.删除链表中的节点.js" style="float:right;opacity:0.5;">🖋</a>
+### 237.删除链表中的节点<a href="./src/237.删除链表中的节点.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -5081,7 +5081,7 @@ var deleteNode = function(node) {
 ```
 </details>
 
-### 238.除自身以外数组的乘积<a href="./src/238.除自身以外数组的乘积.js" style="float:right;opacity:0.5;">🖋</a>
+### 238.除自身以外数组的乘积<a href="./src/238.除自身以外数组的乘积.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -5180,7 +5180,7 @@ var productExceptSelf = function(nums) {
 ```
 </details>
 
-### 239.滑动窗口最大值<a href="./src/239.滑动窗口最大值.js" style="float:right;opacity:0.5;">🖋</a>
+### 239.滑动窗口最大值<a href="./src/239.滑动窗口最大值.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -5277,7 +5277,7 @@ maxSlidingWindow([1,3,1,2,0,5], 3);
 ```
 </details>
 
-### 240.搜索二维矩阵-ii<a href="./src/240.搜索二维矩阵-ii.js" style="float:right;opacity:0.5;">🖋</a>
+### 240.搜索二维矩阵-ii<a href="./src/240.搜索二维矩阵-ii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -5371,7 +5371,7 @@ var searchMatrix = function(matrix, target) {
 ```
 </details>
 
-### 242.有效的字母异位词<a href="./src/242.有效的字母异位词.js" style="float:right;opacity:0.5;">🖋</a>
+### 242.有效的字母异位词<a href="./src/242.有效的字母异位词.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -5454,7 +5454,7 @@ isAnagram("anagram", "nagaram");
 ```
 </details>
 
-### 279.完全平方数<a href="./src/279.完全平方数.js" style="float:right;opacity:0.5;">🖋</a>
+### 279.完全平方数<a href="./src/279.完全平方数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -5577,7 +5577,7 @@ numSquares(12);
 ```
 </details>
 
-### 283<a href="./src/283.js" style="float:right;opacity:0.5;">🖋</a>
+### 283<a href="./src/283.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -5600,7 +5600,7 @@ console.assert(moveZeroes([0,1,0,3,12]));
 ```
 </details>
 
-### 292.nim-游戏<a href="./src/292.nim-游戏.js" style="float:right;opacity:0.5;">🖋</a>
+### 292.nim-游戏<a href="./src/292.nim-游戏.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -5650,7 +5650,7 @@ var canWinNim = function(n) {
 ```
 </details>
 
-### 295.数据流的中位数<a href="./src/295.数据流的中位数.js" style="float:right;opacity:0.5;">🖋</a>
+### 295.数据流的中位数<a href="./src/295.数据流的中位数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -5887,7 +5887,7 @@ MedianFinder.prototype.findMedian = function() {
 ```
 </details>
 
-### 3.无重复字符的最长子串<a href="./src/3.无重复字符的最长子串.js" style="float:right;opacity:0.5;">🖋</a>
+### 3.无重复字符的最长子串<a href="./src/3.无重复字符的最长子串.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -5956,7 +5956,7 @@ var lengthOfLongestSubstring = function(s) {
 ```
 </details>
 
-### 300.最长上升子序列<a href="./src/300.最长上升子序列.js" style="float:right;opacity:0.5;">🖋</a>
+### 300.最长上升子序列<a href="./src/300.最长上升子序列.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -6092,7 +6092,7 @@ var lengthOfLIS = function (nums) {
 ```
 </details>
 
-### 322.零钱兑换<a href="./src/322.零钱兑换.js" style="float:right;opacity:0.5;">🖋</a>
+### 322.零钱兑换<a href="./src/322.零钱兑换.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -6199,7 +6199,7 @@ coinChange([1,2,5],11)
 ```
 </details>
 
-### 326.3-的幂<a href="./src/326.3-的幂.js" style="float:right;opacity:0.5;">🖋</a>
+### 326.3-的幂<a href="./src/326.3-的幂.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -6291,7 +6291,7 @@ console.assert('isPowerOfThree: ', isPowerOfThree(45));
 ```
 </details>
 
-### 337.打家劫舍-iii<a href="./src/337.打家劫舍-iii.js" style="float:right;opacity:0.5;">🖋</a>
+### 337.打家劫舍-iii<a href="./src/337.打家劫舍-iii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -6457,7 +6457,7 @@ var rob = function(root) {
 ```
 </details>
 
-### 338.比特位计数<a href="./src/338.比特位计数.js" style="float:right;opacity:0.5;">🖋</a>
+### 338.比特位计数<a href="./src/338.比特位计数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -6566,7 +6566,7 @@ var countBits = function(num) {
 ```
 </details>
 
-### 34.在排序数组中查找元素的第一个和最后一个位置<a href="./src/34.在排序数组中查找元素的第一个和最后一个位置.js" style="float:right;opacity:0.5;">🖋</a>
+### 34.在排序数组中查找元素的第一个和最后一个位置<a href="./src/34.在排序数组中查找元素的第一个和最后一个位置.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -6667,7 +6667,7 @@ console.assert(searchRange([5,7,7,8,8,10], 8));
 ```
 </details>
 
-### 347.前k<a href="./src/347.前k.js" style="float:right;opacity:0.5;">🖋</a>
+### 347.前k<a href="./src/347.前k.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -6780,7 +6780,7 @@ var topKFrequent = function(nums, k) {
 ```
 </details>
 
-### 350.两个数组的交集-ii<a href="./src/350.两个数组的交集-ii.js" style="float:right;opacity:0.5;">🖋</a>
+### 350.两个数组的交集-ii<a href="./src/350.两个数组的交集-ii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -6903,7 +6903,7 @@ var intersect = function(nums1, nums2) {
 ```
 </details>
 
-### 367.有效的完全平方数<a href="./src/367.有效的完全平方数.js" style="float:right;opacity:0.5;">🖋</a>
+### 367.有效的完全平方数<a href="./src/367.有效的完全平方数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -6990,7 +6990,7 @@ isPerfectSquare(16)
 ```
 </details>
 
-### 371.两整数之和<a href="./src/371.两整数之和.js" style="float:right;opacity:0.5;">🖋</a>
+### 371.两整数之和<a href="./src/371.两整数之和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -7058,7 +7058,7 @@ var getSum = function(a, b) {
 ```
 </details>
 
-### 378.有序矩阵中第k小的元素<a href="./src/378.有序矩阵中第k小的元素.js" style="float:right;opacity:0.5;">🖋</a>
+### 378.有序矩阵中第k小的元素<a href="./src/378.有序矩阵中第k小的元素.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -7213,7 +7213,7 @@ var kthSmallest = function (matrix, k) {
 ```
 </details>
 
-### 384.打乱数组<a href="./src/384.打乱数组.js" style="float:right;opacity:0.5;">🖋</a>
+### 384.打乱数组<a href="./src/384.打乱数组.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -7352,7 +7352,7 @@ Solution.prototype.shuffle = function() {
 ```
 </details>
 
-### 387.字符串中的第一个唯一字符<a href="./src/387.字符串中的第一个唯一字符.js" style="float:right;opacity:0.5;">🖋</a>
+### 387.字符串中的第一个唯一字符<a href="./src/387.字符串中的第一个唯一字符.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -7421,7 +7421,7 @@ var firstUniqChar = function(s) {
 ```
 </details>
 
-### 39.组合总和<a href="./src/39.组合总和.js" style="float:right;opacity:0.5;">🖋</a>
+### 39.组合总和<a href="./src/39.组合总和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -7558,7 +7558,7 @@ var combinationSum = function(candidates, target) {
 ```
 </details>
 
-### 394.字符串解码<a href="./src/394.字符串解码.js" style="float:right;opacity:0.5;">🖋</a>
+### 394.字符串解码<a href="./src/394.字符串解码.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -7751,7 +7751,7 @@ decodeString("3[a]2[bc]"); // debug for vscode
 ```
 </details>
 
-### 4.寻找两个正序数组的中位数<a href="./src/4.寻找两个正序数组的中位数.js" style="float:right;opacity:0.5;">🖋</a>
+### 4.寻找两个正序数组的中位数<a href="./src/4.寻找两个正序数组的中位数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -7857,7 +7857,7 @@ var findMedianSortedArrays = function(nums1, nums2) {
 ```
 </details>
 
-### 412.fizz-buzz<a href="./src/412.fizz-buzz.js" style="float:right;opacity:0.5;">🖋</a>
+### 412.fizz-buzz<a href="./src/412.fizz-buzz.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -8002,7 +8002,7 @@ var fizzBuzz = function(n) {
 ```
 </details>
 
-### 415.字符串相加<a href="./src/415.字符串相加.js" style="float:right;opacity:0.5;">🖋</a>
+### 415.字符串相加<a href="./src/415.字符串相加.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -8084,7 +8084,7 @@ var addStrings = function(num1, num2) {
 ```
 </details>
 
-### 416.分割等和子集<a href="./src/416.分割等和子集.js" style="float:right;opacity:0.5;">🖋</a>
+### 416.分割等和子集<a href="./src/416.分割等和子集.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -8256,7 +8256,7 @@ canPartition([1, 2, 5]);
 ```
 </details>
 
-### 42.接雨水<a href="./src/42.接雨水.js" style="float:right;opacity:0.5;">🖋</a>
+### 42.接雨水<a href="./src/42.接雨水.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -8372,7 +8372,7 @@ var trap = function (height) {
 ```
 </details>
 
-### 43.字符串相乘<a href="./src/43.字符串相乘.js" style="float:right;opacity:0.5;">🖋</a>
+### 43.字符串相乘<a href="./src/43.字符串相乘.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -8483,7 +8483,7 @@ var multiply = function(num1, num2) {
 ```
 </details>
 
-### 437.路径总和-iii<a href="./src/437.路径总和-iii.js" style="float:right;opacity:0.5;">🖋</a>
+### 437.路径总和-iii<a href="./src/437.路径总和-iii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -8617,7 +8617,7 @@ pathSum([10,5,-3,3,2,null,11,3,-2,null,1], 8);
 ```
 </details>
 
-### 454.四数相加-ii<a href="./src/454.四数相加-ii.js" style="float:right;opacity:0.5;">🖋</a>
+### 454.四数相加-ii<a href="./src/454.四数相加-ii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -8757,7 +8757,7 @@ var fourSumCount = function(A, B, C, D) {
 ```
 </details>
 
-### 46.全排列<a href="./src/46.全排列.js" style="float:right;opacity:0.5;">🖋</a>
+### 46.全排列<a href="./src/46.全排列.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -8833,7 +8833,7 @@ permute([1, 2, 3])
 ```
 </details>
 
-### 461.汉明距离<a href="./src/461.汉明距离.js" style="float:right;opacity:0.5;">🖋</a>
+### 461.汉明距离<a href="./src/461.汉明距离.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -8905,7 +8905,7 @@ var hammingDistance = function(x, y) {
 ```
 </details>
 
-### 494.目标和<a href="./src/494.目标和.js" style="float:right;opacity:0.5;">🖋</a>
+### 494.目标和<a href="./src/494.目标和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -9017,7 +9017,7 @@ findTargetSumWays([1,1,1,1,1], 3);
 ```
 </details>
 
-### 5.最长回文子串<a href="./src/5.最长回文子串.js" style="float:right;opacity:0.5;">🖋</a>
+### 5.最长回文子串<a href="./src/5.最长回文子串.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -9096,7 +9096,7 @@ var longestPalindrome = function(s) {
 ```
 </details>
 
-### 54.螺旋矩阵<a href="./src/54.螺旋矩阵.js" style="float:right;opacity:0.5;">🖋</a>
+### 54.螺旋矩阵<a href="./src/54.螺旋矩阵.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -9189,7 +9189,7 @@ spiralOrder([[1,2,3],[4,5,6],[7,8,9]])
 ```
 </details>
 
-### 55.跳跃游戏<a href="./src/55.跳跃游戏.js" style="float:right;opacity:0.5;">🖋</a>
+### 55.跳跃游戏<a href="./src/55.跳跃游戏.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -9288,7 +9288,7 @@ var canJump = function(nums) {
 ```
 </details>
 
-### 557.反转字符串中的单词-iii<a href="./src/557.反转字符串中的单词-iii.js" style="float:right;opacity:0.5;">🖋</a>
+### 557.反转字符串中的单词-iii<a href="./src/557.反转字符串中的单词-iii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -9353,7 +9353,7 @@ var reverseWords = function(s) {
 ```
 </details>
 
-### 56.合并区间<a href="./src/56.合并区间.js" style="float:right;opacity:0.5;">🖋</a>
+### 56.合并区间<a href="./src/56.合并区间.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -9435,7 +9435,7 @@ var merge = function(intervals) {
 ```
 </details>
 
-### 59.螺旋矩阵-ii<a href="./src/59.螺旋矩阵-ii.js" style="float:right;opacity:0.5;">🖋</a>
+### 59.螺旋矩阵-ii<a href="./src/59.螺旋矩阵-ii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -9522,7 +9522,7 @@ var generateMatrix = function(n) {
 ```
 </details>
 
-### 61.旋转链表<a href="./src/61.旋转链表.js" style="float:right;opacity:0.5;">🖋</a>
+### 61.旋转链表<a href="./src/61.旋转链表.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -9662,7 +9662,7 @@ var rotateRight = function(head, k) {
 ```
 </details>
 
-### 617.合并二叉树<a href="./src/617.合并二叉树.js" style="float:right;opacity:0.5;">🖋</a>
+### 617.合并二叉树<a href="./src/617.合并二叉树.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -9747,7 +9747,7 @@ var mergeTrees = function(t1, t2) {
 ```
 </details>
 
-### 62.不同路径<a href="./src/62.不同路径.js" style="float:right;opacity:0.5;">🖋</a>
+### 62.不同路径<a href="./src/62.不同路径.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -9867,7 +9867,7 @@ var uniquePaths = function(m, n) {
 ```
 </details>
 
-### 64.最小路径和<a href="./src/64.最小路径和.js" style="float:right;opacity:0.5;">🖋</a>
+### 64.最小路径和<a href="./src/64.最小路径和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -9982,7 +9982,7 @@ minPathSum([[1,3,1],[1,5,1],[4,2,1]]);
 ```
 </details>
 
-### 647.回文子串<a href="./src/647.回文子串.js" style="float:right;opacity:0.5;">🖋</a>
+### 647.回文子串<a href="./src/647.回文子串.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -10235,7 +10235,7 @@ var countSubstrings = function(s) {
 ```
 </details>
 
-### 7-reverse-integer<a href="./src/7-reverse-integer.js" style="float:right;opacity:0.5;">🖋</a>
+### 7-reverse-integer<a href="./src/7-reverse-integer.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -10285,7 +10285,7 @@ reverse(-123);
 ```
 </details>
 
-### 72.编辑距离<a href="./src/72.编辑距离.js" style="float:right;opacity:0.5;">🖋</a>
+### 72.编辑距离<a href="./src/72.编辑距离.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -10425,7 +10425,7 @@ var minDistance = function(word1, word2) {
 ```
 </details>
 
-### 78.子集<a href="./src/78.子集.js" style="float:right;opacity:0.5;">🖋</a>
+### 78.子集<a href="./src/78.子集.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -10522,7 +10522,7 @@ var subsets = function(nums) {
 ```
 </details>
 
-### 887.鸡蛋掉落<a href="./src/887.鸡蛋掉落.js" style="float:right;opacity:0.5;">🖋</a>
+### 887.鸡蛋掉落<a href="./src/887.鸡蛋掉落.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -10822,7 +10822,7 @@ superEggDrop(2, 7) // Use for vscode debug
 ```
 </details>
 
-### 89.格雷编码<a href="./src/89.格雷编码.js" style="float:right;opacity:0.5;">🖋</a>
+### 89.格雷编码<a href="./src/89.格雷编码.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -10907,7 +10907,7 @@ var grayCode = function(n) {
 ```
 </details>
 
-### 9.回文数<a href="./src/9.回文数.js" style="float:right;opacity:0.5;">🖋</a>
+### 9.回文数<a href="./src/9.回文数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -10980,7 +10980,7 @@ var isPalindrome = function(x) {
 ```
 </details>
 
-### 91.解码方法<a href="./src/91.解码方法.js" style="float:right;opacity:0.5;">🖋</a>
+### 91.解码方法<a href="./src/91.解码方法.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -11112,7 +11112,7 @@ var numDecodings = function(s) {
 ```
 </details>
 
-### 92.反转链表-ii<a href="./src/92.反转链表-ii.js" style="float:right;opacity:0.5;">🖋</a>
+### 92.反转链表-ii<a href="./src/92.反转链表-ii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -11240,7 +11240,7 @@ var reverseBetween = function(head, m, n) {
 ```
 </details>
 
-### 96.不同的二叉搜索树<a href="./src/96.不同的二叉搜索树.js" style="float:right;opacity:0.5;">🖋</a>
+### 96.不同的二叉搜索树<a href="./src/96.不同的二叉搜索树.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -11388,7 +11388,7 @@ var numTrees = function(n) {
 ```
 </details>
 
-### 剑指 Offer 03. 数组中重复的数字<a href="./src/剑指 Offer 03. 数组中重复的数字.js" style="float:right;opacity:0.5;">🖋</a>
+### 剑指 Offer 03. 数组中重复的数字<a href="./src/剑指 Offer 03. 数组中重复的数字.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -11410,7 +11410,7 @@ var findRepeatNumber = function(nums) {
 ```
 </details>
 
-### 剑指 Offer 05. 替换空格<a href="./src/剑指 Offer 05. 替换空格.js" style="float:right;opacity:0.5;">🖋</a>
+### 剑指 Offer 05. 替换空格<a href="./src/剑指 Offer 05. 替换空格.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -11426,7 +11426,7 @@ var replaceSpace = function(s) {
 ```
 </details>
 
-### 剑指 Offer 09. 用两个栈实现队列<a href="./src/剑指 Offer 09. 用两个栈实现队列.js" style="float:right;opacity:0.5;">🖋</a>
+### 剑指 Offer 09. 用两个栈实现队列<a href="./src/剑指 Offer 09. 用两个栈实现队列.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
