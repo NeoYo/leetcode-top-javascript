@@ -38,16 +38,70 @@
  * 
  * 
  */
-
-// @lc code=start
 /**
+    题解：
+    解一：暴力法
+            暴力解法 O(n^3)  i j indexOf
+            
+    解二：滑动窗口
+        1. 用 Set.prototype.has 代替 O(n) 的 String.prototype.indexOf
+
+            Set 的实现： HashMap 是 O(1), BST 是 O(log(n))， Array 是 O(n)
+
+        2. 双层 for 可以用 O(2n) 化解为 O(n)，在最糟糕的情况下，每个字符将被 i 和 j 访问两次。
+            1. 举例1： abcdce 当走到 abcd 的下一个 c, a 后面的 bcd 已经无需再走了, 直接从 abcd 的 d 开始走。 
+            2. 不需要走的原因： abcdc... 中第一个 c， 相当于划分了两个时代
+                1. 包含第一个 c 的， abcd bcd cd d, 肯定是 abcd 最大。
+                2. 包含第一个 c 的，即 从 d 开始
+
+            3. 举例2：在最糟糕的情况下，每个字符将被访问接近两次， 如abab, 6次
+    参考资料：
+        [滑动窗口](https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/solution/wu-zhong-fu-zi-fu-de-zui-chang-zi-chuan-by-leetcod/)
+ */
+// @lc code=start
+/* 
+    解一：暴力法
+        暴力解法 O(n^3)  i j indexOf
+ */ 
+var lengthOfLongestSubstring = function(s) {
+    let max = 0;
+    const arr = s.split('');
+    for (let i = 0; i < arr.length; i++) {
+        const target = [];
+        for (let j = i; j < arr.length; j++) {
+            const char = arr[j];
+            if (target.indexOf(char) !== -1) {
+                break;
+            }
+            target.push(char);
+        }
+        const len = target.length;
+        max = max > len ? max : len;
+    }
+    return max;  
+};
+/**
+    解二：滑动窗口  T(n) = O(n)
+    1. 用 Set.prototype.has 代替 O(n) 的 String.prototype.indexOf
+
+        Set 的实现： HashMap 是 O(1), BST 是 O(log(n))， Array 是 O(n)
+
+    2. 双层 for 可以用 O(2n) 化解为 O(n)，在最糟糕的情况下，每个字符将被 i 和 j 访问两次。
+        1. 举例1： abcdce 当走到 abcd 的下一个 c, a 后面的 bcd 已经无需再走了, 直接从 abcd 的 d 开始走。 
+        2. 不需要走的原因： abcdc... 中第一个 c， 相当于划分了两个时代
+            1. 包含第一个 c 的， abcd bcd cd d, 肯定是 abcd 最大。
+            2. 包含第一个 c 的，即 从 d 开始
+
+        3. 举例2：在最糟糕的情况下，每个字符将被访问接近两次， 如abab, 6次
+ */
+/**  
  * @param {string} s
  * @return {number}
  */
 var lengthOfLongestSubstring = function(s) {
     let max = 0;
-    let map = new Map();
-    for (let i = 0, j = 0; j < s.length; j++) {
+    let map = new Map();    // <出现过的字符, 对应 i 出现的位置>
+    for (let i = 0, j = 0; j < s.length; j++) { // j 快指针，i 慢指针
         const char = s[j];
         i = Math.max(map.get(char) || 0, i);
         map.set(char, j + 1);

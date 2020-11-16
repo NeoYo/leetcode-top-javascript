@@ -51,6 +51,11 @@
        T(n) = O(n^2)
        S(n) = O(1)
        以每一个元素为中心，从左右扩散
+       
+        column[i] = Math.max(0, 
+            Math.min(maxLeft, maxRight) − height[i]
+        )
+
    二、单调栈
        T(n) = O(n)
        S(n) = O(n)

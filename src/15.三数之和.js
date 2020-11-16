@@ -86,6 +86,8 @@
         关键代码如下:
             if(nums[i] === nums[i-1]) continue; // 去重3
 
+注意点：
+    nums.[sort] 注意不能用 n1 > n2，因为是和 0 比较的，不是 true false
  */
 // @lc code=start
 /**
