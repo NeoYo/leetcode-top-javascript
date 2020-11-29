@@ -33,9 +33,7 @@
  * 
  */
 /**
-    知识点
-        str.split(' ') = str.split('/\s/g')
-        str.match(/[\w']+/g)  
+    题解：使用 Array.prototype.reverse 和 String.prototype.split
  */
 // @lc code=start
 /**

@@ -56,7 +56,21 @@
  * 
  * 
  */
+/*
+  题解：Set && Map
 
+  一、暴力. [x, y] => x+y=9 O(N^2)
+  
+  二、Set x + y = 9 => y = 9 - x （记得把用过的 x remove）
+
+    复杂度分析：
+
+    时间复杂度：O(n)， 我们只遍历了包含有 n 个元素的列表一次。在表中进行的每次查找只花费 O(1)的时间。(Map 由于浏览器不同，底层实现也不同，不一定是 O(1))
+
+    空间复杂度：O(n)， 所需的额外空间取决于哈希表中存储的元素数量，该表最多需要存储 n 个元素。
+
+
+ */
 // @lc code=start
 /**
  * @param {number[]} nums
@@ -75,6 +89,676 @@ var twoSum = function(nums, target) {
 };
 // @lc code=end
 
+
+
+```
+</details>
+
+### 2.两数相加<a href="./src/2.两数相加.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=2 lang=javascript
+ *
+ * [2] 两数相加
+ *
+ * https://leetcode-cn.com/problems/add-two-numbers/description/
+ *
+ * algorithms
+ * Medium (38.86%)
+ * Likes:    5228
+ * Dislikes: 0
+ * Total Accepted:    618.2K
+ * Total Submissions: 1.6M
+ * Testcase Example:  '[2,4,3]\n[5,6,4]'
+ *
+ * 给出两个 非空 的链表用来表示两个非负的整数。其中，它们各自的位数是按照 逆序 的方式存储的，并且它们的每个节点只能存储 一位 数字。
+ * 
+ * 如果，我们将这两个数相加起来，则会返回一个新的链表来表示它们的和。
+ * 
+ * 您可以假设除了数字 0 之外，这两个数都不会以 0 开头。
+ * 
+ * 示例：
+ * 
+ * 输入：(2 -> 4 -> 3) + (5 -> 6 -> 4)
+ * 输出：7 -> 0 -> 8
+ * 原因：342 + 465 = 807
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+/**
+ * @param {ListNode} l1
+ * @param {ListNode} l2
+ * @return {ListNode}
+ */
+var addTwoNumbers = function (l1, l2) {
+    const sum = l1.val + l2.val;
+    let res = cur = new ListNode(sum % 10);
+    let append = Math.floor(sum / 10);
+
+    while ((l1 && l1.next) || (l2 && l2.next)) {
+        l1 = l1 && l1.next || { val: 0 };
+        l2 = l2 && l2.next || { val: 0 };
+        const sum = l1.val + l2.val + append;
+        cur.next = new ListNode(sum % 10);
+        cur = cur.next;
+        append = Math.floor(sum / 10);
+    }
+
+    if (append !== 0) {
+        cur.next = new ListNode(append % 10);
+        cur = cur.next;
+    }
+
+    return res;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 3.无重复字符的最长子串<a href="./src/3.无重复字符的最长子串.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=3 lang=javascript
+ *
+ * [3] 无重复字符的最长子串
+ *
+ * https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/description/
+ *
+ * algorithms
+ * Medium (35.80%)
+ * Likes:    4553
+ * Dislikes: 0
+ * Total Accepted:    716.7K
+ * Total Submissions: 2M
+ * Testcase Example:  '"abcabcbb"'
+ *
+ * 给定一个字符串，请你找出其中不含有重复字符的 最长子串 的长度。
+ * 
+ * 示例 1:
+ * 
+ * 输入: "abcabcbb"
+ * 输出: 3 
+ * 解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 输入: "bbbbb"
+ * 输出: 1
+ * 解释: 因为无重复字符的最长子串是 "b"，所以其长度为 1。
+ * 
+ * 
+ * 示例 3:
+ * 
+ * 输入: "pwwkew"
+ * 输出: 3
+ * 解释: 因为无重复字符的最长子串是 "wke"，所以其长度为 3。
+ * 请注意，你的答案必须是 子串 的长度，"pwke" 是一个子序列，不是子串。
+ * 
+ * 
+ */
+/**
+    题解：
+    解一：暴力法
+            暴力解法 O(n^3)  i j indexOf
+            
+    解二：滑动窗口
+        1. 用 Set.prototype.has 代替 O(n) 的 String.prototype.indexOf
+
+            Set 的实现： HashMap 是 O(1), BST 是 O(log(n))， Array 是 O(n)
+
+        2. 双层 for 可以用 O(2n) 化解为 O(n)，在最糟糕的情况下，每个字符将被 i 和 j 访问两次。
+            1. 举例1： abcdce 当走到 abcd 的下一个 c, a 后面的 bcd 已经无需再走了, 直接从 abcd 的 d 开始走。 
+            2. 不需要走的原因： abcdc... 中第一个 c， 相当于划分了两个时代
+                1. 包含第一个 c 的， abcd bcd cd d, 肯定是 abcd 最大。
+                2. 包含第一个 c 的，即 从 d 开始
+
+            3. 举例2：在最糟糕的情况下，每个字符将被访问接近两次， 如abab, 6次
+    参考资料：
+        [滑动窗口](https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/solution/wu-zhong-fu-zi-fu-de-zui-chang-zi-chuan-by-leetcod/)
+ */
+// @lc code=start
+/* 
+    解一：暴力法
+        暴力解法 O(n^3)  i j indexOf
+ */ 
+var lengthOfLongestSubstring = function(s) {
+    let max = 0;
+    const arr = s.split('');
+    for (let i = 0; i < arr.length; i++) {
+        const target = [];
+        for (let j = i; j < arr.length; j++) {
+            const char = arr[j];
+            if (target.indexOf(char) !== -1) {
+                break;
+            }
+            target.push(char);
+        }
+        const len = target.length;
+        max = max > len ? max : len;
+    }
+    return max;  
+};
+/**
+    解二：滑动窗口  T(n) = O(n)
+    1. 用 Set.prototype.has 代替 O(n) 的 String.prototype.indexOf
+
+        Set 的实现： HashMap 是 O(1), BST 是 O(log(n))， Array 是 O(n)
+
+    2. 双层 for 可以用 O(2n) 化解为 O(n)，在最糟糕的情况下，每个字符将被 i 和 j 访问两次。
+        1. 举例1： abcdce 当走到 abcd 的下一个 c, a 后面的 bcd 已经无需再走了, 直接从 abcd 的 d 开始走。 
+        2. 不需要走的原因： abcdc... 中第一个 c， 相当于划分了两个时代
+            1. 包含第一个 c 的， abcd bcd cd d, 肯定是 abcd 最大。
+            2. 包含第一个 c 的，即 从 d 开始
+
+        3. 举例2：在最糟糕的情况下，每个字符将被访问接近两次， 如abab, 6次
+ */
+/**  
+ * @param {string} s
+ * @return {number}
+ */
+var lengthOfLongestSubstring = function(s) {
+    let max = 0;
+    let map = new Map();    // <出现过的字符, 对应 i 出现的位置>
+    for (let i = 0, j = 0; j < s.length; j++) { // j 快指针，i 慢指针
+        const char = s[j];
+        i = Math.max(map.get(char) || 0, i);
+        map.set(char, j + 1);
+        max = Math.max(max, j - i + 1);        
+    }
+    return max;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 4.寻找两个正序数组的中位数<a href="./src/4.寻找两个正序数组的中位数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=4 lang=javascript
+ *
+ * [4] 寻找两个正序数组的中位数
+ *
+ * https://leetcode-cn.com/problems/median-of-two-sorted-arrays/description/
+ *
+ * algorithms
+ * Hard (38.57%)
+ * Likes:    3069
+ * Dislikes: 0
+ * Total Accepted:    241.4K
+ * Total Submissions: 625.8K
+ * Testcase Example:  '[1,3]\n[2]'
+ *
+ * 给定两个大小为 m 和 n 的正序（从小到大）数组 nums1 和 nums2。
+ * 
+ * 请你找出这两个正序数组的中位数，并且要求算法的时间复杂度为 O(log(m + n))。
+ * 
+ * 你可以假设 nums1 和 nums2 不会同时为空。
+ * 
+ * 
+ * 
+ * 示例 1:
+ * 
+ * nums1 = [1, 3]
+ * nums2 = [2]
+ * 
+ * 则中位数是 2.0
+ * 
+ * 
+ * 示例 2:
+ * 
+ * nums1 = [1, 2]
+ * nums2 = [3, 4]
+ * 
+ * 则中位数是 (2 + 3)/2 = 2.5
+ * 
+ * 
+ */
+/**
+    
+ */
+// @lc code=start
+/**
+ * @param {number[]} nums1
+ * @param {number[]} nums2
+ * @return {number}
+ */
+var findMedianSortedArrays = function(nums1, nums2) {
+    /**
+        解一：暴力法
+        原理：
+            将两个数组合并，再进行排序，假设是快排，则 T(n) = O(nlogn)
+     */
+    const nums = [...nums1, ...nums2];
+    nums.sort((n1, n2) => (n1 - n2));
+    if (nums.length % 2 === 0) {
+        const mid = nums.length>>1;
+        return (nums[mid] + nums[mid-1])/2; // 中位数要除以2
+    } else {
+        return nums[(nums.length>>1)]
+    }
+    /**
+        解二：二分查找法
+        例子：
+      nums1  1   2   3   4   8
+            l1              r1
+                mid1
+
+      nums2  6       7       9
+            l2              r2       
+                mid2
+
+            进行二分查找:
+
+                1   2   3   4   8
+                l1              r1
+                    mid1
+            第一轮：
+                            l1  r1
+                            mid1
+
+                6       7       9
+                l2              r2      
+                        mid2
+            第一轮：
+                l2r2
+                mid2
+
+            4、6 将两个数组划分为：
+            1 2 3 和 7 8 9
+     */
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 5.最长回文子串<a href="./src/5.最长回文子串.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=5 lang=javascript
+ *
+ * [5] 最长回文子串
+ *
+ * https://leetcode-cn.com/problems/longest-palindromic-substring/description/
+ *
+ * algorithms
+ * Medium (32.20%)
+ * Likes:    2872
+ * Dislikes: 0
+ * Total Accepted:    411.8K
+ * Total Submissions: 1.3M
+ * Testcase Example:  '"babad"'
+ *
+ * 给定一个字符串 s，找到 s 中最长的回文子串。你可以假设 s 的最大长度为 1000。
+ * 
+ * 示例 1：
+ * 
+ * 输入: "babad"
+ * 输出: "bab"
+ * 注意: "aba" 也是一个有效答案。
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 输入: "cbbd"
+ * 输出: "bb"
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * @param {string} s
+ * @return {string}
+ */
+var longestPalindrome = function(s) {
+    let maxSub = '';
+    for (let i = 0; i < s.length; i++) {
+        const oddSpreadLength = Math.min(
+            s.length - 1 - i,
+            i
+        );
+        for (let spread = 0; spread <= oddSpreadLength; spread++) {
+            if (s[i + spread] !== s[i - spread]) {
+                break;
+            }
+            if ((1 + spread * 2) > maxSub.length) {
+                maxSub = s.slice(i - spread, i + spread + 1);
+            }
+        }
+        const evenSpreadLength = Math.min(
+            s.length - i,
+            i
+        );
+        for (let spread = 0; spread <= evenSpreadLength; spread++) {
+            if (s[i + 1 + spread] !== s[i - spread]) {
+                break;
+            }
+            if ((2 + spread * 2) > maxSub.length) {
+                maxSub = s.slice(i - spread, i + spread + 2);
+            }
+        }
+    }
+    return maxSub;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 6.z-字形变换<a href="./src/6.z-字形变换.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=6 lang=javascript
+ *
+ * [6] Z 字形变换
+ *
+ * https://leetcode-cn.com/problems/zigzag-conversion/description/
+ *
+ * algorithms
+ * Medium (49.00%)
+ * Likes:    898
+ * Dislikes: 0
+ * Total Accepted:    187.3K
+ * Total Submissions: 382.4K
+ * Testcase Example:  '"PAYPALISHIRING"\n3'
+ *
+ * 将一个给定字符串根据给定的行数，以从上往下、从左到右进行 Z 字形排列。
+ * 
+ * 比如输入字符串为 "LEETCODEISHIRING" 行数为 3 时，排列如下：
+ * 
+ * L   C   I   R
+ * E T O E S I I G
+ * E   D   H   N
+ * 
+ * 
+ * 之后，你的输出需要从左往右逐行读取，产生出一个新的字符串，比如："LCIRETOESIIGEDHN"。
+ * 
+ * 请你实现这个将字符串进行指定行数变换的函数：
+ * 
+ * string convert(string s, int numRows);
+ * 
+ * 示例 1:
+ * 
+ * 输入: s = "LEETCODEISHIRING", numRows = 3
+ * 输出: "LCIRETOESIIGEDHN"
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 输入: s = "LEETCODEISHIRING", numRows = 4
+ * 输出: "LDREOEIIECIHNTSG"
+ * 解释:
+ * 
+ * L     D     R
+ * E   O E   I I
+ * E C   I H   N
+ * T     S     G
+ * 
+ */
+/**
+    参考资料：> [画解算法：6. Z 字形变换](https://leetcode-cn.com/problems/zigzag-conversion/solution/hua-jie-suan-fa-6-z-zi-xing-bian-huan-by-guanpengc/)
+ */
+// @lc code=start
+/**
+ * @param {string} s
+ * @param {number} numRows
+ * @return {string}
+ */
+/**
+ * @param {string} s
+ * @param {number} numRows
+ * @return {string}
+ */
+var convert = function(s, numRows) {    
+    if (numRows === 1) { return s;}
+    const groupNums = numRows + numRows - 2;
+    const rows = new Array(numRows).fill('');
+    let rowIndex = 0;
+    let isDown = true;
+    for (let i = 0; i < s.length; i++) {
+        rows[rowIndex] += s[i];
+        if ((i % groupNums) + 1 === numRows) {
+            isDown = false;
+        } else if ((i % groupNums) === 0) {
+            isDown = true;
+        }
+        isDown ? rowIndex++ : rowIndex--;
+    }
+    return rows.reduce((acc, cur) => (acc + cur), '');    
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 7.整数反转<a href="./src/7.整数反转.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=7 lang=javascript
+ *
+ * [7] 整数反转
+ *
+ * https://leetcode-cn.com/problems/reverse-integer/description/
+ *
+ * algorithms
+ * Easy (34.72%)
+ * Likes:    2374
+ * Dislikes: 0
+ * Total Accepted:    523.1K
+ * Total Submissions: 1.5M
+ * Testcase Example:  '123'
+ *
+ * 给出一个 32 位的有符号整数，你需要将这个整数中每位上的数字进行反转。
+ * 
+ * 示例 1:
+ * 
+ * 输入: 123
+ * 输出: 321
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 输入: -123
+ * 输出: -321
+ * 
+ * 
+ * 示例 3:
+ * 
+ * 输入: 120
+ * 输出: 21
+ * 
+ * 
+ * 注意:
+ * 
+ * 假设我们的环境只能存储得下 32 位的有符号整数，则其数值范围为 [−2^31,  2^31 − 1]。请根据这个假设，如果反转后整数溢出那么就返回
+ * 0。
+ * 
+ */
+/**
+    知识点：取余与整除
+    // 特殊考虑 0、末尾0、-号
+     * x = 123
+     * radix = 10
+     * rev = 0
+     * 阶段一
+     * pop = x % radix = 3
+     * rev = rev * radix + pop = 3
+     * x = Math.floor(x / radix) = 12
+     * 阶段二
+     * pop = x % radix = 2
+     * rev = rev * radix + pop = 32
+     * x = Math.floor(x / radix) = 1
+     * 阶段三
+     * pop = x % radix = 1
+     * rev = rev * radix + pop = 321
+     * x = Math.floor(x / radix) = 0
+     * 
+     * if (x === 0) {
+     * }
+     > 这个答案并不对，因为 `if (rev > MAX_VAL || rev < MIN_VAL) {` 已经超出了范围。 
+     > 正确的解法请参考 [画解算法：7. 整数反转](https://leetcode-cn.com/problems/reverse-integer/solution/hua-jie-suan-fa-7-zheng-shu-fan-zhuan-by-guanpengc/)
+ */
+// @lc code=start
+/**
+ * @param {number} x
+ * @return {number}
+ */
+var reverse = function(x) {
+    let rev = 0;
+    const radix = 10;
+    const MAX_VAL = Math.pow(2, 31) - 1;
+    const MIN_VAL = - Math.pow(2, 31);
+    while (x !== 0) {
+        rev = rev * radix + x % radix;
+        x = ~~(x / radix);
+    }
+    if (rev > MAX_VAL || rev < MIN_VAL) {
+        return 0;
+    }
+    return rev;
+};
+// @lc code=end
+/**
+    解二. 数组反转
+    var reverse = function (x) {
+        let arr = (x + '').split('').reverse();    
+        if (arr[arr.length - 1] === '-') {
+            arr.unshift(arr.pop());
+        }
+        const rev = Number(arr.join('')); 
+        if (rev > Math.pow(2, 31) - 1 || rev < - Math.pow(2, 31)) {
+            return 0;
+        }
+        return rev;
+    };
+
+
+    #### 3. 栈
+    栈实际上是为了实现 Array.prototype.reverse
+
+
+
+    #### 4. 相关知识
+
+    > 原码、补码、反码 有时间复习下
+
+    > JS `Math.floor` `Math.ceil` `~~` `parseInt(String/Number) // Number 自动转 String` `ES6 Math.trunc` 参考链接 [stackoverflow - convert a float number to a whole number ](https://stackoverflow.com/questions/596467/how-do-i-convert-a-float-number-to-a-whole-number-in-javascript)
+ */
+
+
+```
+</details>
+
+### 9.回文数<a href="./src/9.回文数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=9 lang=javascript
+ *
+ * [9] 回文数
+ *
+ * https://leetcode-cn.com/problems/palindrome-number/description/
+ *
+ * algorithms
+ * Easy (58.36%)
+ * Likes:    1160
+ * Dislikes: 0
+ * Total Accepted:    402K
+ * Total Submissions: 688.2K
+ * Testcase Example:  '121'
+ *
+ * 判断一个整数是否是回文数。回文数是指正序（从左向右）和倒序（从右向左）读都是一样的整数。
+ * 
+ * 示例 1:
+ * 
+ * 输入: 121
+ * 输出: true
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 输入: -121
+ * 输出: false
+ * 解释: 从左向右读, 为 -121 。 从右向左读, 为 121- 。因此它不是一个回文数。
+ * 
+ * 
+ * 示例 3:
+ * 
+ * 输入: 10
+ * 输出: false
+ * 解释: 从右向左读, 为 01 。因此它不是一个回文数。
+ * 
+ * 
+ * 进阶:
+ * 
+ * 你能不将整数转为字符串来解决这个问题吗？
+ * 
+ */
+
+// @lc code=start
+/**
+ * @param {number} x
+ * @return {boolean}
+ */
+var isPalindrome = function(x) {
+    if (x < 0 || (x % 10 == 0 && x !== 0)) return false;
+    let reverse = 0;
+    while (x > reverse) {
+        reverse = reverse * 10 + x % 10;
+        x = Math.floor(x / 10);
+    }
+    return x === reverse 
+        || Math.floor(reverse / 10) === x;
+};
+// console.assert(isPalindrome(1221) === true);
+// console.assert(isPalindrome(12321) === true);
+// console.assert(isPalindrome(10) === false); // if (x < 0 || (x % 10 == 0 && x !== 0)) return false;
+// @lc code=end
 
 
 ```
@@ -206,6 +890,3218 @@ const equal = (sChar, pChar) => (
 // console.assert(isMatch('mississippi', 'mis*is*ip*.'), 'mississippi mis*is*ip*.');
 // console.assert(isMatch('', '.*'));
 
+// @lc code=end
+
+
+```
+</details>
+
+### 11.盛最多水的容器<a href="./src/11.盛最多水的容器.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=11 lang=javascript
+ *
+ * [11] 盛最多水的容器
+ *
+ * https://leetcode-cn.com/problems/container-with-most-water/description/
+ *
+ * algorithms
+ * Medium (64.38%)
+ * Likes:    1984
+ * Dislikes: 0
+ * Total Accepted:    318.5K
+ * Total Submissions: 494.5K
+ * Testcase Example:  '[1,8,6,2,5,4,8,3,7]'
+ *
+ * 给你 n 个非负整数 a1，a2，...，an，每个数代表坐标中的一个点 (i, ai) 。在坐标内画 n 条垂直线，垂直线 i 的两个端点分别为
+ * (i, ai) 和 (i, 0) 。找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。
+ * 
+ * 说明：你不能倾斜容器。
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 
+ * 
+ * 
+ * 输入：[1,8,6,2,5,4,8,3,7]
+ * 输出：49 
+ * 解释：图中垂直线代表输入数组 [1,8,6,2,5,4,8,3,7]。在此情况下，容器能够容纳水（表示为蓝色部分）的最大值为 49。
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 输入：height = [1,1]
+ * 输出：1
+ * 
+ * 
+ * 示例 3：
+ * 
+ * 
+ * 输入：height = [4,3,2,1,4]
+ * 输出：16
+ * 
+ * 
+ * 示例 4：
+ * 
+ * 
+ * 输入：height = [1,2,1]
+ * 输出：2
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * n = height.length
+ * 2 
+ * 0 
+ * 
+ * 
+ */
+/**
+     解一：暴力法
+       T(n) = O()
+       S(n) = O()
+
+    解二：双指针
+    这道题进阶版：接雨水            
+*/
+// @lc code=start
+/**
+ * @param {number[]} height
+ * @return {number}
+ */
+var maxArea = function(height) {
+    let maxArea = 0;
+    for (let i = 0, j = height.length - 1; i < j; ) {
+        if (height[i] > height[j]) {
+            const area = height[j] * (j - i);
+            if (area > maxArea) {
+                maxArea = area;
+            }
+            j--;
+        } else {
+            const area = height[i] * (j - i);
+            if (area > maxArea) {
+                maxArea = area;
+            }
+            i++;
+        }
+    }
+    return maxArea;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 13.罗马数字转整数<a href="./src/13.罗马数字转整数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=13 lang=javascript
+ *
+ * [13] 罗马数字转整数
+ *
+ * https://leetcode-cn.com/problems/roman-to-integer/description/
+ *
+ * algorithms
+ * Easy (62.12%)
+ * Likes:    1132
+ * Dislikes: 0
+ * Total Accepted:    287.4K
+ * Total Submissions: 462.3K
+ * Testcase Example:  '"III"'
+ *
+ * 罗马数字包含以下七种字符: I， V， X， L，C，D 和 M。
+ * 
+ * 字符          数值
+ * I             1
+ * V             5
+ * X             10
+ * L             50
+ * C             100
+ * D             500
+ * M             1000
+ * 
+ * 例如， 罗马数字 2 写做 II ，即为两个并列的 1。12 写做 XII ，即为 X + II 。 27 写做  XXVII, 即为 XX + V +
+ * II 。
+ * 
+ * 通常情况下，罗马数字中小的数字在大的数字的右边。但也存在特例，例如 4 不写做 IIII，而是 IV。数字 1 在数字 5 的左边，所表示的数等于大数
+ * 5 减小数 1 得到的数值 4 。同样地，数字 9 表示为 IX。这个特殊的规则只适用于以下六种情况：
+ * 
+ * 
+ * I 可以放在 V (5) 和 X (10) 的左边，来表示 4 和 9。
+ * X 可以放在 L (50) 和 C (100) 的左边，来表示 40 和 90。 
+ * C 可以放在 D (500) 和 M (1000) 的左边，来表示 400 和 900。
+ * 
+ * 
+ * 给定一个罗马数字，将其转换成整数。输入确保在 1 到 3999 的范围内。
+ * 
+ * 
+ * 
+ * 示例 1:
+ * 
+ * 输入: "III"
+ * 输出: 3
+ * 
+ * 示例 2:
+ * 
+ * 输入: "IV"
+ * 输出: 4
+ * 
+ * 示例 3:
+ * 
+ * 输入: "IX"
+ * 输出: 9
+ * 
+ * 示例 4:
+ * 
+ * 输入: "LVIII"
+ * 输出: 58
+ * 解释: L = 50, V= 5, III = 3.
+ * 
+ * 
+ * 示例 5:
+ * 
+ * 输入: "MCMXCIV"
+ * 输出: 1994
+ * 解释: M = 1000, CM = 900, XC = 90, IV = 4.
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 题目所给测试用例皆符合罗马数字书写规则，不会出现跨位等情况。
+ * IC 和 IM 这样的例子并不符合题目要求，49 应该写作 XLIX，999 应该写作 CMXCIX 。
+ * 关于罗马数字的详尽书写规则，可以参考 罗马数字 - Mathematics 。
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * @param {string} s
+ * @return {number}
+ */
+var romanToInt = function(s) {
+    const ruleMap = {
+        'I': 1,
+        'V': 5,
+        'X': 10,
+        'L': 50,
+        'C': 100,
+        'D': 500,
+        'M': 1000,
+        'IV': 4,
+        'IX': 9,
+        'XL': 40,
+        'XC': 90,
+        'CD': 400,
+        'CM': 900,
+    }
+    let result = 0;
+    const chars = s.split('');
+    for (let i = 0; i < chars.length; i++) {
+        const specialMatch = ruleMap[chars[i] + chars[i + 1]];  // ruleMap[xx + undefined]
+        if (specialMatch) {
+            result += specialMatch;
+            i++;
+        } else {
+            const match = ruleMap[chars[i]];
+            result += match;
+        }
+    }
+    return result;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 14.最长公共前缀<a href="./src/14.最长公共前缀.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=14 lang=javascript
+ *
+ * [14] 最长公共前缀
+ *
+ * https://leetcode-cn.com/problems/longest-common-prefix/description/
+ *
+ * algorithms
+ * Easy (38.88%)
+ * Likes:    1363
+ * Dislikes: 0
+ * Total Accepted:    404.1K
+ * Total Submissions: 1M
+ * Testcase Example:  '["flower","flow","flight"]'
+ *
+ * 编写一个函数来查找字符串数组中的最长公共前缀。
+ * 
+ * 如果不存在公共前缀，返回空字符串 ""。
+ * 
+ * 示例 1:
+ * 
+ * 输入: ["flower","flow","flight"]
+ * 输出: "fl"
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 输入: ["dog","racecar","car"]
+ * 输出: ""
+ * 解释: 输入不存在公共前缀。
+ * 
+ * 
+ * 说明:
+ * 
+ * 所有输入只包含小写字母 a-z 。
+ * 
+ */
+/**
+    题解：[最长公共前缀](https://leetcode-cn.com/problems/longest-common-prefix/)
+    #### 解一：LCP(S1...Sn) = LCP(LCP(LCP(S1, S2), S3),...Sn) 代码如下
+
+    #### 解二：Trie
+        > 相关资料： [LeetCode 最长公共前缀-更进一步](https://leetcode-cn.com/problems/longest-common-prefix/solution/zui-chang-gong-gong-qian-zhui-by-leetcode/)
+        > 相关题目： [实现 Trie](https://leetcode-cn.com/problems/implement-trie-prefix-tree/solution/)
+ */
+// @lc code=start
+/**
+ * @param {string[]} strs
+ * @return {string}
+ */
+var longestCommonPrefix = function(strs) {
+    if(strs.length === 0) 
+        return "";
+    let ans = strs[0];
+    for(let i = 1; i < strs.length; i++) {
+        let j = 0;
+        while (j < ans.length || j < strs[i].length) {
+            if(ans[j] !== strs[i][j]) {
+                break;
+            }                
+            j++;
+        }
+        ans = ans.slice(0, j);
+        if(ans === "")
+            return ans;
+    }
+    return ans;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 15.三数之和<a href="./src/15.三数之和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=15 lang=javascript
+ *
+ * [15] 三数之和
+ *
+ * https://leetcode-cn.com/problems/3sum/description/
+ *
+ * algorithms
+ * Medium (28.78%)
+ * Likes:    2458
+ * Dislikes: 0
+ * Total Accepted:    294.2K
+ * Total Submissions: 1M
+ * Testcase Example:  '[-1,0,1,2,-1,-4]'
+ *
+ * 给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0
+ * ？请你找出所有满足条件且不重复的三元组。
+ * 
+ * 注意：答案中不可以包含重复的三元组。
+ * 
+ * 
+ * 
+ * 示例：
+ * 
+ * 给定数组 nums = [-1, 0, 1, 2, -1, -4]
+ * 
+ * 满足要求的三元组集合为：
+ * [
+ * ⁠ [-1, 0, 1],
+ * ⁠ [-1, -1, 2]
+ * ]
+ * 
+ * 
+ */
+
+/**
+题解:
+    0. 选与不选 0 和 1  T(n) = O(2^n)
+        每个数都有两个选择
+
+    1. 暴力法 T(n) = O(n^3)
+        三重for循环，得到的是包含重复的三元组
+        
+    2. Map法 T(n) = O(n) + O(n^2) S(n) = O(n),
+        可以得到包含重复的三元组
+        题目要求是不可以包含重复的三元组，将重复三元组去重 Map(num1, num2, num3),会占用更多的空间,更复杂 
+
+    3. 排序法+双指针 T(n) = O(nlogn) + O(n^2)
+        代码如下:
+        Ref: https://leetcode-cn.com/problems/3sum/solution/3sumpai-xu-shuang-zhi-zhen-yi-dong-by-jyd/            
+
+        排序法用的目的在于去重
+
+        -1 -1 -1 -1 -1 0 0 0 0 0 1 1 1 1 1
+               -1          0         1
+               
+难点:
+    需要去重的情况有哪些？
+    
+    第一种情况: 对nums[L]的去重
+        [-1 0 0 0 0 0 1]
+         i  L         R
+        因为第一次出现的时候，已经加入，ans.push([nums[i],nums[L],nums[R]])
+        所以剩余 相邻相同的nums[L]，可以直接去重，关键代码如下:    
+        while (nums[L] === nums[L+1]) L++; // 去重2
+
+    第二种情况: 对nums[R]的去重
+        [-1 0 1 1 1 1]
+        i   L       R
+        因为第一次出现的时候，已经加入，ans.push([nums[i],nums[L],nums[R]])
+        所以剩余 相邻相同的nums[R]，可以直接去重，关键代码如下:
+        while (nums[R] === nums[R-1]) R--; // 去重3
+
+    第三种情况: 对nums[i]的去重
+        如果不去重，会过不了下面用例    
+            Case: [-1,0,1,2,-1,-4]        
+            Answer: [[-1,-1,2],[-1,0,1],[-1,0,1]]
+            Expected Answer: [[-1,-1,2],[-1,0,1]]
+        
+        解析:
+            Sorted: [-4,-1,-1,0,1,2] 
+            简化Case: [-1,-1,0,1]
+            出现重复答案的关键，在于有两个 -1 进行计算
+            去重的方法是: 第一个 -1 出现后，后面就不需要考虑了
+
+        关键代码如下:
+            if(nums[i] === nums[i-1]) continue; // 去重3
+
+注意点：
+    nums.[sort] 注意不能用 n1 > n2，因为是和 0 比较的，不是 true false
+ */
+// @lc code=start
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+var threeSum = function(nums) {
+    let ans = [];
+    const len = nums.length;
+    if(nums == null || len < 3) return ans;
+    nums.sort((a, b) => a - b); // 排序
+    for (let i = 0; i < len ; i++) {
+        if(nums[i] === nums[i-1]) continue; // 去重3
+        let L = i+1;
+        let R = len-1;
+        while(L < R){
+            const sum = nums[i] + nums[L] + nums[R];
+            if (sum === 0) {
+                ans.push([nums[i],nums[L],nums[R]]);
+                while (nums[L] === nums[L+1]) L++; // 去重1
+                while (nums[R] === nums[R-1]) R--; // 去重2
+                L++;
+                R--;
+            } else if (sum < 0) {
+                L++;
+            } else if (sum > 0) {
+                R--;
+            }
+        }
+    }        
+    return ans;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 16.最接近的三数之和<a href="./src/16.最接近的三数之和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=16 lang=javascript
+ *
+ * [16] 最接近的三数之和
+ *
+ * https://leetcode-cn.com/problems/3sum-closest/description/
+ *
+ * algorithms
+ * Medium (45.83%)
+ * Likes:    606
+ * Dislikes: 0
+ * Total Accepted:    161.6K
+ * Total Submissions: 352.3K
+ * Testcase Example:  '[-1,2,1,-4]\n1'
+ *
+ * 给定一个包括 n 个整数的数组 nums 和 一个目标值 target。找出 nums 中的三个整数，使得它们的和与 target
+ * 最接近。返回这三个数的和。假定每组输入只存在唯一答案。
+ * 
+ * 
+ * 
+ * 示例：
+ * 
+ * 输入：nums = [-1,2,1,-4], target = 1
+ * 输出：2
+ * 解释：与 target 最接近的和是 2 (-1 + 2 + 1 = 2) 。
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 3 <= nums.length <= 10^3
+ * -10^3 <= nums[i] <= 10^3
+ * -10^4 <= target <= 10^4
+ * 
+ * 
+ */
+/**
+    参考资料 https://github.com/NeoYo/leetcode-top-javascript/blob/master/15.%E4%B8%89%E6%95%B0%E4%B9%8B%E5%92%8C.js    
+
+    这道题主要与三数之和类似，分析过程也和三数之和相同
+    分析结果采用排序+双指针，降低到 T(n) = O(nlogn) + O(n^2)
+    
+    相对还简单了一点，这道题不需要去重，不需要分析去重的情况
+
+    具体代码如下：
+ */
+
+// @lc code=start
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number}
+ */
+var threeSumClosest = function(nums, target) {
+    let ans = NaN;                     // let ans = [];
+    const len = nums.length;
+    // if(nums == null || len < 3) return ans;
+    nums.sort((a, b) => a - b);             // 排序
+    for (let i = 0; i < len ; i++) {
+        // if(nums[i] === nums[i-1]) continue; // 去重3
+        let L = i+1;
+        let R = len-1;
+        while(L < R){
+            const sum = nums[i] + nums[L] + nums[R];
+            if (sum === target) {
+                return target;      // ans.push([nums[i],nums[L],nums[R]]);
+                // while (nums[L] === nums[L+1]) L++;  // 去重1
+                // while (nums[R] === nums[R-1]) R--;  // 去重2
+                // L++;
+                // R--;
+            } else if (target > sum) {      // } else if (target < 0) {
+                L++;
+            } else if (target < sum) {
+                R--;
+            }
+            if (Math.abs(sum - target) < Math.abs(ans - target)) {
+                ans = sum;
+            }
+        }
+    }        
+    return ans;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 17.电话号码的字母组合<a href="./src/17.电话号码的字母组合.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=17 lang=javascript
+ *
+ * [17] 电话号码的字母组合
+ *
+ * https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/description/
+ *
+ * algorithms
+ * Medium (55.50%)
+ * Likes:    1017
+ * Dislikes: 0
+ * Total Accepted:    197.3K
+ * Total Submissions: 355.2K
+ * Testcase Example:  '"23"'
+ *
+ * 给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。
+ * 
+ * 给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。
+ * 
+ * 
+ * 
+ * 示例:
+ * 
+ * 输入："23"
+ * 输出：["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
+ * 
+ * 
+ * 说明:
+ * 尽管上面的答案是按字典序排列的，但是你可以任意选择答案输出的顺序。
+ * 
+ */
+/**
+    解一：树的 DFS 代码如下
+        dfs([2, 3, 4], str) {
+            // 由 2 得到 'abc'
+           dfs([3, 4], 'a' + str)
+           dfs([3, 4], 'b' + str)
+           dfs([3, 4], 'c' + str)
+        }
+
+        2           a               b           c
+                /   |   \
+        3   d(ad) e(ae) f(af)   d   e   f   d   e   f
+             /
+        4   g(adg)
+
+        代码优化：
+        1. 用数组代替对象。数组也是一种 Map <index, elem>
+        2. dfs(str, index) 使用 index 获取 letters，slice() 太耗内存
+
+    
+
+    解二：队列循环遍历
+
+        其实就是铺平。一行一行地迭代
+        > 参考：[通俗易懂+动画演示 17. 电话号码的字母组合](https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/solution/tong-su-yi-dong-dong-hua-yan-shi-17-dian-hua-hao-m/)
+
+ */
+// @lc code=start
+/**
+ * @param {string} digits
+ * @return {string[]}
+ */
+var letterCombinations = function(digits) {
+    const digitsMap = {
+        2: 'abc',
+        3: 'def',
+        4: 'ghi',
+        5: 'jkl',
+        6: 'mno',
+        7: 'pqrs',
+        8: 'tuv',
+        9: 'wxyz'
+    }
+    const result = [];    
+    /**
+     * @param {string[]} leftDigits
+     * @param {string} prefixStr
+     */
+    function recursion(leftDigits, prefixStr) {
+        leftDigits = leftDigits.slice();
+        const digit = leftDigits.shift();
+        if (digit == null) {
+            prefixStr && result.push(prefixStr);
+            return;
+        }
+        const letters = digitsMap[digit].split('');
+        for (let i = 0; i < letters.length; i++) {
+            recursion(
+                leftDigits,
+                prefixStr + letters[i]
+            );
+        }
+    }
+    recursion(digits.split(''), '');
+    return result;
+};
+// @lc code=end
+letterCombinations("23");
+
+
+```
+</details>
+
+### 19.删除链表的倒数第n个节点<a href="./src/19.删除链表的倒数第n个节点.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=19 lang=javascript
+ *
+ * [19] 删除链表的倒数第N个节点
+ *
+ * https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list/description/
+ *
+ * algorithms
+ * Medium (40.49%)
+ * Likes:    1132
+ * Dislikes: 0
+ * Total Accepted:    288.4K
+ * Total Submissions: 710.9K
+ * Testcase Example:  '[1,2,3,4,5]\n2'
+ *
+ * 给定一个链表，删除链表的倒数第 n 个节点，并且返回链表的头结点。
+ * 
+ * 示例：
+ * 
+ * 给定一个链表: 1->2->3->4->5, 和 n = 2.
+ * 
+ * 当删除了倒数第二个节点后，链表变为 1->2->3->5.
+ * 
+ * 
+ * 说明：
+ * 
+ * 给定的 n 保证是有效的。
+ * 
+ * 进阶：
+ * 
+ * 你能尝试使用一趟扫描实现吗？
+ * 
+ */
+/**
+    题解：找到第 N 个节点的 上一个节点（prev）
+
+    步骤：
+        1. 找到 linkedList.length
+        2. 找到 prev
+        3. 边界处理
+
+    1. 基础：链表删除节点
+ */
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @param {number} n
+ * @return {ListNode}
+ */
+var removeNthFromEnd = function(head, n) {
+    // 1. 计算链表长度 L
+    let len = 0;
+    let cursor = head;
+    while(cursor) {
+        cursor = cursor.next;
+        len++;
+    }
+    cursor = head;
+    if (len - n === 0) {
+        // case: Input: [1,2] 2; Output: [1];
+        // case: Input: [1] 1; Output: null;
+        return head.next;
+    }
+    // 2. 找到被删节点的上一个
+    for (let i = 1; i < len - n; i++) {        
+        cursor = cursor.next;
+    }
+    const target = cursor.next;
+    cursor.next = cursor.next.next;
+    target.next = null;
+    return head;
+};
+/**
+    2. 优化：DummyHead
+
+        代码优化
+
+        上面代码中 删除头结点，需要做特殊处理，可以使用 dummyHead
+
+
+        Diff 位置
+
+        // 0. dummyHead
+        const dummyHead = new ListNode(null);
+        dummyHead.next = head;
+        head = dummyHead;
+
+        // if (len - n === 0) {
+        //     // case: Input: [1,2] 2; Output: [1];
+        //     // case: Input: [1] 1; Output: null;
+        //     return head.next;
+        // }    
+
+        return head.next; // head.next 处理 dummyHead
+
+    3. 优化2：前后指针
+
+        1. fast 与 slow 距离为 N
+        2. fast 走到最后一个节点
+
+        满足以上条件，slow 刚好在 要删除节点的上一个
+ */
+// @lc code=start
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @param {number} n
+ * @return {ListNode}
+ */
+var removeNthFromEnd = function(head, n) {
+    // 0. dummyHead
+    const dummyHead = new ListNode(null);
+    dummyHead.next = head;
+    head = dummyHead;
+    // 1. 计算链表长度 L
+    let len = 0;
+    let cursor = head;
+    while(cursor) {
+        cursor = cursor.next;
+        len++;
+    }
+    cursor = head;
+    // if (len - n === 0) {
+    //     // case: Input: [1,2] 2; Output: [1];
+    //     // case: Input: [1] 1; Output: null;
+    //     return head.next;
+    // }
+    // 2. 找到被删节点的上一个
+    for (let i = 1; i < len - n; i++) {        
+        cursor = cursor.next;
+    }
+    const target = cursor.next;
+    cursor.next = cursor.next.next;
+    target.next = null;
+    return head.next; // head.next 处理 dummyHead
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 20.有效的括号<a href="./src/20.有效的括号.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=20 lang=javascript
+ *
+ * [20] 有效的括号
+ *
+ * https://leetcode-cn.com/problems/valid-parentheses/description/
+ *
+ * algorithms
+ * Easy (43.24%)
+ * Likes:    2014
+ * Dislikes: 0
+ * Total Accepted:    468.6K
+ * Total Submissions: 1.1M
+ * Testcase Example:  '"()"'
+ *
+ * 给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串，判断字符串是否有效。
+ * 
+ * 有效字符串需满足：
+ * 
+ * 
+ * 左括号必须用相同类型的右括号闭合。
+ * 左括号必须以正确的顺序闭合。
+ * 
+ * 
+ * 注意空字符串可被认为是有效字符串。
+ * 
+ * 示例 1:
+ * 
+ * 输入: "()"
+ * 输出: true
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 输入: "()[]{}"
+ * 输出: true
+ * 
+ * 
+ * 示例 3:
+ * 
+ * 输入: "(]"
+ * 输出: false
+ * 
+ * 
+ * 示例 4:
+ * 
+ * 输入: "([)]"
+ * 输出: false
+ * 
+ * 
+ * 示例 5:
+ * 
+ * 输入: "{[]}"
+ * 输出: true
+ * 
+ */
+/**
+    题解：
+        1. 左符号就入栈
+        2. 不是左符号，就出栈匹配
+        3. 检测 栈的length 
+ */
+// @lc code=start
+/**
+ * @param {string} s
+ * @return {boolean}
+ */
+var isValid = function(s) {
+    const stack = [];
+    const map = {
+        '(': ')',
+        '{': '}',
+        '[': ']',
+    }
+
+    for (let i = 0; i < s.length; i++) {
+        if (s[i] in map) {
+            stack.push(s[i]);
+            continue;
+        }
+        if (map[stack.pop()] === s[i]) {
+            continue;
+        }
+        return false;
+    }
+    return stack.length === 0;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 22.括号生成<a href="./src/22.括号生成.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=22 lang=javascript
+ *
+ * [22] 括号生成
+ *
+ * https://leetcode-cn.com/problems/generate-parentheses/description/
+ *
+ * algorithms
+ * Medium (76.46%)
+ * Likes:    1444
+ * Dislikes: 0
+ * Total Accepted:    202.9K
+ * Total Submissions: 265.2K
+ * Testcase Example:  '3'
+ *
+ * 数字 n 代表生成括号的对数，请你设计一个函数，用于能够生成所有可能的并且 有效的 括号组合。
+ * 
+ * 
+ * 
+ * 示例：
+ * 
+ * 输入：n = 3
+ * 输出：[
+ * ⁠      "((()))",
+ * ⁠      "(()())",
+ * ⁠      "(())()",
+ * ⁠      "()(())",
+ * ⁠      "()()()"
+ * ⁠    ]
+ * 
+ * 
+ */
+/**
+    解一：暴力法
+        深度优先遍历，找到所有结果
+        判断是否满足对称括号条件
+        实现：使用递归
+
+    解二：DFS (递归)
+        其实是深度优先遍历的升级版， 回溯+剪枝；
+        递归利用的是系统栈
+        https://pic.leetcode-cn.com/7ec04f84e936e95782aba26c4663c5fe7aaf94a2a80986a97d81574467b0c513-LeetCode%20%E7%AC%AC%2022%20%E9%A2%98%EF%BC%9A%E2%80%9C%E6%8B%AC%E5%8F%B7%E7%94%9F%E5%87%BA%E2%80%9D%E9%A2%98%E8%A7%A3%E9%85%8D%E5%9B%BE.png
+        解题思路：
+            1. 举 n = 2 的例子，总结规律
+
+            2. 规律如下
+                1. 往左和往右次数都：n
+                2. 左边继续递归条件：left < n
+                3. 右边继续递归条件：right < left
+
+    解三：BFS (队列)
+        思路：就是将递归、扁平化。
+        容器：队列。每个节点都要存储好 left、right、res。
+
+    参考资料：
+        https://leetcode-cn.com/problems/generate-parentheses/solution/hui-su-suan-fa-by-liweiwei1419/
+ */
+var generateParenthesis = function(n) {
+    const dfs = function (str, left, right, result) {
+        if (left === n && right === n) {
+            result.push(str);
+            return;
+        }
+        if (left > n) {
+            return;
+        }
+        if (right > left) {
+            return;
+        }
+        dfs(str + '(', left + 1, right, result);
+        dfs(str + ')', left, right + 1, result);
+    }
+    const result = [];
+    dfs('', 0, 0, result);
+    return result;
+};
+// @lc code=start
+/**
+ * @param {number} n
+ * @return {string[]}
+ */
+var generateParenthesis = function(n) {
+
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 26.删除排序数组中的重复项<a href="./src/26.删除排序数组中的重复项.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=26 lang=javascript
+ *
+ * [26] 删除排序数组中的重复项
+ *
+ * https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array/description/
+ *
+ * algorithms
+ * Easy (52.16%)
+ * Likes:    1731
+ * Dislikes: 0
+ * Total Accepted:    477.4K
+ * Total Submissions: 912.3K
+ * Testcase Example:  '[1,1,2]'
+ *
+ * 给定一个排序数组，你需要在 原地 删除重复出现的元素，使得每个元素只出现一次，返回移除后数组的新长度。
+ * 
+ * 不要使用额外的数组空间，你必须在 原地 修改输入数组 并在使用 O(1) 额外空间的条件下完成。
+ * 
+ * 
+ * 
+ * 示例 1:
+ * 
+ * 给定数组 nums = [1,1,2], 
+ * 
+ * 函数应该返回新的长度 2, 并且原数组 nums 的前两个元素被修改为 1, 2。 
+ * 
+ * 你不需要考虑数组中超出新长度后面的元素。
+ * 
+ * 示例 2:
+ * 
+ * 给定 nums = [0,0,1,1,1,2,2,3,3,4],
+ * 
+ * 函数应该返回新的长度 5, 并且原数组 nums 的前五个元素被修改为 0, 1, 2, 3, 4。
+ * 
+ * 你不需要考虑数组中超出新长度后面的元素。
+ * 
+ * 
+ * 
+ * 
+ * 说明:
+ * 
+ * 为什么返回数值是整数，但输出的答案是数组呢?
+ * 
+ * 请注意，输入数组是以「引用」方式传递的，这意味着在函数里修改输入数组对于调用者是可见的。
+ * 
+ * 你可以想象内部操作如下:
+ * 
+ * // nums 是以“引用”方式传递的。也就是说，不对实参做任何拷贝
+ * int len = removeDuplicates(nums);
+ * 
+ * // 在函数里修改输入数组对于调用者是可见的。
+ * // 根据你的函数返回的长度, 它会打印出数组中该长度范围内的所有元素。
+ * for (int i = 0; i < len; i++) {
+ * print(nums[i]);
+ * }
+ * 
+ * 
+ */
+/**
+    题解：前后指针
+        1. 把不重复的值往前挪，使得前面是排序好的
+        2. 快指针j：探路，发现不重复的元素
+        3. 慢指针i：已过滤重复项的索引
+        https://pic.leetcode-cn.com/0039d16b169059e8e7f998c618b6c2b269c2d95b02f43415350bde1f661e503a-1.png
+
+    参考资料：
+        https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array/solution/shuang-zhi-zhen-shan-chu-zhong-fu-xiang-dai-you-hu/
+ */
+// @lc code=start
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var removeDuplicates = function(nums) {
+    let i = 0;
+    for (let j = 1; j < nums.length; j++) {
+        if (nums[i] !== nums[j]) {
+            nums[i + 1] = nums[j];
+            i++;
+        }
+    }
+    return i + 1;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 34.在排序数组中查找元素的第一个和最后一个位置<a href="./src/34.在排序数组中查找元素的第一个和最后一个位置.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=34 lang=javascript
+ *
+ * [34] 在排序数组中查找元素的第一个和最后一个位置
+ *
+ * https://leetcode-cn.com/problems/find-first-and-last-position-of-element-in-sorted-array/description/
+ *
+ * algorithms
+ * Medium (40.01%)
+ * Likes:    535
+ * Dislikes: 0
+ * Total Accepted:    118.1K
+ * Total Submissions: 294.7K
+ * Testcase Example:  '[5,7,7,8,8,10]\n8'
+ *
+ * 给定一个按照升序排列的整数数组 nums，和一个目标值 target。找出给定目标值在数组中的开始位置和结束位置。
+ * 
+ * 你的算法时间复杂度必须是 O(log n) 级别。
+ * 
+ * 如果数组中不存在目标值，返回 [-1, -1]。
+ * 
+ * 示例 1:
+ * 
+ * 输入: nums = [5,7,7,8,8,10], target = 8
+ * 输出: [3,4]
+ * 
+ * 示例 2:
+ * 
+ * 输入: nums = [5,7,7,8,8,10], target = 6
+ * 输出: [-1,-1]
+ * 
+ */
+
+// @lc code=start
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number[]}
+ */
+var searchRange = function(nums, target) {
+    // if (nums.length === 0) { return [-1, -1]; }
+    // if (nums.length === 1) {
+    //     return nums[0] === target ? [0, 0] : [-1, -1];
+    // }
+    /**    
+    * 解一：暴力法 T(n) = O(n) S(n) = O(1)
+    * 解二：二分查找法 T(n) = O(logn) S(n) = O(1)
+    */
+    let low = 0,
+        high = nums.length - 1;
+    const res = [-1, -1]; // [起始位置，终止位置]
+    // 起始位置
+    while (low <= high) {
+        const mid = low + ((high - low)>>1);
+        if (nums[mid] < target) {
+            low = mid + 1;
+        } else if (nums[mid] > target) {
+            high = mid - 1;
+        } else {
+            // nums[mid] === target
+            if (mid === 0 || nums[mid - 1] < target) {
+                res[0] = mid;
+                break;
+            } else {
+                high = mid - 1;
+            }
+        }
+    }
+    // 终止位置
+    low = 0;
+    high = nums.length - 1;
+    while (low <= high) {
+        const mid = low + ((high - low)>>1);
+        if (nums[mid] < target) {
+            low = mid + 1;
+        } else if (nums[mid] > target) {
+            high = mid - 1;
+        } else {
+            // nums[mid] === target
+            if (mid === nums.length - 1 || nums[mid + 1] > target) {
+                res[1] = mid;
+                break;
+            } else {
+                low = mid + 1;
+            }
+        }
+    }
+    return res;
+};
+// @lc code=end
+console.assert(searchRange([5,7,7,8,8,10], 8));
+
+```
+</details>
+
+### 39.组合总和<a href="./src/39.组合总和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=39 lang=javascript
+ *
+ * [39] 组合总和
+ *
+ * https://leetcode-cn.com/problems/combination-sum/description/
+ *
+ * algorithms
+ * Medium (69.70%)
+ * Likes:    1002
+ * Dislikes: 0
+ * Total Accepted:    172.6K
+ * Total Submissions: 241.4K
+ * Testcase Example:  '[2,3,6,7]\n7'
+ *
+ * 给定一个无重复元素的数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
+ * 
+ * candidates 中的数字可以无限制重复被选取。
+ * 
+ * 说明：
+ * 
+ * 
+ * 所有数字（包括 target）都是正整数。
+ * 解集不能包含重复的组合。 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 输入：candidates = [2,3,6,7], target = 7,
+ * 所求解集为：
+ * [
+ * ⁠ [7],
+ * ⁠ [2,2,3]
+ * ]
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 输入：candidates = [2,3,5], target = 8,
+ * 所求解集为：
+ * [
+ * [2,2,2,2],
+ * [2,3,3],
+ * [3,5]
+ * ]
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 1 <= candidates.length <= 30
+ * 1 <= candidates[i] <= 200
+ * candidate 中的每个元素都是独一无二的。
+ * 1 <= target <= 500
+ * 
+ * 标签: 数组 回溯算法
+ */
+
+// @lc code=start
+/**
+ * @param {number[]} candidates
+ * @param {number} target
+ * @return {number[][]}
+ */
+var combinationSum = function(candidates, target) {
+    const res = [];
+    const recusion = (candidates, leftTarget, index, choosed) => {
+        if (index >= candidates.length || leftTarget < 0) { return; }
+        while (index <= candidates.length - 1) {
+            const candidate = candidates[index];
+            let cnt = 0;
+            while (candidate * cnt <= leftTarget) {
+                let newChoosed = choosed.slice();
+                let copyCnt = cnt;
+                while (copyCnt > 0) {
+                    newChoosed.push(candidate);
+                    copyCnt--;
+                }
+                const newLeftTarget = leftTarget - candidate * cnt;
+                if (newLeftTarget === 0) {
+                    res.push(newChoosed);
+                }
+                recusion(candidates, newLeftTarget, (index + 1), newChoosed);
+                cnt++;
+            }
+            index++;
+        }
+    }
+    recusion(candidates, target, 0, []);
+    return res;
+};
+/**
+    下面是 LeetCode 官方题解，https://leetcode-cn.com/problems/combination-sum/solution/zu-he-zong-he-by-leetcode-solution/
+    与我上面题解相比
+    相同点：
+        整体思路是相同的，都是使用 0-1 选择与不选择，对 candidates 上的每个数，都有 1...n （n * num <= leftTarget）的可能性，然后进入下一个
+    官方题解更巧妙的地方：
+        在于把每个数的重复选择，也交给递归，不用自己处理
+
+ */
+var combinationSum = function(candidates, target) {
+    const res = [];
+    const dfs = (leftTarget, combine, idx) => {
+        if (idx === candidates.length) {
+            return;
+        }
+        if (leftTarget === 0) {
+            // 直接跳过
+            res.push(combine);
+            return;
+        }
+        // 1. 跳过当前，游标 idx 需要后移一位
+        dfs(leftTarget, combine, idx + 1);
+        // 2. 选择当前数，游标 idx 不需要移动
+        if (leftTarget - candidates[idx] >= 0) { // 剪枝
+            dfs(leftTarget - candidates[idx], [...combine, candidates[idx]], idx);
+        }
+        // 3. 不跳过，也不选择，没有意义，舍弃
+        // dfs(leftTarget, combine, idx)
+    }
+
+    dfs(target, [], 0);
+    return res;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 42.接雨水<a href="./src/42.接雨水.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=42 lang=javascript
+ *
+ * [42] 接雨水
+ *
+ * https://leetcode-cn.com/problems/trapping-rain-water/description/
+ *
+ * algorithms
+ * Hard (52.95%)
+ * Likes:    1787
+ * Dislikes: 0
+ * Total Accepted:    161.5K
+ * Total Submissions: 304.9K
+ * Testcase Example:  '[0,1,0,2,1,0,1,3,2,1,2,1]'
+ *
+ * 给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 
+ * 
+ * 
+ * 输入：height = [0,1,0,2,1,0,1,3,2,1,2,1]
+ * 输出：6
+ * 解释：上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。 
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 输入：height = [4,2,0,3,2,5]
+ * 输出：9
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * n == height.length
+ * 0 
+ * 0 
+ * 
+ * 
+ */
+/**
+   零、参考资料 https://leetcode-cn.com/problems/trapping-rain-water/solution/jie-yu-shui-by-leetcode/
+   一、暴力法
+       T(n) = O(n^2)
+       S(n) = O(1)
+       以每一个元素为中心，从左右扩散
+       
+        column[i] = Math.max(0, 
+            Math.min(maxLeft, maxRight) − height[i]
+        )
+
+   二、单调栈
+       T(n) = O(n)
+       S(n) = O(n)
+       代码如下，对应着参考资料的 动态编程
+
+
+       leftMax     // 单调不减栈
+                   // 记录左边数组的最大值
+
+
+       rightMax
+                   // 单调不增栈
+                   // 记录右边数组的最大值
+*/
+// @lc code=start
+/**
+ * @param {number[]} height
+ * @return {number}
+ */
+/**
+ * @param {number[]} height
+ * @return {number}
+ */
+var trap = function (height) {
+    let n = height.length;
+    if (n === 0) return 0;
+    let res = 0;
+    const test = [];
+
+    let leftMax = [],  
+        rightMax = [];
+    //记录左边数组的最大值
+    leftMax[0] = height[0];
+    for (let i = 1; i < n; i++) {
+        leftMax[i] = Math.max(leftMax[i - 1], height[i]);
+    }
+    console.log('leftMax: ', leftMax);    
+    //记录右边数组的最大值
+    rightMax[n - 1] = height[n - 1];
+    for (let i = n - 2; i >= 0; i--) {
+        rightMax[i] = Math.max(rightMax[i + 1], height[i]);
+    }
+    console.log('rightMax: ', rightMax);
+    //统计每一列的面积之和
+    for (let i = 0; i < n; i++) {
+        res += Math.min(leftMax[i], rightMax[i]) - height[i];
+        test[i] = Math.min(leftMax[i], rightMax[i]) - height[i];
+    }
+    console.log('test: ', test);
+    return res;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 43.字符串相乘<a href="./src/43.字符串相乘.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=43 lang=javascript
+ *
+ * [43] 字符串相乘
+ *
+ * https://leetcode-cn.com/problems/multiply-strings/description/
+ *
+ * algorithms
+ * Medium (44.49%)
+ * Likes:    495
+ * Dislikes: 0
+ * Total Accepted:    108.7K
+ * Total Submissions: 244.2K
+ * Testcase Example:  '"2"\n"3"'
+ *
+ * 给定两个以字符串形式表示的非负整数 num1 和 num2，返回 num1 和 num2 的乘积，它们的乘积也表示为字符串形式。
+ * 
+ * 示例 1:
+ * 
+ * 输入: num1 = "2", num2 = "3"
+ * 输出: "6"
+ * 
+ * 示例 2:
+ * 
+ * 输入: num1 = "123", num2 = "456"
+ * 输出: "56088"
+ * 
+ * 说明：
+ * 
+ * 
+ * num1 和 num2 的长度小于110。
+ * num1 和 num2 只包含数字 0-9。
+ * num1 和 num2 均不以零开头，除非是数字 0 本身。
+ * 不能使用任何标准库的大数类型（比如 BigInteger）或直接将输入转换为整数来处理。
+ * 
+ * 标签：数学 字符串
+ * 
+ */
+/**
+    相似题目：字符串相加 https://github.com/NeoYo/leetcode-top-javascript/blob/master/415.%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9B%B8%E5%8A%A0.js
+
+    题解：
+        逐位相乘逐位累加
+        以 '123' 和 '456' 为例，手算乘法
+            123 与 6:  3和6  20和6  100和6
+            123 与 5:  3和5  20和5  100和5
+            123 与 4:  3和4  20和4  100和4
+        相当于拆解成 两个个位数字相乘，再填充到对应的数组位置
+
+    注意点：
+        1. ['0', '0'] => '0'  处理：'' || '0' = '0'
+
+    参考资料：
+        官方题解 https://leetcode-cn.com/problems/multiply-strings/solution/zi-fu-chuan-xiang-cheng-by-leetcode-solution/
+ */
+/**
+ * @param {string} num1
+ * @param {string} num2
+ * @return {string}
+ */
+var multiply = function(num1, num2) {
+    const res = Array(num1.length + num2.length).fill(0); // res  从右边到左边；数值：最低位 -> 最高位；数组索引： 高 -> 低
+    let num2Idx = num2.length - 1;                        // num2 从右边到左边；数值：最低位 -> 最高位；数组索引：高 -> 低
+    while (num2Idx >= 0) {
+        let num1Idx = num1.length - 1;                    // num1 从右边到左边；数值：最低位 -> 最高位；数组索引：高 -> 低
+        while (num1Idx >= 0) {
+            const cursor = num1Idx + num2Idx + 1;
+            const sum = res[cursor] + parseInt(num1[num1Idx]) * parseInt(num2[num2Idx]); // 假设最大 9*9+9 = 90 不会超过两位
+            res[cursor] = sum % 10;
+            res[cursor - 1] += Math.floor(sum / 10);      // 进位
+            num1Idx--;
+        }
+        num2Idx--;
+    }
+    return res.join('').replace(/^0*/, '') || '0';
+};
+// @lc code=end
+
+multiply('123', '456');
+/**
+    错误实例如下，会出现大数溢出，使得结果错误
+
+    Testcase
+        "123456789"
+        "987654321"
+    Answer
+        "121932631112635260"
+    Expected Answer
+        "121932631112635269"
+ */
+var multiply = function(num1, num2) {
+    const num2L = num2.length - 1;
+    let num2Idx = num2.length - 1;
+    let res = 0;
+    // 竖式乘法
+    while (num2Idx >= 0) {
+        res += num2[num2Idx] * num1 * Math.pow(10, num2L - num2Idx);
+        // console.log(res);
+        num2Idx--;
+    }
+    return String(res);
+};
+```
+</details>
+
+### 46.全排列<a href="./src/46.全排列.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=46 lang=javascript
+ *
+ * [46] 全排列
+ *
+ * https://leetcode-cn.com/problems/permutations/description/
+ *
+ * algorithms
+ * Medium (76.65%)
+ * Likes:    853
+ * Dislikes: 0
+ * Total Accepted:    177.3K
+ * Total Submissions: 231.1K
+ * Testcase Example:  '[1,2,3]'
+ *
+ * 给定一个 没有重复 数字的序列，返回其所有可能的全排列。
+ * 
+ * 示例:
+ * 
+ * 输入: [1,2,3]
+ * 输出:
+ * [
+ * ⁠ [1,2,3],
+ * ⁠ [1,3,2],
+ * ⁠ [2,1,3],
+ * ⁠ [2,3,1],
+ * ⁠ [3,1,2],
+ * ⁠ [3,2,1]
+ * ]
+ * 
+ */
+
+// @lc code=start
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+var permute = function(nums) {
+    const dfs = (depth, res, leftNums, cur) => {
+        if (depth === 0) {
+            res.push(cur);
+            return;
+        }
+        depth--;
+        for (let i = 0; i < leftNums.length; i++) {
+            const nextLeftNums = leftNums.slice();
+            nextLeftNums.splice(i, 1);            
+            dfs(
+                depth,
+                res,
+                nextLeftNums,
+                [...cur, leftNums[i]]
+            )
+        }
+    }
+    const res = [];
+    dfs(nums.length, res, nums, []);
+    return res;
+    /**
+    * 解二：回溯法
+    * 这道题，其实用回溯算法，更好理解
+    * Ref: https://labuladong.gitbook.io/algo/suan-fa-si-wei-xi-lie/hui-su-suan-fa-xiang-jie-xiu-ding-ban
+    */
+};
+// @lc code=end
+permute([1, 2, 3])
+
+```
+</details>
+
+### 54.螺旋矩阵<a href="./src/54.螺旋矩阵.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=54 lang=javascript
+ *
+ * [54] 螺旋矩阵
+ *
+ * https://leetcode-cn.com/problems/spiral-matrix/description/
+ *
+ * algorithms
+ * Medium (41.15%)
+ * Likes:    525
+ * Dislikes: 0
+ * Total Accepted:    87.3K
+ * Total Submissions: 211.1K
+ * Testcase Example:  '[[1,2,3],[4,5,6],[7,8,9]]'
+ *
+ * 给定一个包含 m x n 个元素的矩阵（m 行, n 列），请按照顺时针螺旋顺序，返回矩阵中的所有元素。
+ * 
+ * 示例 1:
+ * 
+ * 输入:
+ * [
+ * ⁠[ 1, 2, 3 ],
+ * ⁠[ 4, 5, 6 ],
+ * ⁠[ 7, 8, 9 ]
+ * ]
+ * 输出: [1,2,3,6,9,8,7,4,5]
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 输入:
+ * [
+ * ⁠ [1, 2, 3, 4],
+ * ⁠ [5, 6, 7, 8],
+ * ⁠ [9,10,11,12]
+ * ]
+ * 输出: [1,2,3,4,8,12,11,10,9,5,6,7]
+ * 
+ * 
+ */
+/*
+    参考资料
+        螺旋矩阵 https://leetcode-cn.com/problems/spiral-matrix/solution/shou-hui-tu-jie-liang-chong-bian-li-de-ce-lue-kan-/
+ */
+
+// @lc code=start
+/**
+ * @param {number[][]} matrix
+ * @return {number[]}
+ */
+var spiralOrder = function(matrix) {
+    // 0. 边界判断
+    if (matrix.length === 0) { return []; }
+    //              top
+    // (x, y) left      right
+    //            bottom
+    const res = [];
+    let left = 0,
+        top = 0,
+        bottom = matrix.length - 1,
+        right = matrix[0].length - 1;
+    while (left < right && top < bottom) {
+        for (let i = left; i < right; i++) res.push(matrix[top][i])   // 向右
+        for (let i = top; i < bottom; i++) res.push(matrix[i][right]) // 向下
+        for (let i = right; i > left; i--) res.push(matrix[bottom][i])// 向左
+        for (let i = bottom; i > top; i--) res.push(matrix[i][left])  // 向上
+        // 缩小 “圈”
+        left++;
+        right--;
+        top++;
+        bottom--;
+    }
+    if (top === bottom) {
+        // 剩下一行，从左到右依次添加
+        for (let i = left; i <= right; i++) res.push(matrix[top][i])
+    } else if (left === right) {
+        // 剩下一列，从上到下依次添加
+        for (let i = top; i <= bottom; i++) res.push(matrix[i][left]);
+    }
+    return res;
+};
+// @lc code=end
+spiralOrder([[1,2,3],[4,5,6],[7,8,9]])
+
+```
+</details>
+
+### 55.跳跃游戏<a href="./src/55.跳跃游戏.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=55 lang=javascript
+ *
+ * [55] 跳跃游戏
+ *
+ * https://leetcode-cn.com/problems/jump-game/description/
+ *
+ * algorithms
+ * Medium (41.01%)
+ * Likes:    806
+ * Dislikes: 0
+ * Total Accepted:    151.4K
+ * Total Submissions: 369.2K
+ * Testcase Example:  '[2,3,1,1,4]'
+ *
+ * 给定一个非负整数数组，你最初位于数组的第一个位置。
+ * 
+ * 数组中的每个元素代表你在该位置可以跳跃的最大长度。
+ * 
+ * 判断你是否能够到达最后一个位置。
+ * 
+ * 示例 1:
+ * 
+ * 输入: [2,3,1,1,4]
+ * 输出: true
+ * 解释: 我们可以先跳 1 步，从位置 0 到达 位置 1, 然后再从位置 1 跳 3 步到达最后一个位置。
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 输入: [3,2,1,0,4]
+ * 输出: false
+ * 解释: 无论怎样，你总会到达索引为 3 的位置。但该位置的最大跳跃长度是 0 ， 所以你永远不可能到达最后一个位置。
+ * 
+ * 
+ */
+/*
+              [2, 3, 1, 1, 4]
+             /              \
+           /+1                \+2
+        [3, 1, 1, 4]        [1, 1, 4]
+        /+1   |+2  \+3          |+1
+[1, 1, 4]   [1, 4] [4]        [1, 4]
+    |+1       |+1               |+1
+  [1, 4]     [4]               [4]
+    |+1
+   [4]
+
+    ∵ nums[4]    , DP[0] = true;
+    ∵ nums[3] = 1, DP[1] = DP[0] = true;
+    ∵ nums[2] = 1, DP[2] = DP[1] = true;
+    ∵ nums[1] = 3, DP[3] = DP[2] || DP[1] || DP[0]] = true;
+    ∵ nums[0] = 2, DP[4] = DP[3] || DP[2] = true;
+
+    [3, 2, 1, 0, 4]
+    ∵ nums[4],     DP[0] = true;
+    ∵ nums[3] = 0, DP[1] = fale;
+    ∵ nums[2] = 1, DP[2] = DP[1] = false;
+    ∵ nums[1] = 2, DP[3] = DP[2] || DP[1]] = false;
+    ∵ nums[0] = 3, DP[4] = DP[3] || DP[2] || DP[1]] = false;
+
+    递推公式:
+    const num = nums[nums.length - 1 - i]
+    let DP[i] = [];
+    for (let j = 1; j <= num; j++) {
+        DP[i] = [...DP[i], ...DP[i-j]]
+    }
+     */
+// @lc code=start
+/**
+ * @param {number[]} nums
+ * @return {boolean}
+ */
+var canJump = function(nums) {
+  const DP = Array(nums.length).fill(null).map(() => false);
+  DP[0] = true;
+  for (let i = 1; i < nums.length; i++) {
+    const num = nums[nums.length - 1 - i];
+    for (let j = 1; j <= num; j++) {
+      DP[i] = DP[i] || DP[i-j];
+      if (DP[i] === true) {
+        break;
+      }
+    }
+  }
+  return DP[nums.length - 1];
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 56.合并区间<a href="./src/56.合并区间.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=56 lang=javascript
+ *
+ * [56] 合并区间
+ *
+ * https://leetcode-cn.com/problems/merge-intervals/description/
+ *
+ * algorithms
+ * Medium (43.02%)
+ * Likes:    667
+ * Dislikes: 0
+ * Total Accepted:    157.3K
+ * Total Submissions: 364K
+ * Testcase Example:  '[[1,3],[2,6],[8,10],[15,18]]'
+ *
+ * 给出一个区间的集合，请合并所有重叠的区间。
+ * 
+ * 
+ * 
+ * 示例 1:
+ * 
+ * 输入: intervals = [[1,3],[2,6],[8,10],[15,18]]
+ * 输出: [[1,6],[8,10],[15,18]]
+ * 解释: 区间 [1,3] 和 [2,6] 重叠, 将它们合并为 [1,6].
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 输入: intervals = [[1,4],[4,5]]
+ * 输出: [[1,5]]
+ * 解释: 区间 [1,4] 和 [4,5] 可被视为重叠区间。
+ * 
+ * 注意：输入类型已于2019年4月15日更改。 请重置默认代码定义以获取新方法签名。
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * intervals[i][0] <= intervals[i][1]
+ * 
+ * 
+ */
+/**
+  题解：
+       一、思路
+           排序+双指针
+           1. 排序，先根据每个区间起点进行排序
+           2. 双指针，当前区间的起点，与上一个区间的终点作比较，比较后的处理，如下面代码所示
+       二、注意点
+           1. Math.max(intervals[i][1], intervals[i-1][1]) 这里是因为有一个用例没有通过
+                输入：[[1,4],[2,3]]，输出应该是：[[1,4]]
+*/
+// @lc code=start
+/**
+ * @param {number[][]} intervals
+ * @return {number[][]}
+ */
+var merge = function(intervals) {
+    intervals.sort((i1, i2) => (i1[0] - i2[0]));    // 升序
+    for (let i = 1; i < intervals.length; i++) {
+        const prevLast = intervals[i - 1][1];
+        const curStart = intervals[i][0];
+        if (prevLast >= curStart) {
+            intervals[i] = [intervals[i - 1][0], Math.max(intervals[i][1], intervals[i-1][1])];
+            intervals[i-1] = null;  // 清空上一个区间
+        }
+    }
+    return intervals.filter(interval => interval != null);
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 59.螺旋矩阵-ii<a href="./src/59.螺旋矩阵-ii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=59 lang=javascript
+ *
+ * [59] 螺旋矩阵 II
+ *
+ * https://leetcode-cn.com/problems/spiral-matrix-ii/description/
+ *
+ * algorithms
+ * Medium (78.06%)
+ * Likes:    254
+ * Dislikes: 0
+ * Total Accepted:    50.4K
+ * Total Submissions: 64.3K
+ * Testcase Example:  '3'
+ *
+ * 给定一个正整数 n，生成一个包含 1 到 n^2 所有元素，且元素按顺时针顺序螺旋排列的正方形矩阵。
+ * 
+ * 示例:
+ * 
+ * 输入: 3
+ * 输出:
+ * [
+ * ⁠[ 1, 2, 3 ],
+ * ⁠[ 8, 9, 4 ],
+ * ⁠[ 7, 6, 5 ]
+ * ]
+ * 
+ */
+/**
+    题解:
+        神似的题目，54. 螺旋矩阵 是已知矩阵，求顺时针螺旋顺序，返回矩阵中的所有元素
+        这一道题，59. 螺旋矩阵-ii 是已知正整数 n，实际上也是 “已知” 了矩阵，边长已经知道了
+
+        根据题意，1, 2, 3, ... 是从外层往内层顺时针走一圈，走完往里收缩，进入下一圈
+        思路跟 54. 螺旋矩阵 几乎是一样的，小小的差异是经过的每一个点的处理
+            54. 螺旋矩阵 是收集走过点的值
+            59. 螺旋矩阵-ii 是填充走过点的值
+ */
+// @lc code=start
+/**
+ * @param {number} n
+ * @return {number[][]}
+ */
+var generateMatrix = function(n) {
+    // 0. 边界判断
+    if (n === 0) { return []; }
+    //              top
+    // (x, y) left      right
+    //             bottom
+    const matrix = Array(n).fill(null).map(_ => Array(n));
+    let left = 0,
+        top = 0,
+        bottom = matrix.length - 1,
+        right = matrix[0].length - 1;
+    let cnt = 0;
+    while (left < right && top < bottom) {
+        for (let i = left; i < right; i++) matrix[top][i] = ++cnt;      // 向右
+        for (let i = top; i < bottom; i++) matrix[i][right] = ++cnt;    // 向下
+        for (let i = right; i > left; i--) matrix[bottom][i] = ++cnt;   // 向左
+        for (let i = bottom; i > top; i--) matrix[i][left] = ++cnt;     // 向上
+        // 缩小 “圈”
+        left++;
+        right--;
+        top++;
+        bottom--;
+    }
+    if (top === bottom) {
+        // 剩下一行，从左到右依次添加
+        for (let i = left; i <= right; i++) matrix[top][i] = ++cnt;
+    } else if (left === right) {
+        // 剩下一列，从上到下依次添加
+        for (let i = top; i <= bottom; i++) matrix[i][left] = ++cnt;
+    }
+    return matrix;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 61.旋转链表<a href="./src/61.旋转链表.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=61 lang=javascript
+ *
+ * [61] 旋转链表
+ *
+ * https://leetcode-cn.com/problems/rotate-list/description/
+ *
+ * algorithms
+ * Medium (40.52%)
+ * Likes:    355
+ * Dislikes: 0
+ * Total Accepted:    92.1K
+ * Total Submissions: 227.3K
+ * Testcase Example:  '[1,2,3,4,5]\n2'
+ *
+ * 给定一个链表，旋转链表，将链表每个节点向右移动 k 个位置，其中 k 是非负数。
+ * 
+ * 示例 1:
+ * 
+ * 输入: 1->2->3->4->5->NULL, k = 2
+ * 输出: 4->5->1->2->3->NULL
+ * 解释:
+ * 向右旋转 1 步: 5->1->2->3->4->NULL
+ * 向右旋转 2 步: 4->5->1->2->3->NULL
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 输入: 0->1->2->NULL, k = 4
+ * 输出: 2->0->1->NULL
+ * 解释:
+ * 向右旋转 1 步: 2->0->1->NULL
+ * 向右旋转 2 步: 1->2->0->NULL
+ * 向右旋转 3 步: 0->1->2->NULL
+ * 向右旋转 4 步: 2->0->1->NULL
+ * 
+ */
+/*
+   题解
+   一、找新起点
+       以第一个例子做分析
+           输入: 1->2->3->4->5->NULL, k = 2
+           输出: 4->5->1->2->3->NULL
+
+       根据题意, 以上面例子进行分析
+
+           链表长度是 5
+           k = 1，选最后一个节点作为起点
+           k = 2，选倒数第二个节点作为起点
+           ...
+           k = 6，选最后一个节点作为起点 (6%5 = 1)
+
+       由于是单向链表，就可以直接移到最后一个节点，从后往前，根据k去找起点
+
+       这里我们对上面分析进行转换
+           链表长度是 5
+           k = 1，选最后一个节点作为起点，选第 4 个节点作为起点 （5-1 +1=5）
+           k = 2，选倒数第二个节点作为起点，选第 3 个节点作为起点 (5-2 +1=4)
+           ...
+           k = 6，选最后一个节点作为起点 (6%5 = 1)，选第 4 个节点作为起点 (5-1 +1=5)
+
+           k=1, 起点：Length-(k%Length) +1
+
+       使用另一个例子用来验证我们的想法
+
+           输入: 0->1->2->NULL, k = 4
+           输出: 2->0->1->NULL
+
+           Length-(k%Length) +1 = 3 - (4%3) + 1 = 3
+
+           第 3 个节点是 Node(2)，看输出，果然以 2 作为起点。hhh~
+
+       可以得出：
+
+       新起点索引为：newHeadIndexLength-(k%Length) +1
+
+   二、切与连
+       连：将尾节点连上原始首节点
+       切：找到新头结点（新起点索引对应的节点）的上一个节点，断开它对心头结点的指向
+
+   三、边界考虑
+       1. k=1, newHeadIndex=1，直接返回
+*/
+// @lc code=start
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @param {number} k
+ * @return {ListNode}
+ */
+var rotateRight = function(head, k) {
+    if (k === 0 || head == null || head.next == null) {
+        return head;
+    }
+    let Length = 0;
+    let cursor = head;
+    let lastNode;
+    while (cursor) {
+        Length++;
+        if (cursor.next == null) {
+            lastNode = cursor;
+        }
+        cursor = cursor.next;
+    }
+    // 接上
+    lastNode.next = head;
+    // console.log('Length: ', Length)
+    // Length - (k%Length) +1
+    let newHeadIndex = Length - (k%Length) +1;
+    if (newHeadIndex === 0 || newHeadIndex === 1) {
+        return head;
+    }
+    cursor = head;
+    for (let i = 2; i <= (newHeadIndex - 1); i++) {
+        cursor = cursor.next;
+    }
+    const preNewHead = cursor;
+    const newHead = preNewHead.next;
+    // 断开
+    preNewHead.next = null;
+    return newHead;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 62.不同路径<a href="./src/62.不同路径.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=62 lang=javascript
+ *
+ * [62] 不同路径
+ *
+ * https://leetcode-cn.com/problems/unique-paths/description/
+ *
+ * algorithms
+ * Medium (62.08%)
+ * Likes:    681
+ * Dislikes: 0
+ * Total Accepted:    146K
+ * Total Submissions: 234.9K
+ * Testcase Example:  '3\n2'
+ *
+ * 一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为“Start” ）。
+ * 
+ * 机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。
+ * 
+ * 问总共有多少条不同的路径？
+ * 
+ * 
+ * 
+ * 例如，上图是一个7 x 3 的网格。有多少可能的路径？
+ * 
+ * 
+ * 
+ * 示例 1:
+ * 
+ * 输入: m = 3, n = 2
+ * 输出: 3
+ * 解释:
+ * 从左上角开始，总共有 3 条路径可以到达右下角。
+ * 1. 向右 -> 向右 -> 向下
+ * 2. 向右 -> 向下 -> 向右
+ * 3. 向下 -> 向右 -> 向右
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 输入: m = 7, n = 3
+ * 输出: 28
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 1 <= m, n <= 100
+ * 题目数据保证答案小于等于 2 * 10 ^ 9
+ * 
+ * 
+ */
+/*
+    题解:
+       如果求的是所有路径，可以使用 dfs 去求出所有解
+       如果求的是一个结果，则可以使用动态规划
+
+    解一：动态规划
+        步骤:
+        1. 画出递归树
+            (m,n)
+             /\
+            /\/\
+           /\/\/\
+          /\/\/\/\
+          \/\/\/\/
+           \/\/\/
+            \/\/
+             \/
+            (0,0)
+        2. 找出DP的表示
+              a  b 
+               \/
+               c
+              假设 DP[n] 表示 n 的步数，有 DP[c] = DP[a] + DP[b]
+        3. DP递推公式
+            DP[y][x] = DP[y-1][x] + DP[y][x-1]
+
+
+    解二：使用排列组合中的组合
+        关键在于怎么看出这是组合问题
+        由题意可知，总共要走的步数是 m + n - 2 步
+        每一步可以选择向下↓或向→, 选择了 m-1 向右，剩下的 n - 1都是向下的。
+        也就是说在  m + n - 2 步中，选出 m - 1 步，作为向右，先选和后选不影响结果
+
+        换种表达，一个袋子里装了编号为 1 到 m+n-2 的小球，从中挑选出 m-1个小球， 这就是一个组合的问题^_^
+
+        Cm+n-2 m-1
+*/
+// @lc code=start
+/**
+ * @param {number} m
+ * @param {number} n
+ * @return {number}
+ */
+var uniquePaths = function(m, n) {
+    const all = m + n - 2;  // 3
+    const picked = m - 1;   // 2
+    let res = 1;
+    for (let i = 0; i < picked; i++) {
+        res = (all - i) * res;
+    }
+    for (let i = 1; i <= picked; i++) {
+        res = res / i;
+    }
+    return res;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 64.最小路径和<a href="./src/64.最小路径和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=64 lang=javascript
+ *
+ * [64] 最小路径和
+ *
+ * https://leetcode-cn.com/problems/minimum-path-sum/description/
+ *
+ * algorithms
+ * Medium (67.50%)
+ * Likes:    677
+ * Dislikes: 0
+ * Total Accepted:    147.1K
+ * Total Submissions: 217.8K
+ * Testcase Example:  '[[1,3,1],[1,5,1],[4,2,1]]'
+ *
+ * 给定一个包含非负整数的 m x n 网格，请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。
+ * 
+ * 说明：每次只能向下或者向右移动一步。
+ * 
+ * 示例:
+ * 
+ * 输入:
+ * [
+ *  [1,3,1],
+ * ⁠ [1,5,1],
+ * ⁠ [4,2,1]
+ * ]
+ * 输出: 7
+ * 解释: 因为路径 1→3→1→1→1 的总和最小。
+ * 
+ * 
+ */
+/**
+    题解：
+        这道题与 62.不同路径，是非常相似的题目
+        https://github.com/NeoYo/leetcode-top-javascript/blob/master/62.%E4%B8%8D%E5%90%8C%E8%B7%AF%E5%BE%84.js
+
+    举例：
+        输入:
+            [
+             [1,3,1],
+            ⁠ [1,5,1],
+            ⁠ [4,2,1]
+            ]
+
+    解题关键：
+        推导转移方程，那么有两个问题：
+        A. 状态是什么？
+            1. 跟第 i 行和第 j 列有关
+            2. 结果求总和最小，那么状态就是 第 i 行和第 j 列的最小和
+        B. 选择是什么？
+            每次状态转移可以选择 i+1 (向下) 或 j+1 (向右)
+            
+        
+
+    二维DP, 最好画出转移表，再编写代码
+        画转移表步骤如下:
+        1. 初始化第一行和第一列
+            1,4,5
+            2,
+            6,
+        2. 根据转移方程 DP[i][j] = Math.min((DP[i-1][j] || 0), (DP[i][j-1] || 0)) + grid[i][j];
+            确定每一个值
+            1,4,5
+            2,? = Math.min(4, 2) + 5 = 7
+            6,
+        3. 依此类推
+            1,4,5
+            2,7,6
+            6,8,7
+
+
+    拓展：
+        转移表与递归树区别与作用：
+            1. 转移表适合 二维DP
+            2. 递归树适合 1~n 维DP
+            3. 转移表适合用来编写和校验，DP代码
+            4. 递归树适合用来编写 dfs 递归代码
+ */
+// @lc code=start
+/**
+ * @param {number[][]} grid
+ * @return {number}
+ */
+var minPathSum = function(grid) {
+    const DP = Array(grid.length).fill(null).map(_ => Array());
+    const COL_CNT = grid[0].length;
+    DP[0][0] = grid[0][0];
+    for (let i = 1; i < grid.length; i++) {
+        DP[i][0] = DP[i-1][0] + grid[i][0];
+    }
+    for (let j = 1; j < COL_CNT; j++) {
+        DP[0][j] = DP[0][j-1] + grid[0][j];
+    }
+    for (let i = 1; i < DP.length; i++) {
+        for (let j = 1; j < COL_CNT; j++) {
+            DP[i][j] = Math.min((DP[i-1][j] || 0), (DP[i][j-1] || 0)) + grid[i][j];
+        }
+    }
+    // console.log('DP: ', DP);
+    return DP[DP.length-1][COL_CNT-1];
+};
+// @lc code=end
+minPathSum([[1,3,1],[1,5,1],[4,2,1]]);
+
+
+```
+</details>
+
+### 72.编辑距离<a href="./src/72.编辑距离.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=72 lang=javascript
+ *
+ * [72] 编辑距离
+ *
+ * https://leetcode-cn.com/problems/edit-distance/description/
+ *
+ * algorithms
+ * Hard (59.75%)
+ * Likes:    1209
+ * Dislikes: 0
+ * Total Accepted:    89.9K
+ * Total Submissions: 149.9K
+ * Testcase Example:  '"horse"\n"ros"'
+ *
+ * 给你两个单词 word1 和 word2，请你计算出将 word1 转换成 word2 所使用的最少操作数 。
+ * 
+ * 你可以对一个单词进行如下三种操作：
+ * 
+ * 
+ * 插入一个字符
+ * 删除一个字符
+ * 替换一个字符
+ * 
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 输入：word1 = "horse", word2 = "ros"
+ * 输出：3
+ * 解释：
+ * horse -> rorse (将 'h' 替换为 'r')
+ * rorse -> rose (删除 'r')
+ * rose -> ros (删除 'e')
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 输入：word1 = "intention", word2 = "execution"
+ * 输出：5
+ * 解释：
+ * intention -> inention (删除 't')
+ * inention -> enention (将 'i' 替换为 'e')
+ * enention -> exention (将 'n' 替换为 'x')
+ * exention -> exection (将 'n' 替换为 'c')
+ * exection -> execution (插入 'u')
+ * 
+ * 
+ */
+/*
+* 输入：word1 = "horse", word2 = "ros"
+* 输出：3
+* 解释：
+* horse -> rorse (将 'h' 替换为 'r')
+* rorse -> rose (删除 'r')
+* rose -> ros (删除 'e')
+*/
+/*
+    以题目中的 word1 = "horse", word2 = "ros" 分析
+    一、暴力法
+        先全删后完整增加
+        horse -> orse -> rse -> se -> e -> (空) -> s -> os -> ros 需要 9 步
+
+    二、题意理解
+        如果随意地去更改 horse 到 ros，我们可能操作 horse 的每一位，每一位又对应着 26 个字母，有非常多的可能性
+
+        从后往前推敲，更符合我们的思考方式，最终要得到 ros，那就盯紧 ros 这几个字母
+        顺着题意去思考，我们相当于每一次操作都去做选择,从替换、编辑、删除里去做选择
+
+        假设最后得到 ros，它的上一个呢，也是由3种情况得来的，替换、编辑、删除
+            1. ros 由 替换 得来的，由于我们操作是从左往右的，最后一步是替换得到，说明上一步已经走到最右边了，roX -> ros
+            2. ros 由 新增 得来的，那么上一个就是 ro, 最后一位增加一个 s, 就 ros
+            3. ros 由 删除 得来的，那么上一个多了一位，是 rosX，删除 X，就是 ros
+        这里还漏掉了一种情况，最后一位刚好命中
+            4. ros 最后一位 s 刚好命中，已有值是 ros, 上一步走到 ro 时，这一步比对了下已有值最后一位，刚好命中~~~！！！
+    三、递归与动态规划
+        这里直接跳过递归推导到动态规划的过程
+        根据上面分析，状态的定义是
+
+        该题理解资料里的，状态转移表很重要
+
+        最后，代码如下哈
+
+    参考资料
+        https://leetcode-cn.com/problems/edit-distance/solution/bian-ji-ju-chi-by-leetcode-solution/
+        
+ */
+// @lc code=start
+/**
+ * @param {string} word1
+ * @param {string} word2
+ * @return {number}
+ */
+var minDistance = function(word1, word2) {
+    const word1L = word1.length;
+    const word2L = word2.length;
+
+    // 零、边界值判断
+    if (word1L == 0 || word2L == 0) {
+        return word1L || word2L;
+    }
+
+    // 一、初始化 DP 数组
+    const DP = Array(word1L + 1).fill(null).map(_ => Array(word2L + 1).fill(Infinity));
+
+    // 二、初始化临界值
+    for (let i = 0; i < word1L + 1; i++) {
+        DP[i][0] = i;
+    }
+    for (let j = 0; j < word2L + 1; j++) {
+        DP[0][j] = j;
+    }
+
+    // 三、状态转移
+    for (let i = 1; i < word1L + 1; i++) {
+        for (let j = 1; j < word2L + 1; j++) {
+            let left = DP[i - 1][j] + 1;    // <- 新增
+            let down = DP[i][j - 1] + 1;    // 删除
+            let left_down = DP[i - 1][j - 1];   // 替换 || 跳过
+            if (word1[i - 1] != word2[j - 1]) {
+                left_down += 1; // 替换
+            }
+            DP[i][j] = Math.min(left, Math.min(down, left_down));
+        }
+    }
+    return DP[word1L][word2L];
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 78.子集<a href="./src/78.子集.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=78 lang=javascript
+ *
+ * [78] 子集
+ *
+ * https://leetcode-cn.com/problems/subsets/description/
+ *
+ * algorithms
+ * Medium (77.77%)
+ * Likes:    724
+ * Dislikes: 0
+ * Total Accepted:    124.6K
+ * Total Submissions: 160.1K
+ * Testcase Example:  '[1,2,3]'
+ *
+ * 给定一组不含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
+ * 
+ * 说明：解集不能包含重复的子集。
+ * 
+ * 示例:
+ * 
+ * 输入: nums = [1,2,3]
+ * 输出:
+ * [
+ * ⁠ [3],
+ * [1],
+ * [2],
+ * [1,2,3],
+ * [1,3],
+ * [2,3],
+ * [1,2],
+ * []
+ * ]
+ * 
+ */
+
+// @lc code=start
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+var subsets = function(nums) {
+    /**
+        遍历 vs 回溯
+
+        遍历：遍历所有值
+        回溯算法：强调保存当前状态后，在下一层寻找过程中，失败了可以回来，拿到原来的状态
+     */
+
+    /*
+    解一：深度优先遍历
+        T(n) = O(n*2^n)
+               x
+           /        \
+         1            x
+       /    \       /   \
+      2      x     2      x
+     / \    / \   / \    /  \
+    3   x  3   x  3  x   3   x
+
+     进行二叉树的先序遍历， 会得到
+     []
+     [1], [1,2], [1,2,3], [1,2,x], [1,x], [1,x,3], [1,xx]
+     [x], [x, 2], [x, 2, 3], [x, 2, x], [x, x], [x, x, 3], [x, x, x]
+
+     对于这道题，可以用只取前序遍历的，根节点和左子树，后子树舍弃掉，代码如下：
+    */
+    const dfs = (res, leftNums, cur) => {
+        // res.push(cur);
+        if (leftNums.length === 0) {
+            return;
+        }
+        res.push([...cur, leftNums[0]]);
+        dfs(res, leftNums.slice(1), [...cur, leftNums[0]]);
+        dfs(res, leftNums.slice(1), [...cur]);
+    }
+    const res = [[]];
+    dfs(res, nums, [], 0);
+    return res;
+    /**
+     * 解二：回溯法
+     * 这道题，其实用回溯算法，更好理解
+     * Ref: https://labuladong.gitbook.io/algo/suan-fa-si-wei-xi-lie/hui-su-suan-fa-xiang-jie-xiu-ding-ban
+     */
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 88.合并两个有序数组<a href="./src/88.合并两个有序数组.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=88 lang=javascript
+ *
+ * [88] 合并两个有序数组
+ *
+ * https://leetcode-cn.com/problems/merge-sorted-array/description/
+ *
+ * algorithms
+ * Easy (48.89%)
+ * Likes:    699
+ * Dislikes: 0
+ * Total Accepted:    236.1K
+ * Total Submissions: 482.5K
+ * Testcase Example:  '[1,2,3,0,0,0]\n3\n[2,5,6]\n3'
+ *
+ * 给你两个有序整数数组 nums1 和 nums2，请你将 nums2 合并到 nums1 中，使 nums1 成为一个有序数组。
+ * 
+ * 
+ * 
+ * 说明：
+ * 
+ * 
+ * 初始化 nums1 和 nums2 的元素数量分别为 m 和 n 。
+ * 你可以假设 nums1 有足够的空间（空间大小大于或等于 m + n）来保存 nums2 中的元素。
+ * 
+ * 
+ * 
+ * 
+ * 示例：
+ * 
+ * 
+ * 输入：
+ * nums1 = [1,2,3,0,0,0], m = 3
+ * nums2 = [2,5,6],       n = 3
+ * 
+ * 输出：[1,2,2,3,5,6]
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * -10^9 
+ * nums1.length == m + n
+ * nums2.length == n
+ * 
+ * 
+ */
+/**
+    题解
+        1. nums1 最后往前移动 index
+        2. nums1 最后 i 和 nums2 最后 j 两两比较
+
+    参考图解：
+        [画解算法：88. 合并两个有序数组](https://leetcode-cn.com/problems/merge-sorted-array/solution/hua-jie-suan-fa-88-he-bing-liang-ge-you-xu-shu-zu-/)
+
+
+ */
+// @lc code=start
+/**
+ * @param {number[]} nums1
+ * @param {number} m
+ * @param {number[]} nums2
+ * @param {number} n
+ * @return {void} Do not return anything, modify nums1 in-place instead.
+ */
+var merge = function(nums1, m, nums2, n) {
+    for (
+        let i = m - 1, j = n - 1, index = nums1.length -1;
+        index >= 0;
+        index--
+    ) {
+        if (nums1[i] > nums2[j] || j < 0) {
+            nums1[index] = nums1[i];
+            i--;
+        } else {
+            nums1[index] = nums2[j];
+            j--;
+        }
+    }    
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 89.格雷编码<a href="./src/89.格雷编码.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=89 lang=javascript
+ *
+ * [89] 格雷编码
+ *
+ * https://leetcode-cn.com/problems/gray-code/description/
+ *
+ * algorithms
+ * Medium (68.83%)
+ * Likes:    233
+ * Dislikes: 0
+ * Total Accepted:    35.7K
+ * Total Submissions: 51.7K
+ * Testcase Example:  '2'
+ *
+ * 格雷编码是一个二进制数字系统，在该系统中，两个连续的数值仅有一个位数的差异。
+ * 
+ * 给定一个代表编码总位数的非负整数 n，打印其格雷编码序列。即使有多个不同答案，你也只需要返回其中一种。
+ * 
+ * 格雷编码序列必须以 0 开头。
+ * 
+ * 
+ * 
+ * 示例 1:
+ * 
+ * 输入: 2
+ * 输出: [0,1,3,2]
+ * 解释:
+ * 00 - 0
+ * 01 - 1
+ * 11 - 3
+ * 10 - 2
+ * 
+ * 对于给定的 n，其格雷编码序列并不唯一。
+ * 例如，[0,2,3,1] 也是一个有效的格雷编码序列。
+ * 
+ * 00 - 0
+ * 10 - 2
+ * 11 - 3
+ * 01 - 1
+ * 
+ * 示例 2:
+ * 
+ * 输入: 0
+ * 输出: [0]
+ * 解释: 我们定义格雷编码序列必须以 0 开头。
+ * 给定编码总位数为 n 的格雷编码序列，其长度为 2^n。当 n = 0 时，长度为 2^0 = 1。
+ * 因此，当 n = 0 时，其格雷编码序列为 [0]。
+ * 
+ * 
+ */
+/**
+    参考资料
+        解法一：公式法
+            资料：https://leetcode-cn.com/problems/gray-code/solution/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by--12/
+                解法三 二进制转成格雷码的公式。
+        解法二：格雷码是反射码
+            资料：https://baike.baidu.com/item/%E6%A0%BC%E9%9B%B7%E7%A0%81/6510858?fr=aladdin 里面介绍了递归，由递归，推导到了上面的 DP
+ 
+ */
+// @lc code=start
+/**
+ * @param {number} n
+ * @return {number[]}
+ */
+var grayCode = function(n) {
+    const res = [];
+    const max = 1 << n;
+    for(let binary = 0;binary < max; binary++) {
+        res.push(binary ^ (binary >> 1));
+    }
+    return res;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 91.解码方法<a href="./src/91.解码方法.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=91 lang=javascript
+ *
+ * [91] 解码方法
+ *
+ * https://leetcode-cn.com/problems/decode-ways/description/
+ *
+ * algorithms
+ * Medium (24.43%)
+ * Likes:    502
+ * Dislikes: 0
+ * Total Accepted:    68.1K
+ * Total Submissions: 277.9K
+ * Testcase Example:  '"12"'
+ *
+ * 一条包含字母 A-Z 的消息通过以下方式进行了编码：
+ * 
+ * 'A' -> 1
+ * 'B' -> 2
+ * ...
+ * 'Z' -> 26
+ * 
+ * 
+ * 给定一个只包含数字的非空字符串，请计算解码方法的总数。
+ * 
+ * 示例 1:
+ * 
+ * 输入: "12"
+ * 输出: 2
+ * 解释: 它可以解码为 "AB"（1 2）或者 "L"（12）。
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 输入: "226"
+ * 输出: 3
+ * 解释: 它可以解码为 "BZ" (2 26), "VF" (22 6), 或者 "BBF" (2 2 6) 。
+ * 
+ * 
+ */
+/*
+    动态规划思路：
+        1. 先从后往前思考，再画出递归树
+            1.1 递归树首先要包含所有情况
+            1.2 再考虑根据所求值，从下到上传值
+        3. 再得出动态规划方程
+        4. 注意边界条件
+
+    题解：
+        满足条件的数字范围: [1, 26]
+
+        用例： "12"
+
+            括号内是index, (index)    
+
+                        12(2)
+                /-12              \-2
+                (0)                 1(1)
+                                   |-1
+                                   (0)
+            
+
+        用例： "226"
+
+                      226(3)=3
+                 /-6        \-26
+               22(2)=2      2(1)=1
+              /-22 \-2       |-2
+             (0)=2 2(1)=1    (0)=1
+                    |
+                    (0)=1
+            
+        DP[i] = DP[i-2] + DP[i-1]
+
+        DP[i] = (s.slice(i-2, i) beyond [1, 26]) && DP[i-2]) ? 2 : 1   i 表示 游标
+
+    注意点：
+        注意异常情况。用例如下：
+        
+            用例： "10"
+
+                        10
+                    /-0   \-10
+                    1       (0)=1
+
+            用例： "01"
+
+                    -01
+                /-1    \-01
+                0       空
+
+        还有代码中的注释
+*/
+// @lc code=start
+/**
+ * @param {string} s
+ * @return {number}
+ */
+var numDecodings = function(s) {
+    if (s[0] === '0') { return 0; } // 排除 0 开头的...
+    const DP = Array(s.length+1).fill(0);
+    DP[0] = 1;
+    DP[1] = 1;
+    for (let i = 2; i <= s.length+1; i++) {
+        const twoChar = s.slice(i-2, i);
+        const curChar = s[i-1];
+        let val = 0;
+        if (curChar !== '0') { // 排除 0
+            val += DP[i-1];
+        }
+        if (twoChar[0] !== '0') { //排除 01、02、...
+            if (Number(twoChar) > 0 && Number(twoChar) <= 26) {
+                val += DP[i-2];
+            }
+        }
+        DP[i] = val;
+    }
+    // console.log(DP);
+    return DP[s.length];
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 92.反转链表-ii<a href="./src/92.反转链表-ii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=92 lang=javascript
+ *
+ * [92] 反转链表 II
+ *
+ * https://leetcode-cn.com/problems/reverse-linked-list-ii/description/
+ *
+ * algorithms
+ * Medium (51.37%)
+ * Likes:    553
+ * Dislikes: 0
+ * Total Accepted:    81.3K
+ * Total Submissions: 157.5K
+ * Testcase Example:  '[1,2,3,4,5]\n2\n4'
+ *
+ * 反转从位置 m 到 n 的链表。请使用一趟扫描完成反转。
+ * 
+ * 说明:
+ * 1 ≤ m ≤ n ≤ 链表长度。
+ * 
+ * 示例:
+ * 
+ * 输入: 1->2->3->4->5->NULL, m = 2, n = 4
+ * 输出: 1->4->3->2->5->NULL
+ * 
+ */
+/*
+    题解：
+        该题是在 206. 反转链表 的基础上进行拓展的 https://github.com/NeoYo/leetcode-top-javascript/blob/master/206.%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8.js
+
+        思路是
+            0. 准备 m-1 m n n+1 对应的节点
+            1. 断开 [m, n] 以外的连接
+            2. 反转 [m, n] 之间节点，套用 反转链表 的非递归解法模板
+            3. 连接 [mPreNode, n ... m, nNextNode]
+        注意点
+            1. m-1、n+1 会有不存在的情况  mPreNode nNextNode 的存在判断
+            2. m 和 n 会有相等的情况
+            3. m-1 不存在的处理
+            这几个注意点，会在以下代码中体现
+
+    更详细的题解
+        步步拆解：如何递归地反转链表的一部分 https://leetcode-cn.com/problems/reverse-linked-list-ii/solution/bu-bu-chai-jie-ru-he-di-gui-di-fan-zhuan-lian-biao/
+            从反转全部 到 反转前几个，再到 反转 m 到 n
+ */
+// @lc code=start
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @param {number} m
+ * @param {number} n
+ * @return {ListNode}
+ */
+var reverseBetween = function(head, m, n) {
+    function reverseList(head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        let next = null;
+        let pre = head.next;
+        while (head != null) {
+            pre = head.next;
+            head.next = next;
+            next = head;
+            head = pre;
+        }
+        return next;
+    };
+    /*
+       1 -> 2 -> 3 -> 4 -> 5 -> NULL
+            m         n
+    */
+    let mPreNode,
+        mNode,
+        nNode,
+        nNextNode;
+
+    let cursor = head;
+    for (let i = 1; i <= (n + 1); i++) {
+        if (i == m - 1) {
+            mPreNode = cursor;
+        } else if (i == m) {
+            mNode = cursor;
+        }
+        if (i == n) { // 注意点 2. m 和 n 相等的情况
+            nNode = cursor;
+        } else if (i == (n + 1)) {
+            nNextNode = cursor;
+        }
+        if (cursor) {
+            cursor = cursor.next;
+        } else {
+            break;
+        }
+    }
+    // 1. 断开 [m, n] 以外的连接
+    mPreNode && (mPreNode.next = null);
+    nNode && (nNode.next = null);
+    // 2. 反转 [m, n] 之间节点，套用 反转链表 的非递归解法模板
+    const reversedList = reverseList(mNode);
+    // 3. 连接 [mPreNode, n ... m, nNextNode]
+    (mNode.next = nNextNode);
+    if (mPreNode) {
+        mPreNode.next = reversedList;
+        return head;
+    } else {
+        // 注意点 3. m-1 节点不存在的处理
+        return reversedList;
+    }
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 96.不同的二叉搜索树<a href="./src/96.不同的二叉搜索树.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=96 lang=javascript
+ *
+ * [96] 不同的二叉搜索树
+ *
+ * https://leetcode-cn.com/problems/unique-binary-search-trees/description/
+ *
+ * algorithms
+ * Medium (69.13%)
+ * Likes:    836
+ * Dislikes: 0
+ * Total Accepted:    87.3K
+ * Total Submissions: 126.3K
+ * Testcase Example:  '3'
+ *
+ * 给定一个整数 n，求以 1 ... n 为节点组成的二叉搜索树有多少种？
+ * 
+ * 示例:
+ * 
+ * 输入: 3
+ * 输出: 5
+ * 解释:
+ * 给定 n = 3, 一共有 5 种不同结构的二叉搜索树:
+ * 
+ * ⁠  1         3     3      2      1
+ * ⁠   \       /     /      / \      \
+ * ⁠    3     2     1      1   3      2
+ * ⁠   /     /       \                 \
+ * ⁠  2     1         2                 3
+ * 
+ */
+
+/**
+    题解：
+        根据题目意义，及二叉搜索树的性质，可分析出以下信息
+        设 f(i, n) 表示以 i 为根节点，有 n 个节点的二叉搜索树的种类数
+        设 G(n) 表示 整数 n，以 1 ... n 为节点组成的二叉搜索树的种类数
+        它们存在如下关系：
+            f(i, n) = G(i-1) * G(n-i)
+
+        那么这个式子怎么得来的?
+            下面以 n = 6 为例，当求 f(4, 6) 时，求 
+                      i=4
+                      f(4, 6)        1, 2, 3, 4, 5, 6
+                     /        \
+                    /          \
+                [0, 1, 2, 3]   [5, 6]
+
+            左边 [0, 1, 2, 3] 相当于求 G(4)，以 1 ... 4 为节点组成的二叉搜索树的种类数
+            右边 [5, 6]，以 5，6 为节点组成的二叉搜索树的种类数，会等价于 以 0, 1, 2 为节点组成的二叉搜索树的种类数
+                因为对于二叉搜索树的种类树来说，连续的 5，6 和 连续的 1，2 是相同的，图示如下
+                   5           6       1         2
+                    \         /         \       /     
+                     6       5           2     1
+                空的位置，相当于 G(0) = 1
+
+            所以 f(4, 6) = G(4-1) * G(6-4)
+
+    解零：递归法
+        递归法的核心，是把未知的一部分（左子树、右子树），看成一个整体
+        以 n = 6为例，G(6) 是由 以 1 为根节点，以 2 为根节点 ... 以 6 为根节点每种情况的种类数相加
+        而每一种情况，是未知的，把它们看成一个整体，就可以得到
+            G(6) = 0;
+            for (let i = 1; i <=n; i++) {
+                G(6) += f(i, 6);
+            }
+        而 f(i, 6) = G(i-1) * G(6-i)
+
+        从特例到通用，核心代码如下
+            G(n) = 0;
+            for (let i = 1; i <=n; i++) {
+                G(n) += G(i-1) * G(n-i);
+            }
+
+        完整代码：
+            var numTrees = function(n) {
+                if (n == 0 || n == 1) {
+                    return 1;
+                }
+                let num = 0;
+                for (let i = 1; i <= n; i++) {
+                    num += numTrees(i - 1) * numTrees(n - i);
+                }
+                return num;
+            };
+
+        T(n) = O(n^n)
+
+    解一：动态规划
+        递归是自上而下的，含有大量重复计算 比如 [5, 6] 和 [1, 2]，都是 G(2)，只需计算一次就够了，备忘录的方式也可以
+        根据上面的递归关系，可以得到递推公式，只是把 G 换成 DP，从下往上计算
+        核心代码如下：
+            const DP[n] = 0;
+            for (let i = 1; i <=n; i++) {
+                DP(n) += DP(i-1) * DP(n-i);
+            }
+        完整代码在最下面
+
+    // 解二：卡塔兰数？
+    //     百度百科：https://baike.baidu.com/item/catalan/7605685?fr=aladdin
+    //     卡塔兰数，还没理解 ==
+
+    注意点：
+        为什么 G(0) = 1？是因为两个集合 A 和 B， A 是空的集合，没得选，也是一种选择
+            比如 n = 1，求 numTrees(1)
+                 1
+              /    \
+             G(0) G(0)
+                1 = G(0) * G(0) = 1 * 1
+            
+
+            比如 n = 2，求 numTrees(2)
+                2
+            /    \
+            G(0)   G(1)
+            f(2) = G(0) * G(1)
+            
+ */
+
+// @lc code=start
+/**
+ * @param {number} n
+ * @return {number}
+ */
+var numTrees = function(n) {
+    const G = new Array(n + 1).fill(0);
+    G[0] = 1;
+    G[1] = 1;
+
+    for (let i = 2; i <= n; ++i) {
+        for (let j = 1; j <= i; ++j) {
+            G[i] += G[j - 1] * G[i - j];
+        }
+    }
+    return G[n];
+};
 // @lc code=end
 
 
@@ -543,6 +4439,103 @@ var maxPathSum = function(root) {
     }
     dfs(root);
     return nodeMax;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 125.验证回文串<a href="./src/125.验证回文串.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=125 lang=javascript
+ *
+ * [125] 验证回文串
+ *
+ * https://leetcode-cn.com/problems/valid-palindrome/description/
+ *
+ * algorithms
+ * Easy (46.56%)
+ * Likes:    293
+ * Dislikes: 0
+ * Total Accepted:    177.2K
+ * Total Submissions: 380.3K
+ * Testcase Example:  '"A man, a plan, a canal: Panama"'
+ *
+ * 给定一个字符串，验证它是否是回文串，只考虑字母和数字字符，可以忽略字母的大小写。
+ * 
+ * 说明：本题中，我们将空字符串定义为有效的回文串。
+ * 
+ * 示例 1:
+ * 
+ * 输入: "A man, a plan, a canal: Panama"
+ * 输出: true
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 输入: "race a car"
+ * 输出: false
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * @param {string} s
+ * @return {boolean}
+ */
+var isPalindrome = function(s) {
+    for (let i = 0; i < (s.length >> 1); i++) {
+        if (s[i] !== s[s.length - 1 - i]) {
+            return false;
+        }
+    }
+    return true;
+};
+/*
+    解一: 头尾指针
+
+    时间复杂度：O(n)
+
+    空间复杂度：O(n)
+
+    number >> 1 === Math.floor(number/2)
+    解二: reverse
+
+    var isPalindrome = function(s) {
+        const arr = s.toLowerCase().match(/\w|\d/g) || [];
+        const str = arr.join('');
+        return arr.reverse().join('') === str;
+    };
+
+ */
+
+/**
+ * @param {string} s
+ * @return {boolean}
+ */
+var isPalindrome = function(s) {
+    for (let i = 0; i < (s.length >> 1); i++) {
+        if (s[i] !== s[s.length - 1 - i]) {
+            return false;
+        }
+    }
+    return true;
+};
+/**
+* @param {string} s
+* @return {boolean}
+*/
+var isPalindrome = function(s) {
+    const arr = s.toLowerCase().match(/\w|\d/g) || [];
+    const str = arr.join('');
+    return arr.reverse().join('') === str;
 };
 // @lc code=end
 
@@ -1494,138 +5487,6 @@ var sortList = function(head) {
 ```
 </details>
 
-### 15.三数之和<a href="./src/15.三数之和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=15 lang=javascript
- *
- * [15] 三数之和
- *
- * https://leetcode-cn.com/problems/3sum/description/
- *
- * algorithms
- * Medium (28.78%)
- * Likes:    2458
- * Dislikes: 0
- * Total Accepted:    294.2K
- * Total Submissions: 1M
- * Testcase Example:  '[-1,0,1,2,-1,-4]'
- *
- * 给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0
- * ？请你找出所有满足条件且不重复的三元组。
- * 
- * 注意：答案中不可以包含重复的三元组。
- * 
- * 
- * 
- * 示例：
- * 
- * 给定数组 nums = [-1, 0, 1, 2, -1, -4]
- * 
- * 满足要求的三元组集合为：
- * [
- * ⁠ [-1, 0, 1],
- * ⁠ [-1, -1, 2]
- * ]
- * 
- * 
- */
-
-/**
-题解:
-    0. 选与不选 0 和 1  T(n) = O(2^n)
-        每个数都有两个选择
-
-    1. 暴力法 T(n) = O(n^3)
-        三重for循环，得到的是包含重复的三元组
-        
-    2. Map法 T(n) = O(n) + O(n^2) S(n) = O(n),
-        可以得到包含重复的三元组
-        题目要求是不可以包含重复的三元组，将重复三元组去重 Map(num1, num2, num3),会占用更多的空间,更复杂 
-
-    3. 排序法+双指针 T(n) = O(nlogn) + O(n^2)
-        代码如下:
-        Ref: https://leetcode-cn.com/problems/3sum/solution/3sumpai-xu-shuang-zhi-zhen-yi-dong-by-jyd/            
-
-        排序法用的目的在于去重
-
-        -1 -1 -1 -1 -1 0 0 0 0 0 1 1 1 1 1
-               -1          0         1
-               
-难点:
-    需要去重的情况有哪些？
-    
-    第一种情况: 对nums[L]的去重
-        [-1 0 0 0 0 0 1]
-         i  L         R
-        因为第一次出现的时候，已经加入，ans.push([nums[i],nums[L],nums[R]])
-        所以剩余 相邻相同的nums[L]，可以直接去重，关键代码如下:    
-        while (nums[L] === nums[L+1]) L++; // 去重2
-
-    第二种情况: 对nums[R]的去重
-        [-1 0 1 1 1 1]
-        i   L       R
-        因为第一次出现的时候，已经加入，ans.push([nums[i],nums[L],nums[R]])
-        所以剩余 相邻相同的nums[R]，可以直接去重，关键代码如下:
-        while (nums[R] === nums[R-1]) R--; // 去重3
-
-    第三种情况: 对nums[i]的去重
-        如果不去重，会过不了下面用例    
-            Case: [-1,0,1,2,-1,-4]        
-            Answer: [[-1,-1,2],[-1,0,1],[-1,0,1]]
-            Expected Answer: [[-1,-1,2],[-1,0,1]]
-        
-        解析:
-            Sorted: [-4,-1,-1,0,1,2] 
-            简化Case: [-1,-1,0,1]
-            出现重复答案的关键，在于有两个 -1 进行计算
-            去重的方法是: 第一个 -1 出现后，后面就不需要考虑了
-
-        关键代码如下:
-            if(nums[i] === nums[i-1]) continue; // 去重3
-
- */
-// @lc code=start
-/**
- * @param {number[]} nums
- * @return {number[][]}
- */
-var threeSum = function(nums) {
-    let ans = [];
-    const len = nums.length;
-    if(nums == null || len < 3) return ans;
-    nums.sort((a, b) => a - b); // 排序
-    for (let i = 0; i < len ; i++) {
-        if(nums[i] === nums[i-1]) continue; // 去重3
-        let L = i+1;
-        let R = len-1;
-        while(L < R){
-            const sum = nums[i] + nums[L] + nums[R];
-            if (sum === 0) {
-                ans.push([nums[i],nums[L],nums[R]]);
-                while (nums[L] === nums[L+1]) L++; // 去重1
-                while (nums[R] === nums[R-1]) R--; // 去重2
-                L++;
-                R--;
-            } else if (sum < 0) {
-                L++;
-            } else if (sum > 0) {
-                R--;
-            }
-        }
-    }        
-    return ans;
-};
-// @lc code=end
-
-
-```
-</details>
-
 ### 150.逆波兰表达式求值<a href="./src/150.逆波兰表达式求值.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
@@ -2025,37 +5886,57 @@ var maxProduct = function(nums) {
 ```
 </details>
 
-### 16.最接近的三数之和<a href="./src/16.最接近的三数之和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+### 155.最小栈<a href="./src/155.最小栈.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
 
 ```js
 /*
- * @lc app=leetcode.cn id=16 lang=javascript
+ * @lc app=leetcode.cn id=155 lang=javascript
  *
- * [16] 最接近的三数之和
+ * [155] 最小栈
  *
- * https://leetcode-cn.com/problems/3sum-closest/description/
+ * https://leetcode-cn.com/problems/min-stack/description/
  *
  * algorithms
- * Medium (45.83%)
- * Likes:    606
+ * Easy (54.68%)
+ * Likes:    574
  * Dislikes: 0
- * Total Accepted:    161.6K
- * Total Submissions: 352.3K
- * Testcase Example:  '[-1,2,1,-4]\n1'
+ * Total Accepted:    132.8K
+ * Total Submissions: 243K
+ * Testcase Example:  '["MinStack","push","push","push","getMin","pop","top","getMin"]\n' +
+  '[[],[-2],[0],[-3],[],[],[],[]]'
  *
- * 给定一个包括 n 个整数的数组 nums 和 一个目标值 target。找出 nums 中的三个整数，使得它们的和与 target
- * 最接近。返回这三个数的和。假定每组输入只存在唯一答案。
+ * 设计一个支持 push ，pop ，top 操作，并能在常数时间内检索到最小元素的栈。
+ * 
+ * 
+ * push(x) —— 将元素 x 推入栈中。
+ * pop() —— 删除栈顶的元素。
+ * top() —— 获取栈顶元素。
+ * getMin() —— 检索栈中的最小元素。
  * 
  * 
  * 
- * 示例：
  * 
- * 输入：nums = [-1,2,1,-4], target = 1
- * 输出：2
- * 解释：与 target 最接近的和是 2 (-1 + 2 + 1 = 2) 。
+ * 示例:
+ * 
+ * 输入：
+ * ["MinStack","push","push","push","getMin","pop","top","getMin"]
+ * [[],[-2],[0],[-3],[],[],[],[]]
+ * 
+ * 输出：
+ * [null,null,null,null,-3,null,0,-2]
+ * 
+ * 解释：
+ * MinStack minStack = new MinStack();
+ * minStack.push(-2);
+ * minStack.push(0);
+ * minStack.push(-3);
+ * minStack.getMin();   --> 返回 -3.
+ * minStack.pop();
+ * minStack.top();      --> 返回 0.
+ * minStack.getMin();   --> 返回 -2.
  * 
  * 
  * 
@@ -2063,58 +5944,95 @@ var maxProduct = function(nums) {
  * 提示：
  * 
  * 
- * 3 <= nums.length <= 10^3
- * -10^3 <= nums[i] <= 10^3
- * -10^4 <= target <= 10^4
+ * pop、top 和 getMin 操作总是在 非空栈 上调用。
  * 
  * 
  */
 /**
-    参考资料 https://github.com/NeoYo/leetcode-top-javascript/blob/master/15.%E4%B8%89%E6%95%B0%E4%B9%8B%E5%92%8C.js    
-
-    这道题主要与三数之和类似，分析过程也和三数之和相同
-    分析结果采用排序+双指针，降低到 T(n) = O(nlogn) + O(n^2)
     
-    相对还简单了一点，这道题不需要去重，不需要分析去重的情况
+    - 标签 
 
-    具体代码如下：
+        ==栈==
+
+    - 资料
+        1. [最小栈和最小队列 - 奇舞周刊](https://www.jishuwen.com/d/2n3p)
+        2. [最小栈实现](https://jsbin.com/kagekof/1/edit?html,css,js,output) 和 [最小队列实现](https://jsbin.com/pevoquw/1/edit?html,css,js,output)
+        3. [漫画算法 - 最小栈的实现](https://zhuanlan.zhihu.com/p/31958400)
+
+    - 总结
+        1. 辅助栈 或 辅助队列，都用于历史记录，记录“破记录的最小值”
+        2. 出栈和出队列时，要同时维护辅助栈
+        3. 最小队列，入队时，可能会更新整个辅助队列
  */
-
 // @lc code=start
 /**
- * @param {number[]} nums
- * @param {number} target
+ * initialize your data structure here.
+ */
+var MinStack = function() {
+    this.stack = [];
+    this.minIdxs = []; // small ... smaller ... smallest
+};
+
+/** 
+ * @param {number} x
+ * @return {void}
+ */
+MinStack.prototype.push = function(x) {
+    this.stack.push(x);
+    if (x <= this.getCompareMin()) {
+        this.minIdxs.push(this.stack.length - 1);
+    }
+};
+
+/**
+ * @return {void}
+ */
+MinStack.prototype.pop = function() {
+    if (this.top() === this.getCompareMin()) {
+        this.minIdxs.pop();
+    }
+    this.stack.pop();
+};
+
+/**
  * @return {number}
  */
-var threeSumClosest = function(nums, target) {
-    let ans = NaN;                     // let ans = [];
-    const len = nums.length;
-    // if(nums == null || len < 3) return ans;
-    nums.sort((a, b) => a - b);             // 排序
-    for (let i = 0; i < len ; i++) {
-        // if(nums[i] === nums[i-1]) continue; // 去重3
-        let L = i+1;
-        let R = len-1;
-        while(L < R){
-            const sum = nums[i] + nums[L] + nums[R];
-            if (sum === target) {
-                return target;      // ans.push([nums[i],nums[L],nums[R]]);
-                // while (nums[L] === nums[L+1]) L++;  // 去重1
-                // while (nums[R] === nums[R-1]) R--;  // 去重2
-                // L++;
-                // R--;
-            } else if (target > sum) {      // } else if (target < 0) {
-                L++;
-            } else if (target < sum) {
-                R--;
-            }
-            if (Math.abs(sum - target) < Math.abs(ans - target)) {
-                ans = sum;
-            }
-        }
-    }        
-    return ans;
+MinStack.prototype.top = function() {
+    return this.stack[this.stack.length - 1];
 };
+
+/**
+ * @return {boolean}
+ */
+MinStack.prototype.getCompareMin = function() {
+    return this.getMin() == null ? +Infinity : this.getMin();
+};
+
+
+/**
+ * @return {number}
+ */
+MinStack.prototype.getMin = function() {
+    const minIdx = this.minIdxs[this.minIdxs.length - 1];
+    return this.stack[minIdx];
+};
+
+/* *
+ * Your MinStack object will be instantiated and called as such:
+ * var obj = new MinStack()
+ * obj.push(x)
+ * obj.pop()
+ * var param_3 = obj.top()
+ * var param_4 = obj.getMin()
+ */
+
+/* 
+    解题思路：
+    0. 暴力法 T(n) = O(n)
+    1. 记录器 T(n) = O(1) 空间换时间
+
+    注意点： 等于最小值也要入栈
+*/
 // @lc code=end
 
 
@@ -3114,82 +7032,6 @@ function rob(nums) {
 // @lc code=end
 
 // console.assert(rob([1,2,3,1]));
-
-
-```
-</details>
-
-### 2.两数相加<a href="./src/2.两数相加.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=2 lang=javascript
- *
- * [2] 两数相加
- *
- * https://leetcode-cn.com/problems/add-two-numbers/description/
- *
- * algorithms
- * Medium (38.86%)
- * Likes:    5228
- * Dislikes: 0
- * Total Accepted:    618.2K
- * Total Submissions: 1.6M
- * Testcase Example:  '[2,4,3]\n[5,6,4]'
- *
- * 给出两个 非空 的链表用来表示两个非负的整数。其中，它们各自的位数是按照 逆序 的方式存储的，并且它们的每个节点只能存储 一位 数字。
- * 
- * 如果，我们将这两个数相加起来，则会返回一个新的链表来表示它们的和。
- * 
- * 您可以假设除了数字 0 之外，这两个数都不会以 0 开头。
- * 
- * 示例：
- * 
- * 输入：(2 -> 4 -> 3) + (5 -> 6 -> 4)
- * 输出：7 -> 0 -> 8
- * 原因：342 + 465 = 807
- * 
- * 
- */
-
-// @lc code=start
-/**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
- */
-/**
- * @param {ListNode} l1
- * @param {ListNode} l2
- * @return {ListNode}
- */
-var addTwoNumbers = function (l1, l2) {
-    const sum = l1.val + l2.val;
-    let res = cur = new ListNode(sum % 10);
-    let append = Math.floor(sum / 10);
-
-    while ((l1 && l1.next) || (l2 && l2.next)) {
-        l1 = l1 && l1.next || { val: 0 };
-        l2 = l2 && l2.next || { val: 0 };
-        const sum = l1.val + l2.val + append;
-        cur.next = new ListNode(sum % 10);
-        cur = cur.next;
-        append = Math.floor(sum / 10);
-    }
-
-    if (append !== 0) {
-        cur.next = new ListNode(append % 10);
-        cur = cur.next;
-    }
-
-    return res;
-};
-// @lc code=end
 
 
 ```
@@ -5887,75 +9729,6 @@ MedianFinder.prototype.findMedian = function() {
 ```
 </details>
 
-### 3.无重复字符的最长子串<a href="./src/3.无重复字符的最长子串.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=3 lang=javascript
- *
- * [3] 无重复字符的最长子串
- *
- * https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/description/
- *
- * algorithms
- * Medium (35.80%)
- * Likes:    4553
- * Dislikes: 0
- * Total Accepted:    716.7K
- * Total Submissions: 2M
- * Testcase Example:  '"abcabcbb"'
- *
- * 给定一个字符串，请你找出其中不含有重复字符的 最长子串 的长度。
- * 
- * 示例 1:
- * 
- * 输入: "abcabcbb"
- * 输出: 3 
- * 解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
- * 
- * 
- * 示例 2:
- * 
- * 输入: "bbbbb"
- * 输出: 1
- * 解释: 因为无重复字符的最长子串是 "b"，所以其长度为 1。
- * 
- * 
- * 示例 3:
- * 
- * 输入: "pwwkew"
- * 输出: 3
- * 解释: 因为无重复字符的最长子串是 "wke"，所以其长度为 3。
- * 请注意，你的答案必须是 子串 的长度，"pwke" 是一个子序列，不是子串。
- * 
- * 
- */
-
-// @lc code=start
-/**
- * @param {string} s
- * @return {number}
- */
-var lengthOfLongestSubstring = function(s) {
-    let max = 0;
-    let map = new Map();
-    for (let i = 0, j = 0; j < s.length; j++) {
-        const char = s[j];
-        i = Math.max(map.get(char) || 0, i);
-        map.set(char, j + 1);
-        max = Math.max(max, j - i + 1);        
-    }
-    return max;
-};
-// @lc code=end
-
-
-```
-</details>
-
 ### 300.最长上升子序列<a href="./src/300.最长上升子序列.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
@@ -6566,103 +10339,66 @@ var countBits = function(num) {
 ```
 </details>
 
-### 34.在排序数组中查找元素的第一个和最后一个位置<a href="./src/34.在排序数组中查找元素的第一个和最后一个位置.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+### 344.反转字符串<a href="./src/344.反转字符串.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
 
 ```js
 /*
- * @lc app=leetcode.cn id=34 lang=javascript
+ * @lc app=leetcode.cn id=344 lang=javascript
  *
- * [34] 在排序数组中查找元素的第一个和最后一个位置
+ * [344] 反转字符串
  *
- * https://leetcode-cn.com/problems/find-first-and-last-position-of-element-in-sorted-array/description/
+ * https://leetcode-cn.com/problems/reverse-string/description/
  *
  * algorithms
- * Medium (40.01%)
- * Likes:    535
+ * Easy (73.61%)
+ * Likes:    325
  * Dislikes: 0
- * Total Accepted:    118.1K
- * Total Submissions: 294.7K
- * Testcase Example:  '[5,7,7,8,8,10]\n8'
+ * Total Accepted:    223.7K
+ * Total Submissions: 303.7K
+ * Testcase Example:  '["h","e","l","l","o"]'
  *
- * 给定一个按照升序排列的整数数组 nums，和一个目标值 target。找出给定目标值在数组中的开始位置和结束位置。
+ * 编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组 char[] 的形式给出。
  * 
- * 你的算法时间复杂度必须是 O(log n) 级别。
+ * 不要给另外的数组分配额外的空间，你必须原地修改输入数组、使用 O(1) 的额外空间解决这一问题。
  * 
- * 如果数组中不存在目标值，返回 [-1, -1]。
+ * 你可以假设数组中的所有字符都是 ASCII 码表中的可打印字符。
  * 
- * 示例 1:
  * 
- * 输入: nums = [5,7,7,8,8,10], target = 8
- * 输出: [3,4]
  * 
- * 示例 2:
+ * 示例 1：
  * 
- * 输入: nums = [5,7,7,8,8,10], target = 6
- * 输出: [-1,-1]
+ * 输入：["h","e","l","l","o"]
+ * 输出：["o","l","l","e","h"]
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 输入：["H","a","n","n","a","h"]
+ * 输出：["h","a","n","n","a","H"]
  * 
  */
-
+/*
+    题解：
+        实现 Array.prototype.reverse
+        1. 使用双指针一前一后交换， S(n) = 1， T(n) = O(n)
+        2. Array.prototype.reverse 需要 O(n) 空间复杂度
+*/
 // @lc code=start
 /**
- * @param {number[]} nums
- * @param {number} target
- * @return {number[]}
+ * @param {character[]} s
+ * @return {void} Do not return anything, modify s in-place instead.
  */
-var searchRange = function(nums, target) {
-    // if (nums.length === 0) { return [-1, -1]; }
-    // if (nums.length === 1) {
-    //     return nums[0] === target ? [0, 0] : [-1, -1];
-    // }
-    /**    
-    * 解一：暴力法 T(n) = O(n) S(n) = O(1)
-    * 解二：二分查找法 T(n) = O(logn) S(n) = O(1)
-    */
-    let low = 0,
-        high = nums.length - 1;
-    const res = [-1, -1]; // [起始位置，终止位置]
-    // 起始位置
-    while (low <= high) {
-        const mid = low + ((high - low)>>1);
-        if (nums[mid] < target) {
-            low = mid + 1;
-        } else if (nums[mid] > target) {
-            high = mid - 1;
-        } else {
-            // nums[mid] === target
-            if (mid === 0 || nums[mid - 1] < target) {
-                res[0] = mid;
-                break;
-            } else {
-                high = mid - 1;
-            }
-        }
+var reverseString = function(s) {
+    for(let i = 0; i < (s.length >> 1); i++) {
+        const oppoIdx = s.length - 1 - i;
+        [s[i], s[oppoIdx]] = [s[oppoIdx], s[i]];
     }
-    // 终止位置
-    low = 0;
-    high = nums.length - 1;
-    while (low <= high) {
-        const mid = low + ((high - low)>>1);
-        if (nums[mid] < target) {
-            low = mid + 1;
-        } else if (nums[mid] > target) {
-            high = mid - 1;
-        } else {
-            // nums[mid] === target
-            if (mid === nums.length - 1 || nums[mid + 1] > target) {
-                res[1] = mid;
-                break;
-            } else {
-                low = mid + 1;
-            }
-        }
-    }
-    return res;
 };
 // @lc code=end
-console.assert(searchRange([5,7,7,8,8,10], 8));
+
 
 ```
 </details>
@@ -7421,143 +11157,6 @@ var firstUniqChar = function(s) {
 ```
 </details>
 
-### 39.组合总和<a href="./src/39.组合总和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=39 lang=javascript
- *
- * [39] 组合总和
- *
- * https://leetcode-cn.com/problems/combination-sum/description/
- *
- * algorithms
- * Medium (69.70%)
- * Likes:    1002
- * Dislikes: 0
- * Total Accepted:    172.6K
- * Total Submissions: 241.4K
- * Testcase Example:  '[2,3,6,7]\n7'
- *
- * 给定一个无重复元素的数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
- * 
- * candidates 中的数字可以无限制重复被选取。
- * 
- * 说明：
- * 
- * 
- * 所有数字（包括 target）都是正整数。
- * 解集不能包含重复的组合。 
- * 
- * 
- * 示例 1：
- * 
- * 输入：candidates = [2,3,6,7], target = 7,
- * 所求解集为：
- * [
- * ⁠ [7],
- * ⁠ [2,2,3]
- * ]
- * 
- * 
- * 示例 2：
- * 
- * 输入：candidates = [2,3,5], target = 8,
- * 所求解集为：
- * [
- * [2,2,2,2],
- * [2,3,3],
- * [3,5]
- * ]
- * 
- * 
- * 
- * 提示：
- * 
- * 
- * 1 <= candidates.length <= 30
- * 1 <= candidates[i] <= 200
- * candidate 中的每个元素都是独一无二的。
- * 1 <= target <= 500
- * 
- * 标签: 数组 回溯算法
- */
-
-// @lc code=start
-/**
- * @param {number[]} candidates
- * @param {number} target
- * @return {number[][]}
- */
-var combinationSum = function(candidates, target) {
-    const res = [];
-    const recusion = (candidates, leftTarget, index, choosed) => {
-        if (index >= candidates.length || leftTarget < 0) { return; }
-        while (index <= candidates.length - 1) {
-            const candidate = candidates[index];
-            let cnt = 0;
-            while (candidate * cnt <= leftTarget) {
-                let newChoosed = choosed.slice();
-                let copyCnt = cnt;
-                while (copyCnt > 0) {
-                    newChoosed.push(candidate);
-                    copyCnt--;
-                }
-                const newLeftTarget = leftTarget - candidate * cnt;
-                if (newLeftTarget === 0) {
-                    res.push(newChoosed);
-                }
-                recusion(candidates, newLeftTarget, (index + 1), newChoosed);
-                cnt++;
-            }
-            index++;
-        }
-    }
-    recusion(candidates, target, 0, []);
-    return res;
-};
-/**
-    下面是 LeetCode 官方题解，https://leetcode-cn.com/problems/combination-sum/solution/zu-he-zong-he-by-leetcode-solution/
-    与我上面题解相比
-    相同点：
-        整体思路是相同的，都是使用 0-1 选择与不选择，对 candidates 上的每个数，都有 1...n （n * num <= leftTarget）的可能性，然后进入下一个
-    官方题解更巧妙的地方：
-        在于把每个数的重复选择，也交给递归，不用自己处理
-
- */
-var combinationSum = function(candidates, target) {
-    const res = [];
-    const dfs = (leftTarget, combine, idx) => {
-        if (idx === candidates.length) {
-            return;
-        }
-        if (leftTarget === 0) {
-            // 直接跳过
-            res.push(combine);
-            return;
-        }
-        // 1. 跳过当前，游标 idx 需要后移一位
-        dfs(leftTarget, combine, idx + 1);
-        // 2. 选择当前数，游标 idx 不需要移动
-        if (leftTarget - candidates[idx] >= 0) { // 剪枝
-            dfs(leftTarget - candidates[idx], [...combine, candidates[idx]], idx);
-        }
-        // 3. 不跳过，也不选择，没有意义，舍弃
-        // dfs(leftTarget, combine, idx)
-    }
-
-    dfs(target, [], 0);
-    return res;
-};
-// @lc code=end
-
-
-```
-</details>
-
 ### 394.字符串解码<a href="./src/394.字符串解码.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
@@ -7747,112 +11346,6 @@ var decodeString = function(s) {
 decodeString("3[a]2[bc]"); // debug for vscode
 // decodeString("3[a2[c]]"); // debug for vscode
 // decodeString("100[leetcode]"); // debug for vscdoe
-
-```
-</details>
-
-### 4.寻找两个正序数组的中位数<a href="./src/4.寻找两个正序数组的中位数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=4 lang=javascript
- *
- * [4] 寻找两个正序数组的中位数
- *
- * https://leetcode-cn.com/problems/median-of-two-sorted-arrays/description/
- *
- * algorithms
- * Hard (38.57%)
- * Likes:    3069
- * Dislikes: 0
- * Total Accepted:    241.4K
- * Total Submissions: 625.8K
- * Testcase Example:  '[1,3]\n[2]'
- *
- * 给定两个大小为 m 和 n 的正序（从小到大）数组 nums1 和 nums2。
- * 
- * 请你找出这两个正序数组的中位数，并且要求算法的时间复杂度为 O(log(m + n))。
- * 
- * 你可以假设 nums1 和 nums2 不会同时为空。
- * 
- * 
- * 
- * 示例 1:
- * 
- * nums1 = [1, 3]
- * nums2 = [2]
- * 
- * 则中位数是 2.0
- * 
- * 
- * 示例 2:
- * 
- * nums1 = [1, 2]
- * nums2 = [3, 4]
- * 
- * 则中位数是 (2 + 3)/2 = 2.5
- * 
- * 
- */
-/**
-    
- */
-// @lc code=start
-/**
- * @param {number[]} nums1
- * @param {number[]} nums2
- * @return {number}
- */
-var findMedianSortedArrays = function(nums1, nums2) {
-    /**
-        解一：暴力法
-        原理：
-            将两个数组合并，再进行排序，假设是快排，则 T(n) = O(nlogn)
-     */
-    const nums = [...nums1, ...nums2];
-    nums.sort((n1, n2) => (n1 - n2));
-    if (nums.length % 2 === 0) {
-        const mid = nums.length>>1;
-        return (nums[mid] + nums[mid-1])/2; // 中位数要除以2
-    } else {
-        return nums[(nums.length>>1)]
-    }
-    /**
-        解二：二分查找法
-        例子：
-      nums1  1   2   3   4   8
-            l1              r1
-                mid1
-
-      nums2  6       7       9
-            l2              r2       
-                mid2
-
-            进行二分查找:
-
-                1   2   3   4   8
-                l1              r1
-                    mid1
-            第一轮：
-                            l1  r1
-                            mid1
-
-                6       7       9
-                l2              r2      
-                        mid2
-            第一轮：
-                l2r2
-                mid2
-
-            4、6 将两个数组划分为：
-            1 2 3 和 7 8 9
-     */
-};
-// @lc code=end
-
 
 ```
 </details>
@@ -8256,233 +11749,6 @@ canPartition([1, 2, 5]);
 ```
 </details>
 
-### 42.接雨水<a href="./src/42.接雨水.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=42 lang=javascript
- *
- * [42] 接雨水
- *
- * https://leetcode-cn.com/problems/trapping-rain-water/description/
- *
- * algorithms
- * Hard (52.95%)
- * Likes:    1787
- * Dislikes: 0
- * Total Accepted:    161.5K
- * Total Submissions: 304.9K
- * Testcase Example:  '[0,1,0,2,1,0,1,3,2,1,2,1]'
- *
- * 给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
- * 
- * 
- * 
- * 示例 1：
- * 
- * 
- * 
- * 
- * 输入：height = [0,1,0,2,1,0,1,3,2,1,2,1]
- * 输出：6
- * 解释：上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。 
- * 
- * 
- * 示例 2：
- * 
- * 
- * 输入：height = [4,2,0,3,2,5]
- * 输出：9
- * 
- * 
- * 
- * 
- * 提示：
- * 
- * 
- * n == height.length
- * 0 
- * 0 
- * 
- * 
- */
-/**
-   零、参考资料 https://leetcode-cn.com/problems/trapping-rain-water/solution/jie-yu-shui-by-leetcode/
-   一、暴力法
-       T(n) = O(n^2)
-       S(n) = O(1)
-       以每一个元素为中心，从左右扩散
-   二、单调栈
-       T(n) = O(n)
-       S(n) = O(n)
-       代码如下，对应着参考资料的 动态编程
-
-
-       leftMax     // 单调不减栈
-                   // 记录左边数组的最大值
-
-
-       rightMax
-                   // 单调不增栈
-                   // 记录右边数组的最大值
-*/
-// @lc code=start
-/**
- * @param {number[]} height
- * @return {number}
- */
-/**
- * @param {number[]} height
- * @return {number}
- */
-var trap = function (height) {
-    let n = height.length;
-    if (n === 0) return 0;
-    let res = 0;
-    const test = [];
-
-    let leftMax = [],  
-        rightMax = [];
-    //记录左边数组的最大值
-    leftMax[0] = height[0];
-    for (let i = 1; i < n; i++) {
-        leftMax[i] = Math.max(leftMax[i - 1], height[i]);
-    }
-    console.log('leftMax: ', leftMax);    
-    //记录右边数组的最大值
-    rightMax[n - 1] = height[n - 1];
-    for (let i = n - 2; i >= 0; i--) {
-        rightMax[i] = Math.max(rightMax[i + 1], height[i]);
-    }
-    console.log('rightMax: ', rightMax);
-    //统计每一列的面积之和
-    for (let i = 0; i < n; i++) {
-        res += Math.min(leftMax[i], rightMax[i]) - height[i];
-        test[i] = Math.min(leftMax[i], rightMax[i]) - height[i];
-    }
-    console.log('test: ', test);
-    return res;
-};
-// @lc code=end
-
-
-```
-</details>
-
-### 43.字符串相乘<a href="./src/43.字符串相乘.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=43 lang=javascript
- *
- * [43] 字符串相乘
- *
- * https://leetcode-cn.com/problems/multiply-strings/description/
- *
- * algorithms
- * Medium (44.49%)
- * Likes:    495
- * Dislikes: 0
- * Total Accepted:    108.7K
- * Total Submissions: 244.2K
- * Testcase Example:  '"2"\n"3"'
- *
- * 给定两个以字符串形式表示的非负整数 num1 和 num2，返回 num1 和 num2 的乘积，它们的乘积也表示为字符串形式。
- * 
- * 示例 1:
- * 
- * 输入: num1 = "2", num2 = "3"
- * 输出: "6"
- * 
- * 示例 2:
- * 
- * 输入: num1 = "123", num2 = "456"
- * 输出: "56088"
- * 
- * 说明：
- * 
- * 
- * num1 和 num2 的长度小于110。
- * num1 和 num2 只包含数字 0-9。
- * num1 和 num2 均不以零开头，除非是数字 0 本身。
- * 不能使用任何标准库的大数类型（比如 BigInteger）或直接将输入转换为整数来处理。
- * 
- * 标签：数学 字符串
- * 
- */
-/**
-    相似题目：字符串相加 https://github.com/NeoYo/leetcode-top-javascript/blob/master/415.%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9B%B8%E5%8A%A0.js
-
-    题解：
-        逐位相乘逐位累加
-        以 '123' 和 '456' 为例，手算乘法
-            123 与 6:  3和6  20和6  100和6
-            123 与 5:  3和5  20和5  100和5
-            123 与 4:  3和4  20和4  100和4
-        相当于拆解成 两个个位数字相乘，再填充到对应的数组位置
-
-    注意点：
-        1. ['0', '0'] => '0'  处理：'' || '0' = '0'
-
-    参考资料：
-        官方题解 https://leetcode-cn.com/problems/multiply-strings/solution/zi-fu-chuan-xiang-cheng-by-leetcode-solution/
- */
-/**
- * @param {string} num1
- * @param {string} num2
- * @return {string}
- */
-var multiply = function(num1, num2) {
-    const res = Array(num1.length + num2.length).fill(0); // res  从右边到左边；数值：最低位 -> 最高位；数组索引： 高 -> 低
-    let num2Idx = num2.length - 1;                        // num2 从右边到左边；数值：最低位 -> 最高位；数组索引：高 -> 低
-    while (num2Idx >= 0) {
-        let num1Idx = num1.length - 1;                    // num1 从右边到左边；数值：最低位 -> 最高位；数组索引：高 -> 低
-        while (num1Idx >= 0) {
-            const cursor = num1Idx + num2Idx + 1;
-            const sum = res[cursor] + parseInt(num1[num1Idx]) * parseInt(num2[num2Idx]); // 假设最大 9*9+9 = 90 不会超过两位
-            res[cursor] = sum % 10;
-            res[cursor - 1] += Math.floor(sum / 10);      // 进位
-            num1Idx--;
-        }
-        num2Idx--;
-    }
-    return res.join('').replace(/^0*/, '') || '0';
-};
-// @lc code=end
-
-multiply('123', '456');
-/**
-    错误实例如下，会出现大数溢出，使得结果错误
-
-    Testcase
-        "123456789"
-        "987654321"
-    Answer
-        "121932631112635260"
-    Expected Answer
-        "121932631112635269"
- */
-var multiply = function(num1, num2) {
-    const num2L = num2.length - 1;
-    let num2Idx = num2.length - 1;
-    let res = 0;
-    // 竖式乘法
-    while (num2Idx >= 0) {
-        res += num2[num2Idx] * num1 * Math.pow(10, num2L - num2Idx);
-        // console.log(res);
-        num2Idx--;
-    }
-    return String(res);
-};
-```
-</details>
-
 ### 437.路径总和-iii<a href="./src/437.路径总和-iii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
@@ -8757,82 +12023,6 @@ var fourSumCount = function(A, B, C, D) {
 ```
 </details>
 
-### 46.全排列<a href="./src/46.全排列.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=46 lang=javascript
- *
- * [46] 全排列
- *
- * https://leetcode-cn.com/problems/permutations/description/
- *
- * algorithms
- * Medium (76.65%)
- * Likes:    853
- * Dislikes: 0
- * Total Accepted:    177.3K
- * Total Submissions: 231.1K
- * Testcase Example:  '[1,2,3]'
- *
- * 给定一个 没有重复 数字的序列，返回其所有可能的全排列。
- * 
- * 示例:
- * 
- * 输入: [1,2,3]
- * 输出:
- * [
- * ⁠ [1,2,3],
- * ⁠ [1,3,2],
- * ⁠ [2,1,3],
- * ⁠ [2,3,1],
- * ⁠ [3,1,2],
- * ⁠ [3,2,1]
- * ]
- * 
- */
-
-// @lc code=start
-/**
- * @param {number[]} nums
- * @return {number[][]}
- */
-var permute = function(nums) {
-    const dfs = (depth, res, leftNums, cur) => {
-        if (depth === 0) {
-            res.push(cur);
-            return;
-        }
-        depth--;
-        for (let i = 0; i < leftNums.length; i++) {
-            const nextLeftNums = leftNums.slice();
-            nextLeftNums.splice(i, 1);            
-            dfs(
-                depth,
-                res,
-                nextLeftNums,
-                [...cur, leftNums[i]]
-            )
-        }
-    }
-    const res = [];
-    dfs(nums.length, res, nums, []);
-    return res;
-    /**
-    * 解二：回溯法
-    * 这道题，其实用回溯算法，更好理解
-    * Ref: https://labuladong.gitbook.io/algo/suan-fa-si-wei-xi-lie/hui-su-suan-fa-xiang-jie-xiu-ding-ban
-    */
-};
-// @lc code=end
-permute([1, 2, 3])
-
-```
-</details>
-
 ### 461.汉明距离<a href="./src/461.汉明距离.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
@@ -9017,277 +12207,6 @@ findTargetSumWays([1,1,1,1,1], 3);
 ```
 </details>
 
-### 5.最长回文子串<a href="./src/5.最长回文子串.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=5 lang=javascript
- *
- * [5] 最长回文子串
- *
- * https://leetcode-cn.com/problems/longest-palindromic-substring/description/
- *
- * algorithms
- * Medium (32.20%)
- * Likes:    2872
- * Dislikes: 0
- * Total Accepted:    411.8K
- * Total Submissions: 1.3M
- * Testcase Example:  '"babad"'
- *
- * 给定一个字符串 s，找到 s 中最长的回文子串。你可以假设 s 的最大长度为 1000。
- * 
- * 示例 1：
- * 
- * 输入: "babad"
- * 输出: "bab"
- * 注意: "aba" 也是一个有效答案。
- * 
- * 
- * 示例 2：
- * 
- * 输入: "cbbd"
- * 输出: "bb"
- * 
- * 
- */
-
-// @lc code=start
-/**
- * @param {string} s
- * @return {string}
- */
-var longestPalindrome = function(s) {
-    let maxSub = '';
-    for (let i = 0; i < s.length; i++) {
-        const oddSpreadLength = Math.min(
-            s.length - 1 - i,
-            i
-        );
-        for (let spread = 0; spread <= oddSpreadLength; spread++) {
-            if (s[i + spread] !== s[i - spread]) {
-                break;
-            }
-            if ((1 + spread * 2) > maxSub.length) {
-                maxSub = s.slice(i - spread, i + spread + 1);
-            }
-        }
-        const evenSpreadLength = Math.min(
-            s.length - i,
-            i
-        );
-        for (let spread = 0; spread <= evenSpreadLength; spread++) {
-            if (s[i + 1 + spread] !== s[i - spread]) {
-                break;
-            }
-            if ((2 + spread * 2) > maxSub.length) {
-                maxSub = s.slice(i - spread, i + spread + 2);
-            }
-        }
-    }
-    return maxSub;
-};
-// @lc code=end
-
-
-```
-</details>
-
-### 54.螺旋矩阵<a href="./src/54.螺旋矩阵.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=54 lang=javascript
- *
- * [54] 螺旋矩阵
- *
- * https://leetcode-cn.com/problems/spiral-matrix/description/
- *
- * algorithms
- * Medium (41.15%)
- * Likes:    525
- * Dislikes: 0
- * Total Accepted:    87.3K
- * Total Submissions: 211.1K
- * Testcase Example:  '[[1,2,3],[4,5,6],[7,8,9]]'
- *
- * 给定一个包含 m x n 个元素的矩阵（m 行, n 列），请按照顺时针螺旋顺序，返回矩阵中的所有元素。
- * 
- * 示例 1:
- * 
- * 输入:
- * [
- * ⁠[ 1, 2, 3 ],
- * ⁠[ 4, 5, 6 ],
- * ⁠[ 7, 8, 9 ]
- * ]
- * 输出: [1,2,3,6,9,8,7,4,5]
- * 
- * 
- * 示例 2:
- * 
- * 输入:
- * [
- * ⁠ [1, 2, 3, 4],
- * ⁠ [5, 6, 7, 8],
- * ⁠ [9,10,11,12]
- * ]
- * 输出: [1,2,3,4,8,12,11,10,9,5,6,7]
- * 
- * 
- */
-/*
-    参考资料
-        螺旋矩阵 https://leetcode-cn.com/problems/spiral-matrix/solution/shou-hui-tu-jie-liang-chong-bian-li-de-ce-lue-kan-/
- */
-
-// @lc code=start
-/**
- * @param {number[][]} matrix
- * @return {number[]}
- */
-var spiralOrder = function(matrix) {
-    // 0. 边界判断
-    if (matrix.length === 0) { return []; }
-    //              top
-    // (x, y) left      right
-    //            bottom
-    const res = [];
-    let left = 0,
-        top = 0,
-        bottom = matrix.length - 1,
-        right = matrix[0].length - 1;
-    while (left < right && top < bottom) {
-        for (let i = left; i < right; i++) res.push(matrix[top][i])   // 向右
-        for (let i = top; i < bottom; i++) res.push(matrix[i][right]) // 向下
-        for (let i = right; i > left; i--) res.push(matrix[bottom][i])// 向左
-        for (let i = bottom; i > top; i--) res.push(matrix[i][left])  // 向上
-        // 缩小 “圈”
-        left++;
-        right--;
-        top++;
-        bottom--;
-    }
-    if (top === bottom) {
-        // 剩下一行，从左到右依次添加
-        for (let i = left; i <= right; i++) res.push(matrix[top][i])
-    } else if (left === right) {
-        // 剩下一列，从上到下依次添加
-        for (let i = top; i <= bottom; i++) res.push(matrix[i][left]);
-    }
-    return res;
-};
-// @lc code=end
-spiralOrder([[1,2,3],[4,5,6],[7,8,9]])
-
-```
-</details>
-
-### 55.跳跃游戏<a href="./src/55.跳跃游戏.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=55 lang=javascript
- *
- * [55] 跳跃游戏
- *
- * https://leetcode-cn.com/problems/jump-game/description/
- *
- * algorithms
- * Medium (41.01%)
- * Likes:    806
- * Dislikes: 0
- * Total Accepted:    151.4K
- * Total Submissions: 369.2K
- * Testcase Example:  '[2,3,1,1,4]'
- *
- * 给定一个非负整数数组，你最初位于数组的第一个位置。
- * 
- * 数组中的每个元素代表你在该位置可以跳跃的最大长度。
- * 
- * 判断你是否能够到达最后一个位置。
- * 
- * 示例 1:
- * 
- * 输入: [2,3,1,1,4]
- * 输出: true
- * 解释: 我们可以先跳 1 步，从位置 0 到达 位置 1, 然后再从位置 1 跳 3 步到达最后一个位置。
- * 
- * 
- * 示例 2:
- * 
- * 输入: [3,2,1,0,4]
- * 输出: false
- * 解释: 无论怎样，你总会到达索引为 3 的位置。但该位置的最大跳跃长度是 0 ， 所以你永远不可能到达最后一个位置。
- * 
- * 
- */
-/*
-              [2, 3, 1, 1, 4]
-             /              \
-           /+1                \+2
-        [3, 1, 1, 4]        [1, 1, 4]
-        /+1   |+2  \+3          |+1
-[1, 1, 4]   [1, 4] [4]        [1, 4]
-    |+1       |+1               |+1
-  [1, 4]     [4]               [4]
-    |+1
-   [4]
-
-    ∵ nums[4]    , DP[0] = true;
-    ∵ nums[3] = 1, DP[1] = DP[0] = true;
-    ∵ nums[2] = 1, DP[2] = DP[1] = true;
-    ∵ nums[1] = 3, DP[3] = DP[2] || DP[1] || DP[0]] = true;
-    ∵ nums[0] = 2, DP[4] = DP[3] || DP[2] = true;
-
-    [3, 2, 1, 0, 4]
-    ∵ nums[4],     DP[0] = true;
-    ∵ nums[3] = 0, DP[1] = fale;
-    ∵ nums[2] = 1, DP[2] = DP[1] = false;
-    ∵ nums[1] = 2, DP[3] = DP[2] || DP[1]] = false;
-    ∵ nums[0] = 3, DP[4] = DP[3] || DP[2] || DP[1]] = false;
-
-    递推公式:
-    const num = nums[nums.length - 1 - i]
-    let DP[i] = [];
-    for (let j = 1; j <= num; j++) {
-        DP[i] = [...DP[i], ...DP[i-j]]
-    }
-     */
-// @lc code=start
-/**
- * @param {number[]} nums
- * @return {boolean}
- */
-var canJump = function(nums) {
-  const DP = Array(nums.length).fill(null).map(() => false);
-  DP[0] = true;
-  for (let i = 1; i < nums.length; i++) {
-    const num = nums[nums.length - 1 - i];
-    for (let j = 1; j <= num; j++) {
-      DP[i] = DP[i] || DP[i-j];
-      if (DP[i] === true) {
-        break;
-      }
-    }
-  }
-  return DP[nums.length - 1];
-};
-// @lc code=end
-
-
-```
-</details>
-
 ### 557.反转字符串中的单词-iii<a href="./src/557.反转字符串中的单词-iii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
@@ -9329,9 +12248,7 @@ var canJump = function(nums) {
  * 
  */
 /**
-    知识点
-        str.split(' ') = str.split('/\s/g')
-        str.match(/[\w']+/g)  
+    题解：使用 Array.prototype.reverse 和 String.prototype.split
  */
 // @lc code=start
 /**
@@ -9346,315 +12263,6 @@ var reverseWords = function(s) {
         ))
         .join(' ')
     );
-};
-// @lc code=end
-
-
-```
-</details>
-
-### 56.合并区间<a href="./src/56.合并区间.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=56 lang=javascript
- *
- * [56] 合并区间
- *
- * https://leetcode-cn.com/problems/merge-intervals/description/
- *
- * algorithms
- * Medium (43.02%)
- * Likes:    667
- * Dislikes: 0
- * Total Accepted:    157.3K
- * Total Submissions: 364K
- * Testcase Example:  '[[1,3],[2,6],[8,10],[15,18]]'
- *
- * 给出一个区间的集合，请合并所有重叠的区间。
- * 
- * 
- * 
- * 示例 1:
- * 
- * 输入: intervals = [[1,3],[2,6],[8,10],[15,18]]
- * 输出: [[1,6],[8,10],[15,18]]
- * 解释: 区间 [1,3] 和 [2,6] 重叠, 将它们合并为 [1,6].
- * 
- * 
- * 示例 2:
- * 
- * 输入: intervals = [[1,4],[4,5]]
- * 输出: [[1,5]]
- * 解释: 区间 [1,4] 和 [4,5] 可被视为重叠区间。
- * 
- * 注意：输入类型已于2019年4月15日更改。 请重置默认代码定义以获取新方法签名。
- * 
- * 
- * 
- * 提示：
- * 
- * 
- * intervals[i][0] <= intervals[i][1]
- * 
- * 
- */
-/**
-  题解：
-       一、思路
-           排序+双指针
-           1. 排序，先根据每个区间起点进行排序
-           2. 双指针，当前区间的起点，与上一个区间的终点作比较，比较后的处理，如下面代码所示
-       二、注意点
-           1. Math.max(intervals[i][1], intervals[i-1][1]) 这里是因为有一个用例没有通过
-                输入：[[1,4],[2,3]]，输出应该是：[[1,4]]
-*/
-// @lc code=start
-/**
- * @param {number[][]} intervals
- * @return {number[][]}
- */
-var merge = function(intervals) {
-    intervals.sort((i1, i2) => (i1[0] - i2[0]));    // 升序
-    for (let i = 1; i < intervals.length; i++) {
-        const prevLast = intervals[i - 1][1];
-        const curStart = intervals[i][0];
-        if (prevLast >= curStart) {
-            intervals[i] = [intervals[i - 1][0], Math.max(intervals[i][1], intervals[i-1][1])];
-            intervals[i-1] = null;  // 清空上一个区间
-        }
-    }
-    return intervals.filter(interval => interval != null);
-};
-// @lc code=end
-
-
-```
-</details>
-
-### 59.螺旋矩阵-ii<a href="./src/59.螺旋矩阵-ii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=59 lang=javascript
- *
- * [59] 螺旋矩阵 II
- *
- * https://leetcode-cn.com/problems/spiral-matrix-ii/description/
- *
- * algorithms
- * Medium (78.06%)
- * Likes:    254
- * Dislikes: 0
- * Total Accepted:    50.4K
- * Total Submissions: 64.3K
- * Testcase Example:  '3'
- *
- * 给定一个正整数 n，生成一个包含 1 到 n^2 所有元素，且元素按顺时针顺序螺旋排列的正方形矩阵。
- * 
- * 示例:
- * 
- * 输入: 3
- * 输出:
- * [
- * ⁠[ 1, 2, 3 ],
- * ⁠[ 8, 9, 4 ],
- * ⁠[ 7, 6, 5 ]
- * ]
- * 
- */
-/**
-    题解:
-        神似的题目，54. 螺旋矩阵 是已知矩阵，求顺时针螺旋顺序，返回矩阵中的所有元素
-        这一道题，59. 螺旋矩阵-ii 是已知正整数 n，实际上也是 “已知” 了矩阵，边长已经知道了
-
-        根据题意，1, 2, 3, ... 是从外层往内层顺时针走一圈，走完往里收缩，进入下一圈
-        思路跟 54. 螺旋矩阵 几乎是一样的，小小的差异是经过的每一个点的处理
-            54. 螺旋矩阵 是收集走过点的值
-            59. 螺旋矩阵-ii 是填充走过点的值
- */
-// @lc code=start
-/**
- * @param {number} n
- * @return {number[][]}
- */
-var generateMatrix = function(n) {
-    // 0. 边界判断
-    if (n === 0) { return []; }
-    //              top
-    // (x, y) left      right
-    //             bottom
-    const matrix = Array(n).fill(null).map(_ => Array(n));
-    let left = 0,
-        top = 0,
-        bottom = matrix.length - 1,
-        right = matrix[0].length - 1;
-    let cnt = 0;
-    while (left < right && top < bottom) {
-        for (let i = left; i < right; i++) matrix[top][i] = ++cnt;      // 向右
-        for (let i = top; i < bottom; i++) matrix[i][right] = ++cnt;    // 向下
-        for (let i = right; i > left; i--) matrix[bottom][i] = ++cnt;   // 向左
-        for (let i = bottom; i > top; i--) matrix[i][left] = ++cnt;     // 向上
-        // 缩小 “圈”
-        left++;
-        right--;
-        top++;
-        bottom--;
-    }
-    if (top === bottom) {
-        // 剩下一行，从左到右依次添加
-        for (let i = left; i <= right; i++) matrix[top][i] = ++cnt;
-    } else if (left === right) {
-        // 剩下一列，从上到下依次添加
-        for (let i = top; i <= bottom; i++) matrix[i][left] = ++cnt;
-    }
-    return matrix;
-};
-// @lc code=end
-
-
-```
-</details>
-
-### 61.旋转链表<a href="./src/61.旋转链表.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=61 lang=javascript
- *
- * [61] 旋转链表
- *
- * https://leetcode-cn.com/problems/rotate-list/description/
- *
- * algorithms
- * Medium (40.52%)
- * Likes:    355
- * Dislikes: 0
- * Total Accepted:    92.1K
- * Total Submissions: 227.3K
- * Testcase Example:  '[1,2,3,4,5]\n2'
- *
- * 给定一个链表，旋转链表，将链表每个节点向右移动 k 个位置，其中 k 是非负数。
- * 
- * 示例 1:
- * 
- * 输入: 1->2->3->4->5->NULL, k = 2
- * 输出: 4->5->1->2->3->NULL
- * 解释:
- * 向右旋转 1 步: 5->1->2->3->4->NULL
- * 向右旋转 2 步: 4->5->1->2->3->NULL
- * 
- * 
- * 示例 2:
- * 
- * 输入: 0->1->2->NULL, k = 4
- * 输出: 2->0->1->NULL
- * 解释:
- * 向右旋转 1 步: 2->0->1->NULL
- * 向右旋转 2 步: 1->2->0->NULL
- * 向右旋转 3 步: 0->1->2->NULL
- * 向右旋转 4 步: 2->0->1->NULL
- * 
- */
-/*
-   题解
-   一、找新起点
-       以第一个例子做分析
-           输入: 1->2->3->4->5->NULL, k = 2
-           输出: 4->5->1->2->3->NULL
-
-       根据题意, 以上面例子进行分析
-
-           链表长度是 5
-           k = 1，选最后一个节点作为起点
-           k = 2，选倒数第二个节点作为起点
-           ...
-           k = 6，选最后一个节点作为起点 (6%5 = 1)
-
-       由于是单向链表，就可以直接移到最后一个节点，从后往前，根据k去找起点
-
-       这里我们对上面分析进行转换
-           链表长度是 5
-           k = 1，选最后一个节点作为起点，选第 4 个节点作为起点 （5-1 +1=5）
-           k = 2，选倒数第二个节点作为起点，选第 3 个节点作为起点 (5-2 +1=4)
-           ...
-           k = 6，选最后一个节点作为起点 (6%5 = 1)，选第 4 个节点作为起点 (5-1 +1=5)
-
-           k=1, 起点：Length-(k%Length) +1
-
-       使用另一个例子用来验证我们的想法
-
-           输入: 0->1->2->NULL, k = 4
-           输出: 2->0->1->NULL
-
-           Length-(k%Length) +1 = 3 - (4%3) + 1 = 3
-
-           第 3 个节点是 Node(2)，看输出，果然以 2 作为起点。hhh~
-
-       可以得出：
-
-       新起点索引为：newHeadIndexLength-(k%Length) +1
-
-   二、切与连
-       连：将尾节点连上原始首节点
-       切：找到新头结点（新起点索引对应的节点）的上一个节点，断开它对心头结点的指向
-
-   三、边界考虑
-       1. k=1, newHeadIndex=1，直接返回
-*/
-// @lc code=start
-/**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
- */
-/**
- * @param {ListNode} head
- * @param {number} k
- * @return {ListNode}
- */
-var rotateRight = function(head, k) {
-    if (k === 0 || head == null || head.next == null) {
-        return head;
-    }
-    let Length = 0;
-    let cursor = head;
-    let lastNode;
-    while (cursor) {
-        Length++;
-        if (cursor.next == null) {
-            lastNode = cursor;
-        }
-        cursor = cursor.next;
-    }
-    // 接上
-    lastNode.next = head;
-    // console.log('Length: ', Length)
-    // Length - (k%Length) +1
-    let newHeadIndex = Length - (k%Length) +1;
-    if (newHeadIndex === 0 || newHeadIndex === 1) {
-        return head;
-    }
-    cursor = head;
-    for (let i = 2; i <= (newHeadIndex - 1); i++) {
-        cursor = cursor.next;
-    }
-    const preNewHead = cursor;
-    const newHead = preNewHead.next;
-    // 断开
-    preNewHead.next = null;
-    return newHead;
 };
 // @lc code=end
 
@@ -9742,241 +12350,6 @@ var mergeTrees = function(t1, t2) {
     return currentNode;
 };
 // @lc code=end
-
-
-```
-</details>
-
-### 62.不同路径<a href="./src/62.不同路径.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=62 lang=javascript
- *
- * [62] 不同路径
- *
- * https://leetcode-cn.com/problems/unique-paths/description/
- *
- * algorithms
- * Medium (62.08%)
- * Likes:    681
- * Dislikes: 0
- * Total Accepted:    146K
- * Total Submissions: 234.9K
- * Testcase Example:  '3\n2'
- *
- * 一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为“Start” ）。
- * 
- * 机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。
- * 
- * 问总共有多少条不同的路径？
- * 
- * 
- * 
- * 例如，上图是一个7 x 3 的网格。有多少可能的路径？
- * 
- * 
- * 
- * 示例 1:
- * 
- * 输入: m = 3, n = 2
- * 输出: 3
- * 解释:
- * 从左上角开始，总共有 3 条路径可以到达右下角。
- * 1. 向右 -> 向右 -> 向下
- * 2. 向右 -> 向下 -> 向右
- * 3. 向下 -> 向右 -> 向右
- * 
- * 
- * 示例 2:
- * 
- * 输入: m = 7, n = 3
- * 输出: 28
- * 
- * 
- * 
- * 提示：
- * 
- * 
- * 1 <= m, n <= 100
- * 题目数据保证答案小于等于 2 * 10 ^ 9
- * 
- * 
- */
-/*
-    题解:
-       如果求的是所有路径，可以使用 dfs 去求出所有解
-       如果求的是一个结果，则可以使用动态规划
-
-    解一：动态规划
-        步骤:
-        1. 画出递归树
-            (m,n)
-             /\
-            /\/\
-           /\/\/\
-          /\/\/\/\
-          \/\/\/\/
-           \/\/\/
-            \/\/
-             \/
-            (0,0)
-        2. 找出DP的表示
-              a  b 
-               \/
-               c
-              假设 DP[n] 表示 n 的步数，有 DP[c] = DP[a] + DP[b]
-        3. DP递推公式
-            DP[y][x] = DP[y-1][x] + DP[y][x-1]
-
-
-    解二：使用排列组合中的组合
-        关键在于怎么看出这是组合问题
-        由题意可知，总共要走的步数是 m + n - 2 步
-        每一步可以选择向下↓或向→, 选择了 m-1 向右，剩下的 n - 1都是向下的。
-        也就是说在  m + n - 2 步中，选出 m - 1 步，作为向右，先选和后选不影响结果
-
-        换种表达，一个袋子里装了编号为 1 到 m+n-2 的小球，从中挑选出 m-1个小球， 这就是一个组合的问题^_^
-
-        Cm+n-2 m-1
-*/
-// @lc code=start
-/**
- * @param {number} m
- * @param {number} n
- * @return {number}
- */
-var uniquePaths = function(m, n) {
-    const all = m + n - 2;  // 3
-    const picked = m - 1;   // 2
-    let res = 1;
-    for (let i = 0; i < picked; i++) {
-        res = (all - i) * res;
-    }
-    for (let i = 1; i <= picked; i++) {
-        res = res / i;
-    }
-    return res;
-};
-// @lc code=end
-
-
-```
-</details>
-
-### 64.最小路径和<a href="./src/64.最小路径和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=64 lang=javascript
- *
- * [64] 最小路径和
- *
- * https://leetcode-cn.com/problems/minimum-path-sum/description/
- *
- * algorithms
- * Medium (67.50%)
- * Likes:    677
- * Dislikes: 0
- * Total Accepted:    147.1K
- * Total Submissions: 217.8K
- * Testcase Example:  '[[1,3,1],[1,5,1],[4,2,1]]'
- *
- * 给定一个包含非负整数的 m x n 网格，请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。
- * 
- * 说明：每次只能向下或者向右移动一步。
- * 
- * 示例:
- * 
- * 输入:
- * [
- *  [1,3,1],
- * ⁠ [1,5,1],
- * ⁠ [4,2,1]
- * ]
- * 输出: 7
- * 解释: 因为路径 1→3→1→1→1 的总和最小。
- * 
- * 
- */
-/**
-    题解：
-        这道题与 62.不同路径，是非常相似的题目
-        https://github.com/NeoYo/leetcode-top-javascript/blob/master/62.%E4%B8%8D%E5%90%8C%E8%B7%AF%E5%BE%84.js
-
-    举例：
-        输入:
-            [
-             [1,3,1],
-            ⁠ [1,5,1],
-            ⁠ [4,2,1]
-            ]
-
-    解题关键：
-        推导转移方程，那么有两个问题：
-        A. 状态是什么？
-            1. 跟第 i 行和第 j 列有关
-            2. 结果求总和最小，那么状态就是 第 i 行和第 j 列的最小和
-        B. 选择是什么？
-            每次状态转移可以选择 i+1 (向下) 或 j+1 (向右)
-            
-        
-
-    二维DP, 最好画出转移表，再编写代码
-        画转移表步骤如下:
-        1. 初始化第一行和第一列
-            1,4,5
-            2,
-            6,
-        2. 根据转移方程 DP[i][j] = Math.min((DP[i-1][j] || 0), (DP[i][j-1] || 0)) + grid[i][j];
-            确定每一个值
-            1,4,5
-            2,? = Math.min(4, 2) + 5 = 7
-            6,
-        3. 依此类推
-            1,4,5
-            2,7,6
-            6,8,7
-
-
-    拓展：
-        转移表与递归树区别与作用：
-            1. 转移表适合 二维DP
-            2. 递归树适合 1~n 维DP
-            3. 转移表适合用来编写和校验，DP代码
-            4. 递归树适合用来编写 dfs 递归代码
- */
-// @lc code=start
-/**
- * @param {number[][]} grid
- * @return {number}
- */
-var minPathSum = function(grid) {
-    const DP = Array(grid.length).fill(null).map(_ => Array());
-    const COL_CNT = grid[0].length;
-    DP[0][0] = grid[0][0];
-    for (let i = 1; i < grid.length; i++) {
-        DP[i][0] = DP[i-1][0] + grid[i][0];
-    }
-    for (let j = 1; j < COL_CNT; j++) {
-        DP[0][j] = DP[0][j-1] + grid[0][j];
-    }
-    for (let i = 1; i < DP.length; i++) {
-        for (let j = 1; j < COL_CNT; j++) {
-            DP[i][j] = Math.min((DP[i-1][j] || 0), (DP[i][j-1] || 0)) + grid[i][j];
-        }
-    }
-    // console.log('DP: ', DP);
-    return DP[DP.length-1][COL_CNT-1];
-};
-// @lc code=end
-minPathSum([[1,3,1],[1,5,1],[4,2,1]]);
 
 
 ```
@@ -10230,293 +12603,6 @@ var countSubstrings = function(s) {
     Write directly
     调试用例：""aaa""
  */
-
-
-```
-</details>
-
-### 7-reverse-integer<a href="./src/7-reverse-integer.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/**
- * @param {number} x
- * @return {number}
- */
-var reverse = function (x) {
-    // 特殊考虑 0、末尾0、-号
-    /**
-     * x = 123
-     * radix = 10
-     * rev = 0
-     * 阶段一
-     * pop = x % radix = 3
-     * rev = rev * radix + pop = 3
-     * x = Math.floor(x / radix) = 12
-     * 阶段二
-     * pop = x % radix = 2
-     * rev = rev * radix + pop = 32
-     * x = Math.floor(x / radix) = 1
-     * 阶段三
-     * pop = x % radix = 1
-     * rev = rev * radix + pop = 321
-     * x = Math.floor(x / radix) = 0
-     * 
-     * if (x === 0) {
-     * }
-     */
-    let rev = 0;
-    const radix = 10;
-    const MAX_VAL = Math.pow(2, 31) - 1;
-    const MIN_VAL = - Math.pow(2, 31);
-    while (x !== 0) {
-        rev = rev * radix + x % radix;
-        x = ~~(x / radix);
-    }
-    if (rev > MAX_VAL || rev < MIN_VAL) {
-        return 0;
-    }
-    return rev;
-};
-
-reverse(-123);
-```
-</details>
-
-### 72.编辑距离<a href="./src/72.编辑距离.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=72 lang=javascript
- *
- * [72] 编辑距离
- *
- * https://leetcode-cn.com/problems/edit-distance/description/
- *
- * algorithms
- * Hard (59.75%)
- * Likes:    1209
- * Dislikes: 0
- * Total Accepted:    89.9K
- * Total Submissions: 149.9K
- * Testcase Example:  '"horse"\n"ros"'
- *
- * 给你两个单词 word1 和 word2，请你计算出将 word1 转换成 word2 所使用的最少操作数 。
- * 
- * 你可以对一个单词进行如下三种操作：
- * 
- * 
- * 插入一个字符
- * 删除一个字符
- * 替换一个字符
- * 
- * 
- * 
- * 
- * 示例 1：
- * 
- * 输入：word1 = "horse", word2 = "ros"
- * 输出：3
- * 解释：
- * horse -> rorse (将 'h' 替换为 'r')
- * rorse -> rose (删除 'r')
- * rose -> ros (删除 'e')
- * 
- * 
- * 示例 2：
- * 
- * 输入：word1 = "intention", word2 = "execution"
- * 输出：5
- * 解释：
- * intention -> inention (删除 't')
- * inention -> enention (将 'i' 替换为 'e')
- * enention -> exention (将 'n' 替换为 'x')
- * exention -> exection (将 'n' 替换为 'c')
- * exection -> execution (插入 'u')
- * 
- * 
- */
-/*
-* 输入：word1 = "horse", word2 = "ros"
-* 输出：3
-* 解释：
-* horse -> rorse (将 'h' 替换为 'r')
-* rorse -> rose (删除 'r')
-* rose -> ros (删除 'e')
-*/
-/*
-    以题目中的 word1 = "horse", word2 = "ros" 分析
-    一、暴力法
-        先全删后完整增加
-        horse -> orse -> rse -> se -> e -> (空) -> s -> os -> ros 需要 9 步
-
-    二、题意理解
-        如果随意地去更改 horse 到 ros，我们可能操作 horse 的每一位，每一位又对应着 26 个字母，有非常多的可能性
-
-        从后往前推敲，更符合我们的思考方式，最终要得到 ros，那就盯紧 ros 这几个字母
-        顺着题意去思考，我们相当于每一次操作都去做选择,从替换、编辑、删除里去做选择
-
-        假设最后得到 ros，它的上一个呢，也是由3种情况得来的，替换、编辑、删除
-            1. ros 由 替换 得来的，由于我们操作是从左往右的，最后一步是替换得到，说明上一步已经走到最右边了，roX -> ros
-            2. ros 由 新增 得来的，那么上一个就是 ro, 最后一位增加一个 s, 就 ros
-            3. ros 由 删除 得来的，那么上一个多了一位，是 rosX，删除 X，就是 ros
-        这里还漏掉了一种情况，最后一位刚好命中
-            4. ros 最后一位 s 刚好命中，已有值是 ros, 上一步走到 ro 时，这一步比对了下已有值最后一位，刚好命中~~~！！！
-    三、递归与动态规划
-        这里直接跳过递归推导到动态规划的过程
-        根据上面分析，状态的定义是
-
-        该题理解资料里的，状态转移表很重要
-
-        最后，代码如下哈
-
-    参考资料
-        https://leetcode-cn.com/problems/edit-distance/solution/bian-ji-ju-chi-by-leetcode-solution/
-        
- */
-// @lc code=start
-/**
- * @param {string} word1
- * @param {string} word2
- * @return {number}
- */
-var minDistance = function(word1, word2) {
-    const word1L = word1.length;
-    const word2L = word2.length;
-
-    // 零、边界值判断
-    if (word1L == 0 || word2L == 0) {
-        return word1L || word2L;
-    }
-
-    // 一、初始化 DP 数组
-    const DP = Array(word1L + 1).fill(null).map(_ => Array(word2L + 1).fill(Infinity));
-
-    // 二、初始化临界值
-    for (let i = 0; i < word1L + 1; i++) {
-        DP[i][0] = i;
-    }
-    for (let j = 0; j < word2L + 1; j++) {
-        DP[0][j] = j;
-    }
-
-    // 三、状态转移
-    for (let i = 1; i < word1L + 1; i++) {
-        for (let j = 1; j < word2L + 1; j++) {
-            let left = DP[i - 1][j] + 1;    // <- 新增
-            let down = DP[i][j - 1] + 1;    // 删除
-            let left_down = DP[i - 1][j - 1];   // 替换 || 跳过
-            if (word1[i - 1] != word2[j - 1]) {
-                left_down += 1; // 替换
-            }
-            DP[i][j] = Math.min(left, Math.min(down, left_down));
-        }
-    }
-    return DP[word1L][word2L];
-};
-// @lc code=end
-
-
-```
-</details>
-
-### 78.子集<a href="./src/78.子集.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=78 lang=javascript
- *
- * [78] 子集
- *
- * https://leetcode-cn.com/problems/subsets/description/
- *
- * algorithms
- * Medium (77.77%)
- * Likes:    724
- * Dislikes: 0
- * Total Accepted:    124.6K
- * Total Submissions: 160.1K
- * Testcase Example:  '[1,2,3]'
- *
- * 给定一组不含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
- * 
- * 说明：解集不能包含重复的子集。
- * 
- * 示例:
- * 
- * 输入: nums = [1,2,3]
- * 输出:
- * [
- * ⁠ [3],
- * [1],
- * [2],
- * [1,2,3],
- * [1,3],
- * [2,3],
- * [1,2],
- * []
- * ]
- * 
- */
-
-// @lc code=start
-/**
- * @param {number[]} nums
- * @return {number[][]}
- */
-var subsets = function(nums) {
-    /**
-        遍历 vs 回溯
-
-        遍历：遍历所有值
-        回溯算法：强调保存当前状态后，在下一层寻找过程中，失败了可以回来，拿到原来的状态
-     */
-
-    /*
-    解一：深度优先遍历
-        T(n) = O(n*2^n)
-               x
-           /        \
-         1            x
-       /    \       /   \
-      2      x     2      x
-     / \    / \   / \    /  \
-    3   x  3   x  3  x   3   x
-
-     进行二叉树的先序遍历， 会得到
-     []
-     [1], [1,2], [1,2,3], [1,2,x], [1,x], [1,x,3], [1,xx]
-     [x], [x, 2], [x, 2, 3], [x, 2, x], [x, x], [x, x, 3], [x, x, x]
-
-     对于这道题，可以用只取前序遍历的，根节点和左子树，后子树舍弃掉，代码如下：
-    */
-    const dfs = (res, leftNums, cur) => {
-        // res.push(cur);
-        if (leftNums.length === 0) {
-            return;
-        }
-        res.push([...cur, leftNums[0]]);
-        dfs(res, leftNums.slice(1), [...cur, leftNums[0]]);
-        dfs(res, leftNums.slice(1), [...cur]);
-    }
-    const res = [[]];
-    dfs(res, nums, [], 0);
-    return res;
-    /**
-     * 解二：回溯法
-     * 这道题，其实用回溯算法，更好理解
-     * Ref: https://labuladong.gitbook.io/algo/suan-fa-si-wei-xi-lie/hui-su-suan-fa-xiang-jie-xiu-ding-ban
-     */
-};
-// @lc code=end
 
 
 ```
@@ -10817,572 +12903,6 @@ var superEggDrop = function(K, N) {
 // @lc code=end
 // superEggDrop(2, 6) // Use for vscode debug
 superEggDrop(2, 7) // Use for vscode debug
-
-
-```
-</details>
-
-### 89.格雷编码<a href="./src/89.格雷编码.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=89 lang=javascript
- *
- * [89] 格雷编码
- *
- * https://leetcode-cn.com/problems/gray-code/description/
- *
- * algorithms
- * Medium (68.83%)
- * Likes:    233
- * Dislikes: 0
- * Total Accepted:    35.7K
- * Total Submissions: 51.7K
- * Testcase Example:  '2'
- *
- * 格雷编码是一个二进制数字系统，在该系统中，两个连续的数值仅有一个位数的差异。
- * 
- * 给定一个代表编码总位数的非负整数 n，打印其格雷编码序列。即使有多个不同答案，你也只需要返回其中一种。
- * 
- * 格雷编码序列必须以 0 开头。
- * 
- * 
- * 
- * 示例 1:
- * 
- * 输入: 2
- * 输出: [0,1,3,2]
- * 解释:
- * 00 - 0
- * 01 - 1
- * 11 - 3
- * 10 - 2
- * 
- * 对于给定的 n，其格雷编码序列并不唯一。
- * 例如，[0,2,3,1] 也是一个有效的格雷编码序列。
- * 
- * 00 - 0
- * 10 - 2
- * 11 - 3
- * 01 - 1
- * 
- * 示例 2:
- * 
- * 输入: 0
- * 输出: [0]
- * 解释: 我们定义格雷编码序列必须以 0 开头。
- * 给定编码总位数为 n 的格雷编码序列，其长度为 2^n。当 n = 0 时，长度为 2^0 = 1。
- * 因此，当 n = 0 时，其格雷编码序列为 [0]。
- * 
- * 
- */
-/**
-    参考资料
-        解法一：公式法
-            资料：https://leetcode-cn.com/problems/gray-code/solution/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by--12/
-                解法三 二进制转成格雷码的公式。
-        解法二：格雷码是反射码
-            资料：https://baike.baidu.com/item/%E6%A0%BC%E9%9B%B7%E7%A0%81/6510858?fr=aladdin 里面介绍了递归，由递归，推导到了上面的 DP
- 
- */
-// @lc code=start
-/**
- * @param {number} n
- * @return {number[]}
- */
-var grayCode = function(n) {
-    const res = [];
-    const max = 1 << n;
-    for(let binary = 0;binary < max; binary++) {
-        res.push(binary ^ (binary >> 1));
-    }
-    return res;
-};
-// @lc code=end
-
-
-```
-</details>
-
-### 9.回文数<a href="./src/9.回文数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=9 lang=javascript
- *
- * [9] 回文数
- *
- * https://leetcode-cn.com/problems/palindrome-number/description/
- *
- * algorithms
- * Easy (58.36%)
- * Likes:    1160
- * Dislikes: 0
- * Total Accepted:    402K
- * Total Submissions: 688.2K
- * Testcase Example:  '121'
- *
- * 判断一个整数是否是回文数。回文数是指正序（从左向右）和倒序（从右向左）读都是一样的整数。
- * 
- * 示例 1:
- * 
- * 输入: 121
- * 输出: true
- * 
- * 
- * 示例 2:
- * 
- * 输入: -121
- * 输出: false
- * 解释: 从左向右读, 为 -121 。 从右向左读, 为 121- 。因此它不是一个回文数。
- * 
- * 
- * 示例 3:
- * 
- * 输入: 10
- * 输出: false
- * 解释: 从右向左读, 为 01 。因此它不是一个回文数。
- * 
- * 
- * 进阶:
- * 
- * 你能不将整数转为字符串来解决这个问题吗？
- * 
- */
-
-// @lc code=start
-/**
- * @param {number} x
- * @return {boolean}
- */
-var isPalindrome = function(x) {
-    if (x < 0 || (x % 10 == 0 && x !== 0)) return false;
-    let reverse = 0;
-    while (x > reverse) {
-        reverse = reverse * 10 + x % 10;
-        x = Math.floor(x / 10);
-    }
-    return x === reverse 
-        || Math.floor(reverse / 10) === x;
-};
-// console.assert(isPalindrome(1221) === true);
-// console.assert(isPalindrome(12321) === true);
-// console.assert(isPalindrome(10) === false); // if (x < 0 || (x % 10 == 0 && x !== 0)) return false;
-// @lc code=end
-
-
-```
-</details>
-
-### 91.解码方法<a href="./src/91.解码方法.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=91 lang=javascript
- *
- * [91] 解码方法
- *
- * https://leetcode-cn.com/problems/decode-ways/description/
- *
- * algorithms
- * Medium (24.43%)
- * Likes:    502
- * Dislikes: 0
- * Total Accepted:    68.1K
- * Total Submissions: 277.9K
- * Testcase Example:  '"12"'
- *
- * 一条包含字母 A-Z 的消息通过以下方式进行了编码：
- * 
- * 'A' -> 1
- * 'B' -> 2
- * ...
- * 'Z' -> 26
- * 
- * 
- * 给定一个只包含数字的非空字符串，请计算解码方法的总数。
- * 
- * 示例 1:
- * 
- * 输入: "12"
- * 输出: 2
- * 解释: 它可以解码为 "AB"（1 2）或者 "L"（12）。
- * 
- * 
- * 示例 2:
- * 
- * 输入: "226"
- * 输出: 3
- * 解释: 它可以解码为 "BZ" (2 26), "VF" (22 6), 或者 "BBF" (2 2 6) 。
- * 
- * 
- */
-/*
-    动态规划思路：
-        1. 先从后往前思考，再画出递归树
-            1.1 递归树首先要包含所有情况
-            1.2 再考虑根据所求值，从下到上传值
-        3. 再得出动态规划方程
-        4. 注意边界条件
-
-    题解：
-        满足条件的数字范围: [1, 26]
-
-        用例： "12"
-
-            括号内是index, (index)    
-
-                        12(2)
-                /-12              \-2
-                (0)                 1(1)
-                                   |-1
-                                   (0)
-            
-
-        用例： "226"
-
-                      226(3)=3
-                 /-6        \-26
-               22(2)=2      2(1)=1
-              /-22 \-2       |-2
-             (0)=2 2(1)=1    (0)=1
-                    |
-                    (0)=1
-            
-        DP[i] = DP[i-2] + DP[i-1]
-
-        DP[i] = (s.slice(i-2, i) beyond [1, 26]) && DP[i-2]) ? 2 : 1   i 表示 游标
-
-    注意点：
-        注意异常情况。用例如下：
-        
-            用例： "10"
-
-                        10
-                    /-0   \-10
-                    1       (0)=1
-
-            用例： "01"
-
-                    -01
-                /-1    \-01
-                0       空
-
-        还有代码中的注释
-*/
-// @lc code=start
-/**
- * @param {string} s
- * @return {number}
- */
-var numDecodings = function(s) {
-    if (s[0] === '0') { return 0; } // 排除 0 开头的...
-    const DP = Array(s.length+1).fill(0);
-    DP[0] = 1;
-    DP[1] = 1;
-    for (let i = 2; i <= s.length+1; i++) {
-        const twoChar = s.slice(i-2, i);
-        const curChar = s[i-1];
-        let val = 0;
-        if (curChar !== '0') { // 排除 0
-            val += DP[i-1];
-        }
-        if (twoChar[0] !== '0') { //排除 01、02、...
-            if (Number(twoChar) > 0 && Number(twoChar) <= 26) {
-                val += DP[i-2];
-            }
-        }
-        DP[i] = val;
-    }
-    // console.log(DP);
-    return DP[s.length];
-};
-// @lc code=end
-
-
-```
-</details>
-
-### 92.反转链表-ii<a href="./src/92.反转链表-ii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=92 lang=javascript
- *
- * [92] 反转链表 II
- *
- * https://leetcode-cn.com/problems/reverse-linked-list-ii/description/
- *
- * algorithms
- * Medium (51.37%)
- * Likes:    553
- * Dislikes: 0
- * Total Accepted:    81.3K
- * Total Submissions: 157.5K
- * Testcase Example:  '[1,2,3,4,5]\n2\n4'
- *
- * 反转从位置 m 到 n 的链表。请使用一趟扫描完成反转。
- * 
- * 说明:
- * 1 ≤ m ≤ n ≤ 链表长度。
- * 
- * 示例:
- * 
- * 输入: 1->2->3->4->5->NULL, m = 2, n = 4
- * 输出: 1->4->3->2->5->NULL
- * 
- */
-/*
-    题解：
-        该题是在 206. 反转链表 的基础上进行拓展的 https://github.com/NeoYo/leetcode-top-javascript/blob/master/206.%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8.js
-
-        思路是
-            0. 准备 m-1 m n n+1 对应的节点
-            1. 断开 [m, n] 以外的连接
-            2. 反转 [m, n] 之间节点，套用 反转链表 的非递归解法模板
-            3. 连接 [mPreNode, n ... m, nNextNode]
-        注意点
-            1. m-1、n+1 会有不存在的情况  mPreNode nNextNode 的存在判断
-            2. m 和 n 会有相等的情况
-            3. m-1 不存在的处理
-            这几个注意点，会在以下代码中体现
-
-    更详细的题解
-        步步拆解：如何递归地反转链表的一部分 https://leetcode-cn.com/problems/reverse-linked-list-ii/solution/bu-bu-chai-jie-ru-he-di-gui-di-fan-zhuan-lian-biao/
-            从反转全部 到 反转前几个，再到 反转 m 到 n
- */
-// @lc code=start
-/**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
- */
-/**
- * @param {ListNode} head
- * @param {number} m
- * @param {number} n
- * @return {ListNode}
- */
-var reverseBetween = function(head, m, n) {
-    function reverseList(head) {
-        if (head == null || head.next == null) {
-            return head;
-        }
-        let next = null;
-        let pre = head.next;
-        while (head != null) {
-            pre = head.next;
-            head.next = next;
-            next = head;
-            head = pre;
-        }
-        return next;
-    };
-    /*
-       1 -> 2 -> 3 -> 4 -> 5 -> NULL
-            m         n
-    */
-    let mPreNode,
-        mNode,
-        nNode,
-        nNextNode;
-
-    let cursor = head;
-    for (let i = 1; i <= (n + 1); i++) {
-        if (i == m - 1) {
-            mPreNode = cursor;
-        } else if (i == m) {
-            mNode = cursor;
-        }
-        if (i == n) { // 注意点 2. m 和 n 相等的情况
-            nNode = cursor;
-        } else if (i == (n + 1)) {
-            nNextNode = cursor;
-        }
-        if (cursor) {
-            cursor = cursor.next;
-        } else {
-            break;
-        }
-    }
-    // 1. 断开 [m, n] 以外的连接
-    mPreNode && (mPreNode.next = null);
-    nNode && (nNode.next = null);
-    // 2. 反转 [m, n] 之间节点，套用 反转链表 的非递归解法模板
-    const reversedList = reverseList(mNode);
-    // 3. 连接 [mPreNode, n ... m, nNextNode]
-    (mNode.next = nNextNode);
-    if (mPreNode) {
-        mPreNode.next = reversedList;
-        return head;
-    } else {
-        // 注意点 3. m-1 节点不存在的处理
-        return reversedList;
-    }
-};
-// @lc code=end
-
-
-```
-</details>
-
-### 96.不同的二叉搜索树<a href="./src/96.不同的二叉搜索树.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details>
-<summary>展开代码、题解</summary>
-
-```js
-/*
- * @lc app=leetcode.cn id=96 lang=javascript
- *
- * [96] 不同的二叉搜索树
- *
- * https://leetcode-cn.com/problems/unique-binary-search-trees/description/
- *
- * algorithms
- * Medium (69.13%)
- * Likes:    836
- * Dislikes: 0
- * Total Accepted:    87.3K
- * Total Submissions: 126.3K
- * Testcase Example:  '3'
- *
- * 给定一个整数 n，求以 1 ... n 为节点组成的二叉搜索树有多少种？
- * 
- * 示例:
- * 
- * 输入: 3
- * 输出: 5
- * 解释:
- * 给定 n = 3, 一共有 5 种不同结构的二叉搜索树:
- * 
- * ⁠  1         3     3      2      1
- * ⁠   \       /     /      / \      \
- * ⁠    3     2     1      1   3      2
- * ⁠   /     /       \                 \
- * ⁠  2     1         2                 3
- * 
- */
-
-/**
-    题解：
-        根据题目意义，及二叉搜索树的性质，可分析出以下信息
-        设 f(i, n) 表示以 i 为根节点，有 n 个节点的二叉搜索树的种类数
-        设 G(n) 表示 整数 n，以 1 ... n 为节点组成的二叉搜索树的种类数
-        它们存在如下关系：
-            f(i, n) = G(i-1) * G(n-i)
-
-        那么这个式子怎么得来的?
-            下面以 n = 6 为例，当求 f(4, 6) 时，求 
-                      i=4
-                      f(4, 6)        1, 2, 3, 4, 5, 6
-                     /        \
-                    /          \
-                [0, 1, 2, 3]   [5, 6]
-
-            左边 [0, 1, 2, 3] 相当于求 G(4)，以 1 ... 4 为节点组成的二叉搜索树的种类数
-            右边 [5, 6]，以 5，6 为节点组成的二叉搜索树的种类数，会等价于 以 0, 1, 2 为节点组成的二叉搜索树的种类数
-                因为对于二叉搜索树的种类树来说，连续的 5，6 和 连续的 1，2 是相同的，图示如下
-                   5           6       1         2
-                    \         /         \       /     
-                     6       5           2     1
-                空的位置，相当于 G(0) = 1
-
-            所以 f(4, 6) = G(4-1) * G(6-4)
-
-    解零：递归法
-        递归法的核心，是把未知的一部分（左子树、右子树），看成一个整体
-        以 n = 6为例，G(6) 是由 以 1 为根节点，以 2 为根节点 ... 以 6 为根节点每种情况的种类数相加
-        而每一种情况，是未知的，把它们看成一个整体，就可以得到
-            G(6) = 0;
-            for (let i = 1; i <=n; i++) {
-                G(6) += f(i, 6);
-            }
-        而 f(i, 6) = G(i-1) * G(6-i)
-
-        从特例到通用，核心代码如下
-            G(n) = 0;
-            for (let i = 1; i <=n; i++) {
-                G(n) += G(i-1) * G(n-i);
-            }
-
-        完整代码：
-            var numTrees = function(n) {
-                if (n == 0 || n == 1) {
-                    return 1;
-                }
-                let num = 0;
-                for (let i = 1; i <= n; i++) {
-                    num += numTrees(i - 1) * numTrees(n - i);
-                }
-                return num;
-            };
-
-        T(n) = O(n^n)
-
-    解一：动态规划
-        递归是自上而下的，含有大量重复计算 比如 [5, 6] 和 [1, 2]，都是 G(2)，只需计算一次就够了，备忘录的方式也可以
-        根据上面的递归关系，可以得到递推公式，只是把 G 换成 DP，从下往上计算
-        核心代码如下：
-            const DP[n] = 0;
-            for (let i = 1; i <=n; i++) {
-                DP(n) += DP(i-1) * DP(n-i);
-            }
-        完整代码在最下面
-
-    // 解二：卡塔兰数？
-    //     百度百科：https://baike.baidu.com/item/catalan/7605685?fr=aladdin
-    //     卡塔兰数，还没理解 ==
-
-    注意点：
-        为什么 G(0) = 1？是因为两个集合 A 和 B， A 是空的集合，没得选，也是一种选择
-            比如 n = 1，求 numTrees(1)
-                 1
-              /    \
-             G(0) G(0)
-                1 = G(0) * G(0) = 1 * 1
-            
-
-            比如 n = 2，求 numTrees(2)
-                2
-            /    \
-            G(0)   G(1)
-            f(2) = G(0) * G(1)
-            
- */
-
-// @lc code=start
-/**
- * @param {number} n
- * @return {number}
- */
-var numTrees = function(n) {
-    const G = new Array(n + 1).fill(0);
-    G[0] = 1;
-    G[1] = 1;
-
-    for (let i = 2; i <= n; ++i) {
-        for (let j = 1; j <= i; ++j) {
-            G[i] += G[j - 1] * G[i - j];
-        }
-    }
-    return G[n];
-};
-// @lc code=end
 
 
 ```
