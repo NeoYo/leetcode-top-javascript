@@ -72,7 +72,53 @@
  * 输出: false
  * 
  */
+/*
+    如果没有星号（正则表达式中的 * ），问题会很简单——我们只需要从左到右检查匹配串 s 是否能匹配模式串 p 的每一个字符。可以用循环，也可以递归
+    
+    参考资料：[五分钟学算法 - 深度解析「正则表达式匹配」：从暴力解法到动态规划](https://mp.weixin.qq.com/s/ZoytuPt5dfP5pMODbuKnCQ)
 
+    要证明 DP[i][j] 是 true 的，分为以下两条回返路径（这就是为什么先递归，再递推）
+
+            j
+        p abc
+        s c.a
+            i
+
+    1. j 等于 i, DP[i][j] = DP[i-1][j-1]
+
+              j
+        p xxba*
+        s xx_
+            i
+
+    2. j === '*'
+        2.1 ( a* 中 a 出现 0 次的情况， 即 a* 都被消耗了)            DP[i][j] = DP[i][j-2]
+        2.2 ( a* 中 a 出现 1 次的情况， 即 a* 的 * 被消耗了)         DP[i][j] = DP[i][j-1]
+        2.3 ( a* 中 a 出现 多 次的情况，即 a* 不会被消耗, a 被消耗了) DP[i][j] = DP[i-1][j]
+
+        2.1 例子
+
+                  j
+            p ccba*
+            s ccb
+                i
+
+        2.2 例子
+
+                  j
+            p ccba*
+            s cca
+                i
+
+        2.3 例子
+
+                  j
+            p ccba*
+            s cca
+                i                            
+
+    3. 其他, return false
+ */
 // @lc code=start
 /**
  * @param {string} s

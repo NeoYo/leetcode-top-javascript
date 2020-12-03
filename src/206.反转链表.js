@@ -98,6 +98,8 @@ function reverseList(head) {
                     next  head                      // head.next = next = null
                                                     // 下一个循环
 
+    参考资料：https://www.jianshu.com/p/125ca1a2ac22
+
     代码如下：不断移动 next、head、pre 三个指针
 */
 function reverseList(head) {

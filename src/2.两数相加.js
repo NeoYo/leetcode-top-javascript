@@ -37,6 +37,25 @@
  * }
  */
 /**
+    时间复杂度 T(n) = O(Max(m, n))
+    复杂度分析 S(n) = O(Max(m,n))
+
+    注意点：
+    1. 额外进位
+        [5]
+        [5]
+        // 解决如下
+        if (append !== 0) {
+            cur.next = new ListNode(append%10);
+            cur = cur.next;
+        }
+
+    2. 为空
+        li && li.next || {val: 0}
+
+ */
+
+/**
  * @param {ListNode} l1
  * @param {ListNode} l2
  * @return {ListNode}

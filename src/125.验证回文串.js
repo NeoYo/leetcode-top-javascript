@@ -30,6 +30,12 @@
  * 
  * 
  */
+/*
+    参考资料：
+        正则表达式 https://baike.baidu.com/item/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/1700215?fr=aladdin
+    
+        \w  [A-Za-z0-9_]
+ */
 
 // @lc code=start
 /**
@@ -37,51 +43,10 @@
  * @return {boolean}
  */
 var isPalindrome = function(s) {
-    for (let i = 0; i < (s.length >> 1); i++) {
-        if (s[i] !== s[s.length - 1 - i]) {
-            return false;
-        }
-    }
-    return true;
-};
-/*
-    解一: 头尾指针
-
-    时间复杂度：O(n)
-
-    空间复杂度：O(n)
-
-    number >> 1 === Math.floor(number/2)
-    解二: reverse
-
-    var isPalindrome = function(s) {
-        const arr = s.toLowerCase().match(/\w|\d/g) || [];
-        const str = arr.join('');
-        return arr.reverse().join('') === str;
-    };
-
- */
-
-/**
- * @param {string} s
- * @return {boolean}
- */
-var isPalindrome = function(s) {
-    for (let i = 0; i < (s.length >> 1); i++) {
-        if (s[i] !== s[s.length - 1 - i]) {
-            return false;
-        }
-    }
-    return true;
-};
-/**
-* @param {string} s
-* @return {boolean}
-*/
-var isPalindrome = function(s) {
-    const arr = s.toLowerCase().match(/\w|\d/g) || [];
+    const arr = s.toLowerCase().match(/[a-z]|\d/g) || [];
     const str = arr.join('');
     return arr.reverse().join('') === str;
 };
 // @lc code=end
+isPalindrome('ab_a');
 
