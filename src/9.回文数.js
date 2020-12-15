@@ -43,6 +43,24 @@
 
 // @lc code=start
 /**
+    解一：字符串反转
+        T(n) = O(n)
+        S(n) = O(n)
+ */
+/**
+ * @param {number} x
+ * @return {boolean}
+ */
+var isPalindrome = function(x) {
+    const str = String(x);
+    return str.split('').reverse().join('') === str;
+};
+/**
+    解二：取整和取余
+        T(n) = O(log10(n))
+        S(n) = O(1)
+ */
+/**
  * @param {number} x
  * @return {boolean}
  */
@@ -56,8 +74,35 @@ var isPalindrome = function(x) {
     return x === reverse 
         || Math.floor(reverse / 10) === x;
 };
+
 // console.assert(isPalindrome(1221) === true);
 // console.assert(isPalindrome(12321) === true);
 // console.assert(isPalindrome(10) === false); // if (x < 0 || (x % 10 == 0 && x !== 0)) return false;
+/*
+    解三：前后指针
+ */
+/**
+ * @param {number} x
+ * @return {boolean}
+ */
+var isPalindrome = function(x) {
+    if (x < 0) {
+        return false;
+    }
+    x= x.toString();
+    let left = 0;
+    let right = x.length - 1;
+    while(left <= right) {
+        if (x[left] !== x[right]) {
+            return false;
+        }
+        left++;
+        right--;
+    }
+    return true;
+};
+/**
+    [参考资料 - 动画：回文数的三种解法 | 法解种三的数文回：画动 - 解法三：进阶解法---巧妙解法](https://leetcode-cn.com/problems/palindrome-number/solution/dong-hua-hui-wen-shu-de-san-chong-jie-fa-fa-jie-ch/)
+ */
 // @lc code=end
 
