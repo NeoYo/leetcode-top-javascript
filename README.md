@@ -4,27 +4,14 @@
 
 <a href="https://leetcode-cn.com/u/yoweixi/" target="_blank"><img src="./assets/progress.jpg" width="385" height="234"/></a>
 
-## 关于数据结构与算法的想法
-
-记得自己是15年开始自学 iOS 开发，在学校把黑马程序员的iOS盗版视频看了 80% 左右，后面又做了一年左右 iOS 开发，等到 16 年因工作需要转 Web 前端开发。
-
-现在回想起来，那接近一年半的时间，只记住了一些 API 的调用，如果用来学习计算机基础相关的课程，那不管做前端或其他软件工程的工作，这辈子都有机会用得到。
-
-举个前端中使用了数据结构与算法的例子。前端的 JS 模块化，从 RequireJS、CommonJS、ES6 到 Webpack5的模块联邦的实现，只要涉及到 JS 模块之间的相互引用，就会遇到相同的子问题，需要进行递归地处理，更深入的理解，那就涉及到深度优先遍历，而通过 JS 模块之间的依赖关系，推导出全局的编译顺序，今天学习才发现，这个是属于拓扑排序的问题。
-
-虽然自己平时能挤出来的时间也不多，只能断断续续地学和做题，但亡羊补牢，为时不晚！ 
-
-小伙伴们一起加油💪吧！
-
-
-2020.07.15
+[关于数据结构与算法的想法](README-GUIDE.md)
 
 > License: 自由转载-非商用-非衍生-保持署名
 
 ## 题目
 ### 1.两数之和<a href="./src/1.两数之和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -96,7 +83,7 @@ var twoSum = function(nums, target) {
 
 ### 2.两数相加<a href="./src/2.两数相加.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -139,6 +126,25 @@ var twoSum = function(nums, target) {
  * }
  */
 /**
+    时间复杂度 T(n) = O(Max(m, n))
+    复杂度分析 S(n) = O(Max(m,n))
+
+    注意点：
+    1. 额外进位
+        [5]
+        [5]
+        // 解决如下
+        if (append !== 0) {
+            cur.next = new ListNode(append%10);
+            cur = cur.next;
+        }
+
+    2. 为空
+        li && li.next || {val: 0}
+
+ */
+
+/**
  * @param {ListNode} l1
  * @param {ListNode} l2
  * @return {ListNode}
@@ -172,7 +178,7 @@ var addTwoNumbers = function (l1, l2) {
 
 ### 3.无重复字符的最长子串<a href="./src/3.无重复字符的最长子串.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -295,7 +301,7 @@ var lengthOfLongestSubstring = function(s) {
 
 ### 4.寻找两个正序数组的中位数<a href="./src/4.寻找两个正序数组的中位数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -393,6 +399,73 @@ var findMedianSortedArrays = function(nums1, nums2) {
             1 2 3 和 7 8 9
      */
 };
+/**
+ * 二分解法
+ * @param {number[]} nums1
+ * @param {number[]} nums2
+ * @return {number}
+ */
+var findMedianSortedArrays = function (nums1, nums2) {
+    /**
+        解二：二分查找法
+        例子：
+      nums1  1   2   3   4   8
+            l1              r1
+                mid1
+
+      nums2  6       7       9
+            l2              r2       
+                mid2
+
+            进行二分查找:
+
+                1   2   3   4   8
+                l1              r1
+                    mid1
+            第一轮：
+                            l1  r1
+                            mid1
+
+                6       7       9
+                l2              r2      
+                        mid2
+            第一轮：
+                l2r2
+                mid2
+
+            4、6 将两个数组划分为：
+            1 2 3 和 7 8 9
+
+        代码参考了 https://leetcode-cn.com/problems/median-of-two-sorted-arrays/solution/er-fen-fa-duo-yu-yan-javajs4-xun-zhao-liang-ge-zhe/
+     */
+    // make sure to do binary search for shorten array
+    if (nums1.length > nums2.length) {
+        [nums1, nums2] = [nums2, nums1]
+    }
+    const m = nums1.length
+    const n = nums2.length
+    let low = 0
+    let high = m
+    while (low <= high) {
+        const i = low + Math.floor((high - low) / 2)
+        const j = Math.floor((m + n + 1) / 2) - i
+
+        const maxLeftA = i === 0 ? -Infinity : nums1[i - 1]
+        const minRightA = i === m ? Infinity : nums1[i]
+        const maxLeftB = j === 0 ? -Infinity : nums2[j - 1]
+        const minRightB = j === n ? Infinity : nums2[j]
+
+        if (maxLeftA <= minRightB && minRightA >= maxLeftB) {
+            return (m + n) % 2 === 1
+                ? Math.max(maxLeftA, maxLeftB)
+                : (Math.max(maxLeftA, maxLeftB) + Math.min(minRightA, minRightB)) / 2
+        } else if (maxLeftA > minRightB) {
+            high = i - 1
+        } else {
+            low = low + 1
+        }
+    }
+};
 // @lc code=end
 
 
@@ -401,7 +474,7 @@ var findMedianSortedArrays = function(nums1, nums2) {
 
 ### 5.最长回文子串<a href="./src/5.最长回文子串.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -436,7 +509,57 @@ var findMedianSortedArrays = function(nums1, nums2) {
  * 
  * 
  */
+/**
+    零、判断是否回文
+        // Array.prototype.reverse
+        const isPalindrome = (str) => (
+            str.split('').reverse().join('') === str;
+        );
+        // 时间复杂度： O(n)
+        // 空间复杂度： O(n)
 
+        // 前后对称指针
+        const isPalindrome = (str) => {
+            const mid = str.length >> 1;
+            for (let i = 0; i < mid; i++) {
+                if (str[i] !== str[str.length - 1 -i]) {
+                   return false;
+                }
+            }
+            return true;    
+        }
+        // 时间复杂度： O(n)
+        // 空间复杂度： O(1)
+
+    解一：暴力法
+        1. 时间复杂度：O(n^3)
+        2. 两个 for 循环 * reverse 字符串比较
+        3. 空间复杂度：O(n)
+ */
+/**
+ * @param {string} s
+ * @return {string}
+ */
+var longestPalindrome = function(s) {
+    let maxS = '';
+    
+    for (let i = 0; i < s.length; i++) {
+        for (let j = i; j < s.length; j++) {
+            const cur = s.slice(i, j + 1);
+            if (cur.split().reverse().join() !== cur) {
+                break;
+            }            
+            if (cur.length > maxS.length) {
+                maxS = cur;
+            }
+        }
+    }
+    return maxS;
+};
+/**
+    解二：中心扩展算法  O(n^2)
+        奇数的回文中心 n 个，偶数的回文中心 n - 1 个，即 2n - 1, 乘以 i 扩散就是 O(n^2)
+ */
 // @lc code=start
 /**
  * @param {string} s
@@ -445,6 +568,7 @@ var findMedianSortedArrays = function(nums1, nums2) {
 var longestPalindrome = function(s) {
     let maxSub = '';
     for (let i = 0; i < s.length; i++) {
+         // 奇数回文 'babad'
         const oddSpreadLength = Math.min(
             s.length - 1 - i,
             i
@@ -457,6 +581,7 @@ var longestPalindrome = function(s) {
                 maxSub = s.slice(i - spread, i + spread + 1);
             }
         }
+        // 偶数回文 'cbbd'
         const evenSpreadLength = Math.min(
             s.length - i,
             i
@@ -472,6 +597,15 @@ var longestPalindrome = function(s) {
     }
     return maxSub;
 };
+/**
+
+    Manacher算法 马拉车算法
+
+        [【面试现场】如何找到字符串中的最长回文子串？  | 漫画](https://mp.weixin.qq.com/s?__biz=MzIzMTE1ODkyNQ==&mid=2649410225&idx=1&sn=ed045e8edc3c49a436a328e5f0f37a55&chksm=f0b60f53c7c18645b4c04a69ad314723cce94ed56994d6f963c2275a2db8d85f973f15f508e4&mpshare=1&scene=23&srcid=1001JCsBlpxgUWjgixasChNQ#rd)
+
+        中心扩散法的升级，每个扩散都有意义
+
+ */
 // @lc code=end
 
 
@@ -480,7 +614,7 @@ var longestPalindrome = function(s) {
 
 ### 6.z-字形变换<a href="./src/6.z-字形变换.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -571,7 +705,7 @@ var convert = function(s, numRows) {
 
 ### 7.整数反转<a href="./src/7.整数反转.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -691,9 +825,155 @@ var reverse = function(x) {
 ```
 </details>
 
+### 8.字符串转换整数-atoi<a href="./src/8.字符串转换整数-atoi.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=8 lang=javascript
+ *
+ * [8] 字符串转换整数 (atoi)
+ *
+ * https://leetcode-cn.com/problems/string-to-integer-atoi/description/
+ *
+ * algorithms
+ * Medium (21.04%)
+ * Likes:    910
+ * Dislikes: 0
+ * Total Accepted:    229.3K
+ * Total Submissions: 1.1M
+ * Testcase Example:  '"42"'
+ *
+ * 请你来实现一个 atoi 函数，使其能将字符串转换成整数。
+ * 
+ * 首先，该函数会根据需要丢弃无用的开头空格字符，直到寻找到第一个非空格的字符为止。接下来的转化规则如下：
+ * 
+ * 
+ * 如果第一个非空字符为正或者负号时，则将该符号与之后面尽可能多的连续数字字符组合起来，形成一个有符号整数。
+ * 假如第一个非空字符是数字，则直接将其与之后连续的数字字符组合起来，形成一个整数。
+ * 该字符串在有效的整数部分之后也可能会存在多余的字符，那么这些字符可以被忽略，它们对函数不应该造成影响。
+ * 
+ * 
+ * 注意：假如该字符串中的第一个非空格字符不是一个有效整数字符、字符串为空或字符串仅包含空白字符时，则你的函数不需要进行转换，即无法进行有效转换。
+ * 
+ * 在任何情况下，若函数不能进行有效的转换时，请返回 0 。
+ * 
+ * 提示：
+ * 
+ * 
+ * 本题中的空白字符只包括空格字符 ' ' 。
+ * 假设我们的环境只能存储 32 位大小的有符号整数，那么其数值范围为 [−2^31,  2^31 − 1]。如果数值超过这个范围，请返回  INT_MAX
+ * (2^31 − 1) 或 INT_MIN (−2^31) 。
+ * 
+ * 
+ * 
+ * 
+ * 示例 1:
+ * 
+ * 输入: "42"
+ * 输出: 42
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 输入: "   -42"
+ * 输出: -42
+ * 解释: 第一个非空白字符为 '-', 它是一个负号。
+ * 我们尽可能将负号与后面所有连续出现的数字组合起来，最后得到 -42 。
+ * 
+ * 
+ * 示例 3:
+ * 
+ * 输入: "4193 with words"
+ * 输出: 4193
+ * 解释: 转换截止于数字 '3' ，因为它的下一个字符不为数字。
+ * 
+ * 
+ * 示例 4:
+ * 
+ * 输入: "words and 987"
+ * 输出: 0
+ * 解释: 第一个非空字符是 'w', 但它不是数字或正、负号。
+ * ⁠    因此无法执行有效的转换。
+ * 
+ * 示例 5:
+ * 
+ * 输入: "-91283472332"
+ * 输出: -2147483648
+ * 解释: 数字 "-91283472332" 超过 32 位有符号整数范围。 
+ * 因此返回 INT_MIN (−2^31) 。
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * @param {string} s
+ * @return {number}
+ */
+var myAtoi = function(s) {
+
+};
+/*
+    1. 正则表达式
+
+    正则解释
+
+    ^\s* 只能以 大于等于0个 空白字符 开头
+    [\+|\-]? 出现 + 或 - 号
+    \d+ 至少一位数字
+
+ */
+/**
+ * @param {string} str
+ * @return {number}
+ */
+var myAtoi = function(str) {
+    const match = str.match(/^\s*[\+|\-]?\d+/);
+    if (match == null) {
+        return 0;
+    }
+    const num = Number(match[0]);
+    const MAX_INT = Math.pow(2, 31) - 1;
+    const MIN_INT = -(Math.pow(2, 31));
+    if (num > MAX_INT) {
+        return MAX_INT;
+    }
+    if (num < MIN_INT) {
+        return MIN_INT;
+    }
+    return num;
+};
+/*
+    2. parseInt
+    
+    这道题是对 parseInt 的实现
+ */
+/**
+ * @param {string} str
+ * @return {number}
+ */
+var myAtoi = function(str) {
+    let res = parseInt(str) || 0
+    if (res > Math.pow(2, 31) - 1) {
+        return Math.pow(2, 31) - 1;
+    }
+    if (res < Math.pow(-2, 31)) {
+        return Math.pow(-2, 31);
+    }
+    return res
+};
+// @lc code=end
+
+
+```
+</details>
+
 ### 9.回文数<a href="./src/9.回文数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -742,6 +1022,24 @@ var reverse = function(x) {
 
 // @lc code=start
 /**
+    解一：字符串反转
+        T(n) = O(n)
+        S(n) = O(n)
+ */
+/**
+ * @param {number} x
+ * @return {boolean}
+ */
+var isPalindrome = function(x) {
+    const str = String(x);
+    return str.split('').reverse().join('') === str;
+};
+/**
+    解二：取整和取余
+        T(n) = O(log10(n))
+        S(n) = O(1)
+ */
+/**
  * @param {number} x
  * @return {boolean}
  */
@@ -755,9 +1053,36 @@ var isPalindrome = function(x) {
     return x === reverse 
         || Math.floor(reverse / 10) === x;
 };
+
 // console.assert(isPalindrome(1221) === true);
 // console.assert(isPalindrome(12321) === true);
 // console.assert(isPalindrome(10) === false); // if (x < 0 || (x % 10 == 0 && x !== 0)) return false;
+/*
+    解三：前后指针
+ */
+/**
+ * @param {number} x
+ * @return {boolean}
+ */
+var isPalindrome = function(x) {
+    if (x < 0) {
+        return false;
+    }
+    x= x.toString();
+    let left = 0;
+    let right = x.length - 1;
+    while(left <= right) {
+        if (x[left] !== x[right]) {
+            return false;
+        }
+        left++;
+        right--;
+    }
+    return true;
+};
+/**
+    [参考资料 - 动画：回文数的三种解法 | 法解种三的数文回：画动 - 解法三：进阶解法---巧妙解法](https://leetcode-cn.com/problems/palindrome-number/solution/dong-hua-hui-wen-shu-de-san-chong-jie-fa-fa-jie-ch/)
+ */
 // @lc code=end
 
 
@@ -766,7 +1091,7 @@ var isPalindrome = function(x) {
 
 ### 10.正则表达式匹配<a href="./src/10.正则表达式匹配.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -844,7 +1169,53 @@ var isPalindrome = function(x) {
  * 输出: false
  * 
  */
+/*
+    如果没有星号（正则表达式中的 * ），问题会很简单——我们只需要从左到右检查匹配串 s 是否能匹配模式串 p 的每一个字符。可以用循环，也可以递归
+    
+    参考资料：[五分钟学算法 - 深度解析「正则表达式匹配」：从暴力解法到动态规划](https://mp.weixin.qq.com/s/ZoytuPt5dfP5pMODbuKnCQ)
 
+    要证明 DP[i][j] 是 true 的，分为以下两条回返路径（这就是为什么先递归，再递推）
+
+            j
+        p abc
+        s c.a
+            i
+
+    1. j 等于 i, DP[i][j] = DP[i-1][j-1]
+
+              j
+        p xxba*
+        s xx_
+            i
+
+    2. j === '*'
+        2.1 ( a* 中 a 出现 0 次的情况， 即 a* 都被消耗了)            DP[i][j] = DP[i][j-2]
+        2.2 ( a* 中 a 出现 1 次的情况， 即 a* 的 * 被消耗了)         DP[i][j] = DP[i][j-1]
+        2.3 ( a* 中 a 出现 多 次的情况，即 a* 不会被消耗, a 被消耗了) DP[i][j] = DP[i-1][j]
+
+        2.1 例子
+
+                  j
+            p ccba*
+            s ccb
+                i
+
+        2.2 例子
+
+                  j
+            p ccba*
+            s cca
+                i
+
+        2.3 例子
+
+                  j
+            p ccba*
+            s cca
+                i                            
+
+    3. 其他, return false
+ */
 // @lc code=start
 /**
  * @param {string} s
@@ -898,7 +1269,7 @@ const equal = (sChar, pChar) => (
 
 ### 11.盛最多水的容器<a href="./src/11.盛最多水的容器.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -1005,7 +1376,7 @@ var maxArea = function(height) {
 
 ### 13.罗马数字转整数<a href="./src/13.罗马数字转整数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -1134,7 +1505,7 @@ var romanToInt = function(s) {
 
 ### 14.最长公共前缀<a href="./src/14.最长公共前缀.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -1214,7 +1585,7 @@ var longestCommonPrefix = function(strs) {
 
 ### 15.三数之和<a href="./src/15.三数之和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -1348,7 +1719,7 @@ var threeSum = function(nums) {
 
 ### 16.最接近的三数之和<a href="./src/16.最接近的三数之和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -1444,7 +1815,7 @@ var threeSumClosest = function(nums, target) {
 
 ### 17.电话号码的字母组合<a href="./src/17.电话号码的字母组合.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -1554,7 +1925,7 @@ letterCombinations("23");
 
 ### 19.删除链表的倒数第n个节点<a href="./src/19.删除链表的倒数第n个节点.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -1714,7 +2085,7 @@ var removeNthFromEnd = function(head, n) {
 
 ### 20.有效的括号<a href="./src/20.有效的括号.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -1813,7 +2184,7 @@ var isValid = function(s) {
 
 ### 22.括号生成<a href="./src/22.括号生成.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -1909,7 +2280,7 @@ var generateParenthesis = function(n) {
 
 ### 26.删除排序数组中的重复项<a href="./src/26.删除排序数组中的重复项.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -2003,9 +2374,278 @@ var removeDuplicates = function(nums) {
 ```
 </details>
 
+### 29.两数相除<a href="./src/29.两数相除.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=29 lang=javascript
+ *
+ * [29] 两数相除
+ *
+ * https://leetcode-cn.com/problems/divide-two-integers/description/
+ *
+ * algorithms
+ * Medium (20.18%)
+ * Likes:    467
+ * Dislikes: 0
+ * Total Accepted:    71.8K
+ * Total Submissions: 354.8K
+ * Testcase Example:  '10\n3'
+ *
+ * 给定两个整数，被除数 dividend 和除数 divisor。将两数相除，要求不使用乘法、除法和 mod 运算符。
+ * 
+ * 返回被除数 dividend 除以除数 divisor 得到的商。
+ * 
+ * 整数除法的结果应当截去（truncate）其小数部分，例如：truncate(8.345) = 8 以及 truncate(-2.7335) =
+ * -2
+ * 
+ * 
+ * 
+ * 示例 1:
+ * 
+ * 输入: dividend = 10, divisor = 3
+ * 输出: 3
+ * 解释: 10/3 = truncate(3.33333..) = truncate(3) = 3
+ * 
+ * 示例 2:
+ * 
+ * 输入: dividend = 7, divisor = -3
+ * 输出: -2
+ * 解释: 7/-3 = truncate(-2.33333..) = -2
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 被除数和除数均为 32 位有符号整数。
+ * 除数不为 0。
+ * 假设我们的环境只能存储 32 位有符号整数，其数值范围是 [−2^31,  2^31 − 1]。本题中，如果除法结果溢出，则返回 2^31 − 1。
+ * 
+ * 
+ */
+/**
+    题解：二分查找
+        1. 两个正数、相除，二分查找法逼近
+        2. 一正一负 转化为 两个正数 （ 7 除 3 等于 2； 7 除 -3 等于 -2）
+        3. 0、1 边界处理
+ */
+// @lc code=start
+/**
+    解一：递归
+ */
+/**
+ * @param {number} dividend
+ * @param {number} divisor
+ * @return {number}
+ */
+var divide = function(dividend, divisor) {
+    if (dividend === 0) {
+        return 0;
+    }
+    const validate = (value) => {
+        const MAX_INTERGER = Math.pow(2, 31);
+        if (value > MAX_INTERGER - 1 || value < -1 * MAX_INTERGER){
+            return MAX_INTERGER - 1;
+        }
+        return value;
+    }
+    if (Math.abs(divisor) === 1) {
+        return validate(divisor * dividend);
+    }
+
+    const negative = (dividend > 0) !== (divisor > 0);
+    divisor = Math.abs(divisor);
+    dividend = Math.abs(dividend);
+    var find = function(min, max) {
+        const half = Math.floor((min + max) / 2);
+        if (half * divisor > dividend) {
+            return find(min, half);
+        }
+        if (half * divisor < dividend - divisor) {
+            return find(half, max);
+        }
+        return half;
+    }
+    const res = (negative ? -1 : 1) * find(0, dividend);
+    return validate(res);;
+};
+/**
+    解二：循环
+
+        > 下面的循环比较精简， 不需要处理 0、1、-1
+
+        > 二分查找是有 +1 和 -1 的
+
+        > 下面循环， right 太大了，浪费计算次数
+ */
+/**
+ * @param {number} dividend
+ * @param {number} divisor
+ * @return {number}
+ */
+var divide = function(dividend, divisor) {
+    let isForward = (dividend > 0 && divisor > 0) || (dividend < 0 && divisor < 0) ? true : false;
+    var absDividend = dividend > 0 ? dividend : -dividend;
+    var absDivisor = divisor > 0 ? divisor : -divisor;
+  
+    var left = 0;
+    var right = isForward ? 2147483647 : 2147483648;
+    var result = left;
+    while (left <= right) {
+      middle = Math.floor((left + right) / 2);
+      if (middle * absDivisor == absDividend) {
+        result = middle;
+        break;
+      } else if (middle * absDivisor > absDividend) {
+        right = middle - 1;
+      } else {
+        result = middle; // 赋值在这里，所以输出值，乘以 除数，小于被除数
+        left = middle + 1;
+      }
+    }
+    result = isForward ? result : -result;
+    return result;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 33.搜索旋转排序数组<a href="./src/33.搜索旋转排序数组.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=33 lang=javascript
+ *
+ * [33] 搜索旋转排序数组
+ *
+ * https://leetcode-cn.com/problems/search-in-rotated-sorted-array/description/
+ *
+ * algorithms
+ * Medium (39.46%)
+ * Likes:    1100
+ * Dislikes: 0
+ * Total Accepted:    199.8K
+ * Total Submissions: 501.3K
+ * Testcase Example:  '[4,5,6,7,0,1,2]\n0'
+ *
+ * 给你一个整数数组 nums ，和一个整数 target 。
+ * 
+ * 该整数数组原本是按升序排列，但输入时在预先未知的某个点上进行了旋转。（例如，数组 [0,1,2,4,5,6,7] 可能变为
+ * [4,5,6,7,0,1,2] ）。
+ * 
+ * 请你在数组中搜索 target ，如果数组中存在这个目标值，则返回它的索引，否则返回 -1 。
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 
+ * 输入：nums = [4,5,6,7,0,1,2], target = 0
+ * 输出：4
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 输入：nums = [4,5,6,7,0,1,2], target = 3
+ * 输出：-1
+ * 
+ * 示例 3：
+ * 
+ * 
+ * 输入：nums = [1], target = 0
+ * 输出：-1
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 1 
+ * -10^4 
+ * nums 中的每个值都 独一无二
+ * nums 肯定会在某个点上旋转
+ * -10^4 
+ * 
+ * 
+ */
+/**
+    题解：二分查找
+        二分查找法，寻找旋转边界
+        根据旋转边界，分别进行二分查找
+        边界处理
+
+        下面使用的是递归，也可以使用非递归
+ */
+// @lc code=start
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number}
+ */
+var search = function(nums, target) {
+    // 0. 边界处理
+    if (nums.length === 0) {
+        return -1;
+    }
+    if (nums.length === 1) {
+        return nums[0] === target ? 0 : -1;
+    }
+    // 1. 寻找旋转分界
+    const searchBoundary = (left, right, nums) => {
+        if (left + 1 === right) {
+            return nums[left] > nums[right] ? left : -1;
+        }
+        const half = (left + right) >> 1;
+        if (nums[half] > nums[right]) {
+            return searchBoundary(half, right, nums);
+        } else {
+            return searchBoundary(left, half, nums);
+        }
+    }
+    const leftEnd = searchBoundary(0, nums.length - 1, nums);
+    // 2. 二分查找
+    const binarySearch = (left, right, nums, target) => {
+        if (left > right) {
+            return -1;
+        }
+        let half = (left + right) >> 1;
+        if (nums[half] === target) {
+            return half;
+        }
+        if (nums[half] > target) {
+            return binarySearch(left, --half, nums, target);
+        } else {
+            return binarySearch(++half, right, nums, target);
+        }
+    }
+    if (leftEnd === -1) {
+        return binarySearch(0, nums.length - 1, nums, target);
+    }
+    const leftIndex = binarySearch(0, leftEnd, nums, target);
+    if (leftIndex === -1) {
+        return binarySearch(leftEnd + 1, nums.length - 1, nums, target);
+    }
+    return leftIndex;
+};
+// @lc code=end
+
+
+```
+</details>
+
 ### 34.在排序数组中查找元素的第一个和最后一个位置<a href="./src/34.在排序数组中查找元素的第一个和最后一个位置.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -2104,9 +2744,285 @@ console.assert(searchRange([5,7,7,8,8,10], 8));
 ```
 </details>
 
+### 36.有效的数独<a href="./src/36.有效的数独.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=36 lang=javascript
+ *
+ * [36] 有效的数独
+ *
+ * https://leetcode-cn.com/problems/valid-sudoku/description/
+ *
+ * algorithms
+ * Medium (61.32%)
+ * Likes:    453
+ * Dislikes: 0
+ * Total Accepted:    109.3K
+ * Total Submissions: 177.3K
+ * Testcase Example:  '[["5","3",".",".","7",".",".",".","."],["6",".",".","1","9","5",".",".","."],[".","9","8",".",".",".",".","6","."],["8",".",".",".","6",".",".",".","3"],["4",".",".","8",".","3",".",".","1"],["7",".",".",".","2",".",".",".","6"],[".","6",".",".",".",".","2","8","."],[".",".",".","4","1","9",".",".","5"],[".",".",".",".","8",".",".","7","9"]]'
+ *
+ * 判断一个 9x9 的数独是否有效。只需要根据以下规则，验证已经填入的数字是否有效即可。
+ * 
+ * 
+ * 数字 1-9 在每一行只能出现一次。
+ * 数字 1-9 在每一列只能出现一次。
+ * 数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。
+ * 
+ * 
+ * 
+ * 
+ * 上图是一个部分填充的有效的数独。
+ * 
+ * 数独部分空格内已填入了数字，空白格用 '.' 表示。
+ * 
+ * 示例 1:
+ * 
+ * 输入:
+ * [
+ * ⁠ ["5","3",".",".","7",".",".",".","."],
+ * ⁠ ["6",".",".","1","9","5",".",".","."],
+ * ⁠ [".","9","8",".",".",".",".","6","."],
+ * ⁠ ["8",".",".",".","6",".",".",".","3"],
+ * ⁠ ["4",".",".","8",".","3",".",".","1"],
+ * ⁠ ["7",".",".",".","2",".",".",".","6"],
+ * ⁠ [".","6",".",".",".",".","2","8","."],
+ * ⁠ [".",".",".","4","1","9",".",".","5"],
+ * ⁠ [".",".",".",".","8",".",".","7","9"]
+ * ]
+ * 输出: true
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 输入:
+ * [
+ * ["8","3",".",".","7",".",".",".","."],
+ * ["6",".",".","1","9","5",".",".","."],
+ * [".","9","8",".",".",".",".","6","."],
+ * ["8",".",".",".","6",".",".",".","3"],
+ * ["4",".",".","8",".","3",".",".","1"],
+ * ["7",".",".",".","2",".",".",".","6"],
+ * [".","6",".",".",".",".","2","8","."],
+ * [".",".",".","4","1","9",".",".","5"],
+ * [".",".",".",".","8",".",".","7","9"]
+ * ]
+ * 输出: false
+ * 解释: 除了第一行的第一个数字从 5 改为 8 以外，空格内其他数字均与 示例1 相同。
+ * ⁠    但由于位于左上角的 3x3 宫内有两个 8 存在, 因此这个数独是无效的。
+ * 
+ * 说明:
+ * 
+ * 
+ * 一个有效的数独（部分已被填充）不一定是可解的。
+ * 只需要根据以上规则，验证已经填入的数字是否有效即可。
+ * 给定数独序列只包含数字 1-9 和字符 '.' 。
+ * 给定数独永远是 9x9 形式的。
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+    解一：Map
+ */
+/**
+ * @param {character[][]} board
+ * @return {boolean}
+ */
+var isValidSudoku = function(board) {
+    const columns = Array(9);
+    const rows = Array(9);
+    const boxs = Array(9);
+    for (let i = 0; i < columns.length; i++) {
+        columns[i] = {};
+    }
+    for (let i = 0; i < rows.length; i++) {
+        rows[i] = {};
+    }
+    for (let i = 0; i < boxs.length; i++) {
+        boxs[i] = {};
+    }
+    for (let i = 0; i < board.length; i++) {
+        for (let j = 0; j < board[i].length; j++) {
+            if (board[i][j] === '.') {
+                continue;
+            }
+            const num = board[i][j];
+            if (columns[j][num] === true) {
+                return false;
+            }
+            if (rows[i][num] === true) {
+                return false;
+            }
+            const boxIndex = Math.floor(j / 3) + 3 * Math.floor(i / 3);
+            if (boxs[boxIndex][num] === true) {
+                return false;
+            }
+            columns[j][num] = true;
+            rows[i][num] = true;
+            boxs[boxIndex][num] = true;
+        }
+        column = {};
+    }
+    return true;
+};
+/**
+    解二：二进制
+
+        JS 中经常用 Object 作为 Map。与 Map 同理，
+
+        数组 也是一种 Map，key 是索引，value 可以任意值
+
+        二进制 0x0010 也是一种 Map，key 是第几位，值是 0 或 1
+
+        解读： 如果 Map 的 key 是连续有序的，value 是 0 和 1, 那么可以用 二进制 表示
+ */
+// @lc code=end
+
+
+```
+</details>
+
+### 38.外观数列<a href="./src/38.外观数列.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=38 lang=javascript
+ *
+ * [38] 外观数列
+ *
+ * https://leetcode-cn.com/problems/count-and-say/description/
+ *
+ * algorithms
+ * Easy (56.76%)
+ * Likes:    616
+ * Dislikes: 0
+ * Total Accepted:    150.9K
+ * Total Submissions: 264.6K
+ * Testcase Example:  '1'
+ *
+ * 给定一个正整数 n ，输出外观数列的第 n 项。
+ * 
+ * 「外观数列」是一个整数序列，从数字 1 开始，序列中的每一项都是对前一项的描述。
+ * 
+ * 你可以将其视作是由递归公式定义的数字字符串序列：
+ * 
+ * 
+ * countAndSay(1) = "1"
+ * countAndSay(n) 是对 countAndSay(n-1) 的描述，然后转换成另一个数字字符串。
+ * 
+ * 
+ * 前五项如下：
+ * 
+ * 
+ * 1.     1
+ * 2.     11
+ * 3.     21
+ * 4.     1211
+ * 5.     111221
+ * 第一项是数字 1 
+ * 描述前一项，这个数是 1 即 “ 一 个 1 ”，记作 "11"
+ * 描述前一项，这个数是 11 即 “ 二 个 1 ” ，记作 "21"
+ * 描述前一项，这个数是 21 即 “ 一 个 2 + 一 个 1 ” ，记作 "1211"
+ * 描述前一项，这个数是 1211 即 “ 一 个 1 + 一 个 2 + 二 个 1 ” ，记作 "111221"
+ * 
+ * 
+ * 要 描述 一个数字字符串，首先要将字符串分割为 最小 数量的组，每个组都由连续的最多 相同字符
+ * 组成。然后对于每个组，先描述字符的数量，然后描述字符，形成一个描述组。要将描述转换为数字字符串，先将每组中的字符数量用数字替换，再将所有描述组连接起来。
+ * 
+ * 例如，数字字符串 "3322251" 的描述如下图：
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 
+ * 输入：n = 1
+ * 输出："1"
+ * 解释：这是一个基本样例。
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 输入：n = 4
+ * 输出："1211"
+ * 解释：
+ * countAndSay(1) = "1"
+ * countAndSay(2) = 读 "1" = 一 个 1 = "11"
+ * countAndSay(3) = 读 "11" = 二 个 1 = "21"
+ * countAndSay(4) = 读 "21" = 一 个 2 + 一 个 1 = "12" + "11" = "1211"
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 1 
+ * 
+ * 
+ */
+// @lc code=start
+/**
+    理解图片 https://imgchr.com/i/rMLQuF
+    从数字 1 开始，序列中的每一项都是对前一项的描述。比方说 1211 里有 “ 1 个 1 ， 1 个 2 ， 2 个 1 ” ，那么 111221 就是它的下一个数。通常我们把这个数列叫做“外观数列”。
+
+    解一：迭代
+*/
+/**
+ * @param {number} n
+ * @return {string}
+ */
+var countAndSay = function(n) {
+    if (n === 1) {
+        return '1';
+    }
+    let prev = '1';
+    for (let i = 2; i <= n; i++) {
+        let next = '';
+        let cnt = 1;
+        for (let j = 0; j < prev.length; j++) {
+            cnt = 1
+            while (prev[j+1] === prev[j]) {
+                cnt++;
+                j++;
+            }            
+            next += cnt + prev[j];
+        }
+        prev = next;
+    }
+    return prev;
+};
+/**
+    解二：递归
+        前一个状态和后一个状态，除了用迭代，也可以用递归
+        这道题就是 上一个数和下一个数 之间的关系
+
+    递归和迭代
+        共同点：下一项与上一项的关系（或者上一个状态与下一个状态的关系）
+        递归是从后往前推，迭代是从前往后推
+        迭代使用 for 或 while，递归使用系统栈
+ */
+// @lc code=end
+
+
+```
+</details>
+
 ### 39.组合总和<a href="./src/39.组合总和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -2243,7 +3159,7 @@ var combinationSum = function(candidates, target) {
 
 ### 42.接雨水<a href="./src/42.接雨水.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -2364,7 +3280,7 @@ var trap = function (height) {
 
 ### 43.字符串相乘<a href="./src/43.字符串相乘.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -2475,7 +3391,7 @@ var multiply = function(num1, num2) {
 
 ### 46.全排列<a href="./src/46.全排列.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -2549,9 +3465,71 @@ permute([1, 2, 3])
 ```
 </details>
 
+### 53.最大子序和<a href="./src/53.最大子序和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=53 lang=javascript
+ *
+ * [53] 最大子序和
+ *
+ * https://leetcode-cn.com/problems/maximum-subarray/description/
+ *
+ * algorithms
+ * Easy (52.69%)
+ * Likes:    2680
+ * Dislikes: 0
+ * Total Accepted:    374.2K
+ * Total Submissions: 708.8K
+ * Testcase Example:  '[-2,1,-3,4,-1,2,1,-5,4]'
+ *
+ * 给定一个整数数组 nums ，找到一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。
+ * 
+ * 示例:
+ * 
+ * 输入: [-2,1,-3,4,-1,2,1,-5,4]
+ * 输出: 6
+ * 解释: 连续子数组 [4,-1,2,1] 的和最大，为 6。
+ * 
+ * 
+ * 进阶:
+ * 
+ * 如果你已经实现复杂度为 O(n) 的解法，尝试使用更为精妙的分治法求解。
+ * 
+ */
+
+// @lc code=start
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var maxSubArray = function(nums) {
+    let maxSum = -Infinity;
+    let DP_i;
+    for (let i = 0; i < nums.length; i++) {
+        if (i === 0) {
+            DP_i = maxSum = nums[0];
+            continue;
+        }
+        DP_i = Math.max(nums[i], nums[i] + DP_i);
+        if (maxSum < DP_i) {
+            maxSum = DP_i;
+        }
+    }
+    return maxSum;
+};
+// @lc code=end
+
+
+```
+</details>
+
 ### 54.螺旋矩阵<a href="./src/54.螺旋矩阵.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -2644,7 +3622,7 @@ spiralOrder([[1,2,3],[4,5,6],[7,8,9]])
 
 ### 55.跳跃游戏<a href="./src/55.跳跃游戏.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -2743,7 +3721,7 @@ var canJump = function(nums) {
 
 ### 56.合并区间<a href="./src/56.合并区间.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -2825,7 +3803,7 @@ var merge = function(intervals) {
 
 ### 59.螺旋矩阵-ii<a href="./src/59.螺旋矩阵-ii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -2912,7 +3890,7 @@ var generateMatrix = function(n) {
 
 ### 61.旋转链表<a href="./src/61.旋转链表.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -3052,7 +4030,7 @@ var rotateRight = function(head, k) {
 
 ### 62.不同路径<a href="./src/62.不同路径.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -3172,7 +4150,7 @@ var uniquePaths = function(m, n) {
 
 ### 64.最小路径和<a href="./src/64.最小路径和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -3285,9 +4263,214 @@ minPathSum([[1,3,1],[1,5,1],[4,2,1]]);
 ```
 </details>
 
+### 66.加一<a href="./src/66.加一.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=66 lang=javascript
+ *
+ * [66] 加一
+ *
+ * https://leetcode-cn.com/problems/plus-one/description/
+ *
+ * algorithms
+ * Easy (45.70%)
+ * Likes:    591
+ * Dislikes: 0
+ * Total Accepted:    228.1K
+ * Total Submissions: 500K
+ * Testcase Example:  '[1,2,3]'
+ *
+ * 给定一个由 整数 组成的 非空 数组所表示的非负整数，在该数的基础上加一。
+ * 
+ * 最高位数字存放在数组的首位， 数组中每个元素只存储单个数字。
+ * 
+ * 你可以假设除了整数 0 之外，这个整数不会以零开头。
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 
+ * 输入：digits = [1,2,3]
+ * 输出：[1,2,4]
+ * 解释：输入数组表示数字 123。
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 输入：digits = [4,3,2,1]
+ * 输出：[4,3,2,2]
+ * 解释：输入数组表示数字 4321。
+ * 
+ * 
+ * 示例 3：
+ * 
+ * 
+ * 输入：digits = [0]
+ * 输出：[1]
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 1 
+ * 0 
+ * 
+ * 
+ */
+/*
+    边界考虑：
+        9 的向前进位
+        最后一位 10
+
+    优化考虑：
+        如果不需要进位，直接返回
+
+    拓展考虑：
+        如果加任意数字，那么要用 %
+ */
+// @lc code=start
+/**
+ * @param {number[]} digits
+ * @return {number[]}
+ */
+var plusOne = function(digits) {
+    digits[digits.length - 1] += 1;
+    for (
+        let i = digits.length - 1;
+        i > 0;
+        i--
+    ) {
+        if (digits[i] === 10) {
+            digits[i] = 0;
+            digits[i - 1] = digits[i - 1] + 1;
+        } else {
+            return digits;
+        }
+    }
+    if (digits[0] === 10) {
+        digits[0] = 0;
+        digits.unshift(1);
+    }
+    return digits;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 69.x-的平方根<a href="./src/69.x-的平方根.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=69 lang=javascript
+ *
+ * [69] x 的平方根
+ *
+ * https://leetcode-cn.com/problems/sqrtx/description/
+ *
+ * algorithms
+ * Easy (38.92%)
+ * Likes:    535
+ * Dislikes: 0
+ * Total Accepted:    221.3K
+ * Total Submissions: 568.6K
+ * Testcase Example:  '4'
+ *
+ * 实现 int sqrt(int x) 函数。
+ * 
+ * 计算并返回 x 的平方根，其中 x 是非负整数。
+ * 
+ * 由于返回类型是整数，结果只保留整数的部分，小数部分将被舍去。
+ * 
+ * 示例 1:
+ * 
+ * 输入: 4
+ * 输出: 2
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 输入: 8
+ * 输出: 2
+ * 说明: 8 的平方根是 2.82842..., 
+ * 由于返回类型是整数，小数部分将被舍去。
+ * 
+ * 
+ */
+// @lc code=start
+/*
+   > 除了二分法，还可以用牛顿迭代法
+   返回带精度的 float 类型
+*/
+/**
+ * @param {number} x
+ * @return {number}
+ */
+var mySqrt = function(x) {
+    if (x === 0 || x === 1) {
+        return x;
+    }
+    let left = 0;
+    let right = x;
+    let mid = left + (right - left)>>1;
+    while ((mid * mid !== x) 
+           && (left + 1 < right)) {
+        if (mid * mid > x) {
+            right = mid;
+        } else {
+            left = mid;
+        }
+        mid = left + (right - left)>>1
+    }
+    return mid;
+};
+/**
+ * @param {number} x
+ * @return {number}
+ */
+var mySqrt = function(x) {
+    if (x === 1 || x === 0) {
+        return x;
+    }
+    let left = 0;
+    let right = x;
+    let mid = left + (right - left)/2;
+    while (left + 0.001<= right) {
+        mid = left + (right - left)/2;
+        const mid2 = mid * mid;
+        if (mid2 === x) {
+            return mid;
+        }
+        if (mid2 < x) {
+            left = mid;
+        } else {
+            right = mid;
+        }
+    }
+    return mid;
+};
+// @lc code=end
+mySqrt(2);
+
+
+```
+</details>
+
 ### 72.编辑距离<a href="./src/72.编辑距离.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -3427,7 +4610,7 @@ var minDistance = function(word1, word2) {
 
 ### 78.子集<a href="./src/78.子集.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -3524,7 +4707,7 @@ var subsets = function(nums) {
 
 ### 88.合并两个有序数组<a href="./src/88.合并两个有序数组.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -3617,7 +4800,7 @@ var merge = function(nums1, m, nums2, n) {
 
 ### 89.格雷编码<a href="./src/89.格雷编码.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -3702,7 +4885,7 @@ var grayCode = function(n) {
 
 ### 91.解码方法<a href="./src/91.解码方法.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -3834,7 +5017,7 @@ var numDecodings = function(s) {
 
 ### 92.反转链表-ii<a href="./src/92.反转链表-ii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -3962,7 +5145,7 @@ var reverseBetween = function(head, m, n) {
 
 ### 96.不同的二叉搜索树<a href="./src/96.不同的二叉搜索树.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -4110,7 +5293,7 @@ var numTrees = function(n) {
 
 ### 103.二叉树的锯齿形层次遍历<a href="./src/103.二叉树的锯齿形层次遍历.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -4205,9 +5388,201 @@ var zigzagLevelOrder = function(root) {
 ```
 </details>
 
+### 104.二叉树的最大深度<a href="./src/104.二叉树的最大深度.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=104 lang=javascript
+ *
+ * [104] 二叉树的最大深度
+ *
+ * https://leetcode-cn.com/problems/maximum-depth-of-binary-tree/description/
+ *
+ * algorithms
+ * Easy (75.29%)
+ * Likes:    751
+ * Dislikes: 0
+ * Total Accepted:    312.6K
+ * Total Submissions: 414.6K
+ * Testcase Example:  '[3,9,20,null,null,15,7]'
+ *
+ * 给定一个二叉树，找出其最大深度。
+ * 
+ * 二叉树的深度为根节点到最远叶子节点的最长路径上的节点数。
+ * 
+ * 说明: 叶子节点是指没有子节点的节点。
+ * 
+ * 示例：
+ * 给定二叉树 [3,9,20,null,null,15,7]，
+ * 
+ * ⁠   3
+ * ⁠  / \
+ * ⁠ 9  20
+ * ⁠   /  \
+ * ⁠  15   7
+ * 
+ * 返回它的最大深度 3 。
+ * 
+ */
+
+// @lc code=start
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * 解法一：DFS
+ */
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number}
+ */
+var maxDepth = function(root) {
+    if (root == null) {
+        return 0;
+    }
+    let depth = 1;
+    const dfs = (node, cur) => {        
+        if (cur > depth) {
+            depth = cur;
+        }            
+        if (node.left) {
+            dfs(node.left, cur + 1);
+        }
+        if (node.right) {
+            dfs(node.right, cur + 1);
+        }
+    }
+    dfs(root, depth);
+    return depth;
+};
+/*
+ *  解法二： 普通递归
+ */
+/**
+* @param {TreeNode} root
+* @return {number}
+*/
+var maxDepth = function(root) {
+    if (root == null) {
+        return 0;
+    }
+    return Math.max(
+            maxDepth(root.left) + 1,
+            maxDepth(root.right) + 1
+    );
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 111.二叉树的最小深度<a href="./src/111.二叉树的最小深度.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=111 lang=javascript
+ *
+ * [111] 二叉树的最小深度
+ *
+ * https://leetcode-cn.com/problems/minimum-depth-of-binary-tree/description/
+ *
+ * algorithms
+ * Easy (45.04%)
+ * Likes:    411
+ * Dislikes: 0
+ * Total Accepted:    159.1K
+ * Total Submissions: 349.4K
+ * Testcase Example:  '[3,9,20,null,null,15,7]'
+ *
+ * 给定一个二叉树，找出其最小深度。
+ * 
+ * 最小深度是从根节点到最近叶子节点的最短路径上的节点数量。
+ * 
+ * 说明：叶子节点是指没有子节点的节点。
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 
+ * 输入：root = [3,9,20,null,null,15,7]
+ * 输出：2
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 输入：root = [2,null,3,null,4,null,5,null,6]
+ * 输出：5
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 树中节点数的范围在 [0, 10^5] 内
+ * -1000 
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number}
+ */
+var minDepth = function(root) {
+    if (!root) {
+        return 0;
+    }
+    if (!root.left) {
+        return 1 + minDepth(root.right);
+    }
+    if (!root.right) {
+        return 1 + minDepth(root.left);
+    }
+    return 1 + Math.min(
+        minDepth(root.left),
+        minDepth(root.right)
+    );
+};
+// @lc code=end
+
+
+```
+</details>
+
 ### 116.填充每个节点的下一个右侧节点指针<a href="./src/116.填充每个节点的下一个右侧节点指针.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -4326,9 +5701,515 @@ var connect = function(root) {
 ```
 </details>
 
+### 121.买卖股票的最佳时机<a href="./src/121.买卖股票的最佳时机.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=121 lang=javascript
+ *
+ * [121] 买卖股票的最佳时机
+ *
+ * https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/description/
+ *
+ * algorithms
+ * Easy (55.14%)
+ * Likes:    1320
+ * Dislikes: 0
+ * Total Accepted:    321.4K
+ * Total Submissions: 582.1K
+ * Testcase Example:  '[7,1,5,3,6,4]'
+ *
+ * 给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。
+ * 
+ * 如果你最多只允许完成一笔交易（即买入和卖出一支股票一次），设计一个算法来计算你所能获取的最大利润。
+ * 
+ * 注意：你不能在买入股票前卖出股票。
+ * 
+ * 
+ * 
+ * 示例 1:
+ * 
+ * 输入: [7,1,5,3,6,4]
+ * 输出: 5
+ * 解释: 在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5 。
+ * ⁠    注意利润不能是 7-1 = 6, 因为卖出价格需要大于买入价格；同时，你不能在买入前卖出股票。
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 输入: [7,6,4,3,1]
+ * 输出: 0
+ * 解释: 在这种情况下, 没有交易完成, 所以最大利润为 0。
+ * 
+ * 
+ */
+/**
+    买卖股票的最佳时机（总结）
+    
+    题意理解
+        今天不能知道明天，能不能挣钱，要等明天才知道。所以它是从后往前的。
+
+        今天为止挣多少，根据昨天的所有情况，就可以推断出来，推断出的公式就叫递推公式。
+
+        每两天都存在必然联系，从最后一天到第一天，那也可以从第一天得到最后一天。
+
+        从最后一天到第一天使用的是递归，从第一天得到最后一天使用的是动态规划
+
+        > `注意: 你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。` 这句话，简化了难度，递推公式中，0 到 1 表示买入，1 到 0 卖出， 如果不止 1和0，那就多一个 k 作为一个维度， 如买卖股票的最佳时机 III
+
+    递推公式
+
+        ```js
+        dp[i][k][0] = max(dp[i-1][k][0], dp[i-1][k][1] + prices[i])
+        dp[i][k][1] = max(dp[i-1][k][1], dp[i-1][k+1][0] - prices[i]) 
+        ```
+
+        > 注意 k+1 买了一次后变成 k
+
+    解 k = 1，即第一题
+
+
+        ```js
+        dp[i][1][0] = max(dp[i-1][1][0], dp[i-1][1][1] + prices[i])
+        dp[i][1][1] = max(dp[i-1][1][1], dp[i-1][0][0] - prices[i]) 
+                    = max(dp[i-1][1][1], -prices[i])
+        ```
+
+        解释：k = 0 时，前面不存在交易，所以 dp[i-1][0][0] = 0。
+
+    
+    解 k = Infinity，即第二题
+
+        ```js
+        dp[i][Infinity][0] = max(dp[i-1][Infinity][0], dp[i-1][Infinity][1] + prices[i])
+        dp[i][Infinity][1] = max(dp[i-1][Infinity][1], dp[i-1][Infinity+1][0] - prices[i]) 
+
+        ∵ Infinity = Infinity + 1
+        ∴
+        dp[i][0] = max(dp[i-1][0], dp[i-1][1] + prices[i])
+        dp[i][1] = max(dp[i-1][1], dp[i-1][0] - prices[i])
+        ```
+
+    解 k = 2，即第三题
+
+        ```js
+        dp[i][k][0] = max(dp[i-1][k][0], dp[i-1][k][1] + prices[i])
+        dp[i][k][1] = max(dp[i-1][k][1], dp[i-1][k-1][0] - prices[i]) 
+        ```
+    
+    参考资料：
+        [LeetCode 题解  一个方法团灭 6 道股票问题](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/solution/yi-ge-fang-fa-tuan-mie-6-dao-gu-piao-wen-ti-by-l-3/)
+
+ */
+/**
+ 
+解一：暴力法
+    T(n) = S(n^2)
+    S(n) = O(1)
+
+ */
+var maxProfit = function(prices) {
+    // 解一：暴力法 T(n) = O(n^2)
+    let max = 0;
+    for (let buy = 0; buy < prices.length; buy++) {
+        for (let sell = buy; sell < prices.length; sell++) {
+            const profit = prices[sell] - prices[buy];
+            if (max < profit) {
+                max = profit;
+            }
+        }
+    }
+    return max;
+};
+/**
+ 
+解二：DP
+
+    T(n) = O(n)
+    S(n) = O(n)
+
+    ```js
+    dp[i][1][0] = max(dp[i-1][1][0], dp[i-1][1][1] + prices[i])
+    dp[i][1][1] = max(dp[i-1][1][1], dp[i-1][0][0] - prices[i]) 
+                = max(dp[i-1][1][1], -prices[i])
+    解释：k = 0 的 base case，所以 dp[i-1][0][0] = 0。
+    ```
+
+    现在发现 k 都是 1，不会改变，即 k 对状态转移已经没有影响了。
+    可以进行进一步化简去掉所有 k：
+
+    ```js
+    dp[i][0] = max(dp[i-1][0], dp[i-1][1] + prices[i])
+    dp[i][1] = max(dp[i-1][1], -prices[i])
+    ```
+
+ */
+// @lc code=start
+/**
+ * @param {number[]} prices
+ * @return {number}
+ */
+var maxProfit = function(prices) {
+    // 解二：DP
+    /* 
+    一、DP定义
+        DP[i][type]
+        表示从 0 ~ i 获得的利润， ，type 0 表示不持有，type 1 表示持有
+        i >= O; i < prices.length
+        PS: i = 0 表示第 1 天
+
+    二、递推公式
+        // 第 i 处于卖出状态
+        DP[i][0] = Math.max(
+            DP[i - 1][1] + prices[i], // 在第 i 时卖出了
+            DP[i - 1][0]
+        );
+
+        // 第 i 处于持有状态
+        DP[i][1] = Math.max(
+            DP[i - 1][1]
+            // DP[i - 1][0] - prices[i] // 在第 i 时买入了
+            - prices[i] // 在第 i 时买入了, DP[i - 1][0] 只能是 0， 因为只交易一次
+        );  
+    */
+    // 0. 边界处理
+    if (prices.length === 0) {
+        return 0;
+    }
+    // 1. 初始化
+    let DP = new Array(prices.length);
+    for (let i = 0; i < DP.length; i++) {
+        DP[i] = [];
+    }
+    // 2. 预处理
+    DP[0][0] = 0;
+    DP[0][1] = -prices[0];
+    for (let i = 1; i < DP.length; i++) {        
+        DP[i][0] = Math.max(
+            DP[i - 1][1] + prices[i],
+            DP[i - 1][0]
+        );
+        DP[i][1] = Math.max(
+            DP[i - 1][1],
+            - prices[i]
+        );
+    }    
+    return DP[DP.length - 1][0];
+};
+// @lc code=end
+/**
+    拓展：S(n) 从 O(n) 优化 到 O(1)
+    由于 dp[i] 仅仅依赖于 dp[i - 1] 
+ */
+var maxProfit = function(prices) {    
+    // 0. 边界处理
+    if (prices.length === 0) {
+        return 0;
+    }
+    // 1. 预处理
+    let DP_0 = 0;
+    let DP_1 = -prices[0];
+
+    for (let i = 1; i < prices.length; i++) {        
+        DP_0 = Math.max(
+            DP_1 + prices[i],
+            DP_0
+        );
+        DP_1 = Math.max(
+            DP_1,
+            - prices[i]
+        );
+    }    
+    return DP_0;
+};
+
+
+
+```
+</details>
+
+### 122.买卖股票的最佳时机-ii<a href="./src/122.买卖股票的最佳时机-ii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=122 lang=javascript
+ *
+ * [122] 买卖股票的最佳时机 II
+ *
+ * https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii/description/
+ *
+ * algorithms
+ * Easy (64.95%)
+ * Likes:    1007
+ * Dislikes: 0
+ * Total Accepted:    266.1K
+ * Total Submissions: 407.7K
+ * Testcase Example:  '[7,1,5,3,6,4]'
+ *
+ * 给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。
+ * 
+ * 设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）。
+ * 
+ * 注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。
+ * 
+ * 
+ * 
+ * 示例 1:
+ * 
+ * 输入: [7,1,5,3,6,4]
+ * 输出: 7
+ * 解释: 在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。
+ * 随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6-3 = 3 。
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 输入: [1,2,3,4,5]
+ * 输出: 4
+ * 解释: 在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4
+ * 。
+ * 注意你不能在第 1 天和第 2 天接连购买股票，之后再将它们卖出。
+ * 因为这样属于同时参与了多笔交易，你必须在再次购买前出售掉之前的股票。
+ * 
+ * 
+ * 示例 3:
+ * 
+ * 输入: [7,6,4,3,1]
+ * 输出: 0
+ * 解释: 在这种情况下, 没有交易完成, 所以最大利润为 0。
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 1 <= prices.length <= 3 * 10 ^ 4
+ * 0 <= prices[i] <= 10 ^ 4
+ * 
+ * 
+ */
+/**
+    解一：DP
+ */
+// @lc code=start
+/**
+ * @param {number[]} prices
+ * @return {number}
+ */
+/**
+ * @param {number[]} prices
+ * @return {number}
+ */
+var maxProfit = function(prices) {
+    // 0. 边界处理
+    if (prices.length === 0) {
+        return 0;
+    }
+    // 1. 初始化 DP
+    const DP = Array(prices.length);
+    for (let i = 0; i < DP.length; i++) {
+        DP[i] = [];
+    }
+    // 2. 预处理
+    DP[0][1] = -prices[0];
+    DP[0][0] = 0;
+    // 3. 递推
+    for (let i = 1; i < DP.length; i++) {
+        DP[i][0] = Math.max(
+            DP[i-1][0],
+            DP[i-1][1] + prices[i]
+        );
+        DP[i][1] = Math.max(
+            DP[i-1][1],
+            DP[i-1][0] - prices[i]
+        );
+    }
+    return DP[DP.length - 1][0];
+};
+// @lc code=end
+/**
+    优化空间复杂度
+ */
+var maxProfit = function(prices) {    
+    // 0. 边界处理
+    if (prices.length === 0) {
+        return 0;
+    }
+    // 1. 预处理
+    let DP_0 = 0;
+    let DP_1 = -prices[0];
+
+    for (let i = 1; i < prices.length; i++) {
+        const cache = DP_0;
+        DP_0 = Math.max(
+            DP_1 + prices[i],
+            DP_0
+        );
+        DP_1 = Math.max(
+            DP_1,
+            cache - prices[i]
+        );
+    }    
+    return DP_0;
+};
+
+/**
+    如果不用递归，用暴力法（DFS）
+        class Solution {
+            public int maxProfit(int[] prices) {
+                return calculate(prices, 0);
+            }
+
+            public int calculate(int prices[], int s) {
+                if (s >= prices.length)
+                    return 0;
+                int max = 0;
+                for (int start = s; start < prices.length; start++) {
+                    int maxprofit = 0;
+                    for (int i = start + 1; i < prices.length; i++) {
+                        if (prices[start] < prices[i]) {
+                            int profit = calculate(prices, i + 1) + prices[i] - prices[start];
+                            if (profit > maxprofit)
+                                maxprofit = profit;
+                        }
+                    }
+                    if (maxprofit > max)
+                        max = maxprofit;
+                }
+                return max;
+            }
+        }
+        T(n) = n^n (调用递归函数 n^n 次)
+        S(n) = n (递归的深度为 n )
+ */
+
+
+```
+</details>
+
+### 123.买卖股票的最佳时机-iii<a href="./src/123.买卖股票的最佳时机-iii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=123 lang=javascript
+ *
+ * [123] 买卖股票的最佳时机 III
+ *
+ * https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iii/description/
+ *
+ * algorithms
+ * Hard (46.43%)
+ * Likes:    563
+ * Dislikes: 0
+ * Total Accepted:    65.7K
+ * Total Submissions: 140.8K
+ * Testcase Example:  '[3,3,5,0,0,3,1,4]'
+ *
+ * 给定一个数组，它的第 i 个元素是一支给定的股票在第 i 天的价格。
+ * 
+ * 设计一个算法来计算你所能获取的最大利润。你最多可以完成 两笔 交易。
+ * 
+ * 注意: 你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。
+ * 
+ * 示例 1:
+ * 
+ * 输入: [3,3,5,0,0,3,1,4]
+ * 输出: 6
+ * 解释: 在第 4 天（股票价格 = 0）的时候买入，在第 6 天（股票价格 = 3）的时候卖出，这笔交易所能获得利润 = 3-0 = 3 。
+ * 随后，在第 7 天（股票价格 = 1）的时候买入，在第 8 天 （股票价格 = 4）的时候卖出，这笔交易所能获得利润 = 4-1 = 3 。
+ * 
+ * 示例 2:
+ * 
+ * 输入: [1,2,3,4,5]
+ * 输出: 4
+ * 解释: 在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4
+ * 。   
+ * 注意你不能在第 1 天和第 2 天接连购买股票，之后再将它们卖出。   
+ * 因为这样属于同时参与了多笔交易，你必须在再次购买前出售掉之前的股票。
+ * 
+ * 
+ * 示例 3:
+ * 
+ * 输入: [7,6,4,3,1] 
+ * 输出: 0 
+ * 解释: 在这个情况下, 没有交易完成, 所以最大利润为 0。
+ * 
+ */
+/**
+    题解：DP
+
+    递推公式
+        dp[i][k][0] = max(dp[i-1][k][0], dp[i-1][k][1] + prices[i])
+        dp[i][k][1] = max(dp[i-1][k][1], dp[i-1][k-1][0] - prices[i]) 
+        // 买入股票，k 就加 1
+ */
+// @lc code=start
+/**
+ * @param {number[]} prices
+ * @return {number}
+ */
+var maxProfit = function(prices) {
+    const K = 2;
+    // 0. 边界处理
+    if (prices.length === 0) {
+        return 0;
+    }
+    // 1. DP 初始化
+    const DP = Array(prices.length);
+    for (let i = 0; i < DP.length; i++) {
+        DP[i] = Array(K + 1);
+        for (let k = 0; k < DP[i].length; k++) {
+            DP[i][k] = [];
+        }
+    }
+    // 2. DP 初始化临界值
+    // 2.1 当 i = 0 时，列举所有情况
+    DP[0][0][0] = 0;
+    DP[0][1][0] = -Infinity; // Math.max(-Infinity, num) = num
+    DP[0][2][0] = -Infinity;
+    DP[0][0][1] = -Infinity;
+    DP[0][1][1] = -prices[0];
+    DP[0][2][1] = -prices[0] * 2;
+    // 2.1 当 k = 0 时，列举所有情况
+    for (let i = 1; i < DP.length; i++) {
+        DP[i][0][0] = 0;
+        DP[i][0][1] = 0;
+    }
+
+    // 3. DP 递推
+    for (let i = 1; i < DP.length; i++) {
+        DP[i][0][0]=0;
+        for (let k = 1; k <= K; k++) {
+            DP[i][k][0] = Math.max(DP[i-1][k][0], DP[i-1][k][1] + prices[i]);
+            DP[i][k][1] = Math.max(DP[i-1][k][1], DP[i-1][k-1][0] - prices[i]);
+        }
+    }
+    console.log(DP);
+    
+    return Math.max(
+        DP[DP.length - 1][0][0],
+        DP[DP.length - 1][1][0],
+        DP[DP.length - 1][2][0],
+    );
+};
+// @lc code=end
+
+
+```
+</details>
+
 ### 124.二叉树中的最大路径和<a href="./src/124.二叉树中的最大路径和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -4448,7 +6329,7 @@ var maxPathSum = function(root) {
 
 ### 125.验证回文串<a href="./src/125.验证回文串.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -4484,6 +6365,12 @@ var maxPathSum = function(root) {
  * 
  * 
  */
+/*
+    参考资料：
+        正则表达式 https://baike.baidu.com/item/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/1700215?fr=aladdin
+    
+        \w  [A-Za-z0-9_]
+ */
 
 // @lc code=start
 /**
@@ -4491,53 +6378,12 @@ var maxPathSum = function(root) {
  * @return {boolean}
  */
 var isPalindrome = function(s) {
-    for (let i = 0; i < (s.length >> 1); i++) {
-        if (s[i] !== s[s.length - 1 - i]) {
-            return false;
-        }
-    }
-    return true;
-};
-/*
-    解一: 头尾指针
-
-    时间复杂度：O(n)
-
-    空间复杂度：O(n)
-
-    number >> 1 === Math.floor(number/2)
-    解二: reverse
-
-    var isPalindrome = function(s) {
-        const arr = s.toLowerCase().match(/\w|\d/g) || [];
-        const str = arr.join('');
-        return arr.reverse().join('') === str;
-    };
-
- */
-
-/**
- * @param {string} s
- * @return {boolean}
- */
-var isPalindrome = function(s) {
-    for (let i = 0; i < (s.length >> 1); i++) {
-        if (s[i] !== s[s.length - 1 - i]) {
-            return false;
-        }
-    }
-    return true;
-};
-/**
-* @param {string} s
-* @return {boolean}
-*/
-var isPalindrome = function(s) {
-    const arr = s.toLowerCase().match(/\w|\d/g) || [];
+    const arr = s.toLowerCase().match(/[a-z]|\d/g) || [];
     const str = arr.join('');
     return arr.reverse().join('') === str;
 };
 // @lc code=end
+isPalindrome('ab_a');
 
 
 ```
@@ -4545,7 +6391,7 @@ var isPalindrome = function(s) {
 
 ### 130.被围绕的区域<a href="./src/130.被围绕的区域.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -4689,7 +6535,7 @@ solve([["X","O","X","O","X","O"],["O","X","O","X","O","X"],["X","O","X","O","X",
 
 ### 131.分割回文串<a href="./src/131.分割回文串.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -4827,7 +6673,7 @@ var partition = function (s) {
 
 ### 134.加油站<a href="./src/134.加油站.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -4961,7 +6807,7 @@ var canCompleteCircuit = function(gas, cost) {
 
 ### 136.只出现一次的数字<a href="./src/136.只出现一次的数字.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -5047,7 +6893,7 @@ var singleNumber = function(nums) {
 
 ### 139.单词拆分<a href="./src/139.单词拆分.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -5174,7 +7020,7 @@ var wordBreak = function(s, wordDict) {
 
 ### 146.lru缓存机制<a href="./src/146.lru缓存机制.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -5364,7 +7210,7 @@ cache.get(2);       // 返回 -1 (未找到)
 
 ### 148.排序链表<a href="./src/148.排序链表.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -5489,7 +7335,7 @@ var sortList = function(head) {
 
 ### 150.逆波兰表达式求值<a href="./src/150.逆波兰表达式求值.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -5624,7 +7470,7 @@ evalRPN(["10","6","9","3","+","-11","*","/","*","17","+","5","+"], 22);
 
 ### 151.翻转字符串里的单词<a href="./src/151.翻转字符串里的单词.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -5803,7 +7649,7 @@ var reverseWords = function(s) {
 
 ### 152.乘积最大子数组<a href="./src/152.乘积最大子数组.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -5888,7 +7734,7 @@ var maxProduct = function(nums) {
 
 ### 155.最小栈<a href="./src/155.最小栈.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -6041,7 +7887,7 @@ MinStack.prototype.getMin = function() {
 
 ### 160.相交链表<a href="./src/160.相交链表.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -6189,7 +8035,7 @@ var getIntersectionNode = function(headA, headB) {
 
 ### 162.寻找峰值<a href="./src/162.寻找峰值.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -6313,7 +8159,7 @@ var findPeakElement = function(nums) {
 
 ### 169.多数元素<a href="./src/169.多数元素.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -6443,7 +8289,7 @@ majorityElement([3, 2, 3])
 
 ### 171.excel表列序号<a href="./src/171.excel表列序号.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -6538,7 +8384,7 @@ titleToNumber('A')
 
 ### 172.阶乘后的零<a href="./src/172.阶乘后的零.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -6638,7 +8484,7 @@ var trailingZeroes = function(n) {
 
 ### 175.组合两个表.sql<a href="./src/175.组合两个表.sql" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -6659,7 +8505,7 @@ on Person.PersonId = Address.PersonId;
 
 ### 189.旋转数组<a href="./src/189.旋转数组.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -6747,7 +8593,7 @@ var rotate = function(nums, k) {
 
 ### 190.颠倒二进制位<a href="./src/190.颠倒二进制位.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -6829,7 +8675,7 @@ var reverseBits = function(n) {
 
 ### 191.位-1-的个数<a href="./src/191.位-1-的个数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -6931,7 +8777,7 @@ var hammingWeight = function(n) {
 
 ### 198.打家劫舍<a href="./src/198.打家劫舍.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -7039,7 +8885,7 @@ function rob(nums) {
 
 ### 200.岛屿数量<a href="./src/200.岛屿数量.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -7139,7 +8985,7 @@ numIslands([["1","1","1","1","0"],["1","1","0","1","0"],["1","1","0","0","0"],["
 
 ### 202.快乐数<a href="./src/202.快乐数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -7213,7 +9059,7 @@ var isHappy = function(n) {
 
 ### 204.计数质数<a href="./src/204.计数质数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -7310,7 +9156,7 @@ var countPrimes = function(n) {
 
 ### 206.反转链表<a href="./src/206.反转链表.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -7414,6 +9260,8 @@ function reverseList(head) {
                     next  head                      // head.next = next = null
                                                     // 下一个循环
 
+    参考资料：https://www.jianshu.com/p/125ca1a2ac22
+
     代码如下：不断移动 next、head、pre 三个指针
 */
 function reverseList(head) {
@@ -7438,7 +9286,7 @@ function reverseList(head) {
 
 ### 207.课程表<a href="./src/207.课程表.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -7534,7 +9382,7 @@ canFinish(2, [[1,0],[0,1]]);
 
 ### 210.课程表-ii<a href="./src/210.课程表-ii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -7641,7 +9489,7 @@ var findOrder = function (numCourses, prerequisites) {
 
 ### 215.数组中的第k个最大元素<a href="./src/215.数组中的第k个最大元素.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -7778,7 +9626,7 @@ var findKthLargest = function(nums, k) {
 
 ### 221.最大正方形<a href="./src/221.最大正方形.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -7923,7 +9771,7 @@ var maximalSquare = function(matrix) {
 
 ### 225.用队列实现栈<a href="./src/225.用队列实现栈.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -8077,7 +9925,7 @@ LinkedList.prototype.first = function() {
 
 ### 226.翻转二叉树<a href="./src/226.翻转二叉树.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -8164,7 +10012,7 @@ var invertTree = function(root) {
 
 ### 230.二叉搜索树中第k小的元素<a href="./src/230.二叉搜索树中第k小的元素.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -8256,7 +10104,7 @@ var kthSmallest = function(root, k) {
 
 ### 231.2-的幂<a href="./src/231.2-的幂.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -8340,7 +10188,7 @@ isPowerOfTwo(2);
 
 ### 232.用栈实现队列<a href="./src/232.用栈实现队列.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -8478,7 +10326,7 @@ MyQueue.prototype.empty = function() {
 
 ### 234.回文链表<a href="./src/234.回文链表.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -8559,7 +10407,7 @@ var isPalindrome = function(head) {
 
 ### 235.二叉搜索树的最近公共祖先<a href="./src/235.二叉搜索树的最近公共祖先.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -8703,7 +10551,7 @@ var lowestCommonAncestor = function(root, p, q) {
 
 ### 236.二叉树的最近公共祖先<a href="./src/236.二叉树的最近公共祖先.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -8836,7 +10684,7 @@ var lowestCommonAncestor = function (root, p, q) {
 
 ### 237.删除链表中的节点<a href="./src/237.删除链表中的节点.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -8925,7 +10773,7 @@ var deleteNode = function(node) {
 
 ### 238.除自身以外数组的乘积<a href="./src/238.除自身以外数组的乘积.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -9024,7 +10872,7 @@ var productExceptSelf = function(nums) {
 
 ### 239.滑动窗口最大值<a href="./src/239.滑动窗口最大值.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -9121,7 +10969,7 @@ maxSlidingWindow([1,3,1,2,0,5], 3);
 
 ### 240.搜索二维矩阵-ii<a href="./src/240.搜索二维矩阵-ii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -9215,7 +11063,7 @@ var searchMatrix = function(matrix, target) {
 
 ### 242.有效的字母异位词<a href="./src/242.有效的字母异位词.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -9296,9 +11144,97 @@ isAnagram("anagram", "nagaram");
 ```
 </details>
 
+### 268.丢失的数字<a href="./src/268.丢失的数字.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=268 lang=javascript
+ *
+ * [268] 丢失的数字
+ *
+ * https://leetcode-cn.com/problems/missing-number/description/
+ *
+ * algorithms
+ * Easy (57.85%)
+ * Likes:    353
+ * Dislikes: 0
+ * Total Accepted:    100.6K
+ * Total Submissions: 172K
+ * Testcase Example:  '[3,0,1]'
+ *
+ * 给定一个包含 [0, n] 中 n 个数的数组 nums ，找出 [0, n] 这个范围内没有出现在数组中的那个数。
+ * 
+ * 
+ * 
+ * 进阶：
+ * 
+ * 
+ * 你能否实现线性时间复杂度、仅使用额外常数空间的算法解决此问题?
+ * 
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 
+ * 输入：nums = [3,0,1]
+ * 输出：2
+ * 解释：n = 3，因为有 3 个数字，所以所有的数字都在范围 [0,3] 内。2 是丢失的数字，因为它没有出现在 nums 中。
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 输入：nums = [0,1]
+ * 输出：2
+ * 解释：n = 2，因为有 2 个数字，所以所有的数字都在范围 [0,2] 内。2 是丢失的数字，因为它没有出现在 nums 中。
+ * 
+ * 示例 3：
+ * 
+ * 
+ * 输入：nums = [9,6,4,2,3,5,7,0,1]
+ * 输出：8
+ * 解释：n = 9，因为有 9 个数字，所以所有的数字都在范围 [0,9] 内。8 是丢失的数字，因为它没有出现在 nums 中。
+ * 
+ * 示例 4：
+ * 
+ * 
+ * 输入：nums = [0]
+ * 输出：1
+ * 解释：n = 1，因为有 1 个数字，所以所有的数字都在范围 [0,1] 内。1 是丢失的数字，因为它没有出现在 nums 中。
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * n == nums.length
+ * 1 
+ * 0 
+ * nums 中的所有数字都 独一无二
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var missingNumber = function(nums) {
+
+};
+// @lc code=end
+
+
+```
+</details>
+
 ### 279.完全平方数<a href="./src/279.完全平方数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -9421,7 +11357,7 @@ numSquares(12);
 
 ### 283<a href="./src/283.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -9444,7 +11380,7 @@ console.assert(moveZeroes([0,1,0,3,12]));
 
 ### 292.nim-游戏<a href="./src/292.nim-游戏.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -9494,7 +11430,7 @@ var canWinNim = function(n) {
 
 ### 295.数据流的中位数<a href="./src/295.数据流的中位数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -9731,7 +11667,7 @@ MedianFinder.prototype.findMedian = function() {
 
 ### 300.最长上升子序列<a href="./src/300.最长上升子序列.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -9865,9 +11801,140 @@ var lengthOfLIS = function (nums) {
 ```
 </details>
 
+### 309.最佳买卖股票时机含冷冻期<a href="./src/309.最佳买卖股票时机含冷冻期.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=309 lang=javascript
+ *
+ * [309] 最佳买卖股票时机含冷冻期
+ *
+ * https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/description/
+ *
+ * algorithms
+ * Medium (57.22%)
+ * Likes:    613
+ * Dislikes: 0
+ * Total Accepted:    64.7K
+ * Total Submissions: 113K
+ * Testcase Example:  '[1,2,3,0,2]'
+ *
+ * 给定一个整数数组，其中第 i 个元素代表了第 i 天的股票价格 。​
+ * 
+ * 设计一个算法计算出最大利润。在满足以下约束条件下，你可以尽可能地完成更多的交易（多次买卖一支股票）:
+ * 
+ * 
+ * 你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。
+ * 卖出股票后，你无法在第二天买入股票 (即冷冻期为 1 天)。
+ * 
+ * 
+ * 示例:
+ * 
+ * 输入: [1,2,3,0,2]
+ * 输出: 3 
+ * 解释: 对应的交易状态为: [买入, 卖出, 冷冻期, 买入, 卖出]
+ * 
+ */
+/**
+    解一：DP 
+ */
+// @lc code=start
+/**
+ * @param {number[]} prices
+ * @return {number}
+ */
+var maxProfit = function(prices) {
+    // 0. 边界处理
+    if (prices.length === 0 || prices.length === 1) {
+        // case [] and [1]
+        return 0;
+    }
+    // 1. 初始化 DP
+    const DP = Array(prices.length);
+    for (let i = 0; i < DP.length; i++) {
+        DP[i] = [];
+    }
+    // 2. 预处理
+    DP[0][1] = -prices[0];                    // 第一天就买入
+    DP[1][1] = Math.max(DP[0][1], -prices[1]);// 第二天持有不动或第二天才购买 case: [2,1,4] expect: 3
+    DP[0][0] = 0;                             // 第一天不买入
+    DP[1][0] = Math.max(DP[0][1] + prices[1], DP[0][0]);   // 第二天卖出
+    // 3. 递推
+    for (let i = 2; i < DP.length; i++) {
+        DP[i][0] = Math.max(
+            DP[i-1][0],
+            DP[i-1][1] + prices[i]
+        );
+        DP[i][1] = Math.max(
+            DP[i-1][1],            // 在 -1 天持有
+            DP[i-2][0] - prices[i] // 在 -2 天卖出，今天买入
+        );
+    }
+    return DP[DP.length - 1][0];
+};
+// @lc code=end
+
+/**
+    ##### 优化空间复杂度 O(n) => O(1)
+ */
+// dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);
+// dp[i][1] = Math.max(dp[i - 1][1], dp[i - 2][0] - prices[i]);
+var maxProfit = function(prices) {
+    if (!prices || prices.length < 2) return 0;
+    // let dp = Array.from({length: prices.length}, () => []);
+    let dp_i_0 = 0;
+    let dp_i_1 = -prices[0];
+    let dp_pre_0 = 0;
+
+    // dp[1][0] = Math.max(dp[0][0], dp[0][1] + prices[1]);
+    // dp[1][1] = Math.max(dp[0][1], - prices[1]);
+    for (let i = 1; i < prices.length; i++) {
+        let temp = dp_i_0;
+        dp_i_0 = Math.max(dp_i_0, dp_i_1 + prices[i]);
+        dp_i_1 = Math.max(dp_i_1, dp_pre_0 - prices[i]);
+        dp_pre_0 = temp;
+    }
+    return dp_i_0;
+};
+
+/**
+    冷冻期 用 3 表示
+ */
+var maxProfit = function(prices) {
+    // dp[i][0] 持有
+    // dp[i][1] 不持有，当天卖了，第二天不能买
+    // dp[i][2] 不持有，当天没卖，第二天可以买
+    // dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][2] - prices[i])
+    // dp[i][1] = Math.max(dp[i - 1][0] + prices[i])
+    // dp[i][2] = Math.max(dp[i - 1][1], dp[i - 1][2])
+    if (!prices || prices.length <= 1) return 0;
+    const dp = [[], []];
+    dp[0][0] = -prices[0];
+    dp[0][1] = 0;
+    dp[0][2] = 0;
+    // dp[1][0] = Math.max(-prices[0], -prices[1]);
+    // dp[1][1] = Math.max(prices[1] - prices[0], 0);
+    // dp[1][2] = 0;
+    for (let i = 1; i < prices.length; i += 1) {
+        dp[i] = [];
+        dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][2] - prices[i])
+        dp[i][1] = Math.max(dp[i - 1][0] + prices[i])
+        dp[i][2] = Math.max(dp[i - 1][1], dp[i - 1][2])
+        
+    }
+    const n = prices.length;
+    return Math.max(dp[n - 1][0], dp[n - 1][1], dp[n - 1][2]);
+};
+
+```
+</details>
+
 ### 322.零钱兑换<a href="./src/322.零钱兑换.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -9974,7 +12041,7 @@ coinChange([1,2,5],11)
 
 ### 326.3-的幂<a href="./src/326.3-的幂.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -10066,7 +12133,7 @@ console.assert('isPowerOfThree: ', isPowerOfThree(45));
 
 ### 337.打家劫舍-iii<a href="./src/337.打家劫舍-iii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -10232,7 +12299,7 @@ var rob = function(root) {
 
 ### 338.比特位计数<a href="./src/338.比特位计数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -10341,7 +12408,7 @@ var countBits = function(num) {
 
 ### 344.反转字符串<a href="./src/344.反转字符串.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -10405,7 +12472,7 @@ var reverseString = function(s) {
 
 ### 347.前k<a href="./src/347.前k.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -10518,7 +12585,7 @@ var topKFrequent = function(nums, k) {
 
 ### 350.两个数组的交集-ii<a href="./src/350.两个数组的交集-ii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -10641,7 +12708,7 @@ var intersect = function(nums1, nums2) {
 
 ### 367.有效的完全平方数<a href="./src/367.有效的完全平方数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -10728,7 +12795,7 @@ isPerfectSquare(16)
 
 ### 371.两整数之和<a href="./src/371.两整数之和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -10796,7 +12863,7 @@ var getSum = function(a, b) {
 
 ### 378.有序矩阵中第k小的元素<a href="./src/378.有序矩阵中第k小的元素.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -10951,7 +13018,7 @@ var kthSmallest = function (matrix, k) {
 
 ### 384.打乱数组<a href="./src/384.打乱数组.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -11090,7 +13157,7 @@ Solution.prototype.shuffle = function() {
 
 ### 387.字符串中的第一个唯一字符<a href="./src/387.字符串中的第一个唯一字符.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -11159,7 +13226,7 @@ var firstUniqChar = function(s) {
 
 ### 394.字符串解码<a href="./src/394.字符串解码.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -11352,7 +13419,7 @@ decodeString("3[a]2[bc]"); // debug for vscode
 
 ### 412.fizz-buzz<a href="./src/412.fizz-buzz.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -11497,7 +13564,7 @@ var fizzBuzz = function(n) {
 
 ### 415.字符串相加<a href="./src/415.字符串相加.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -11579,7 +13646,7 @@ var addStrings = function(num1, num2) {
 
 ### 416.分割等和子集<a href="./src/416.分割等和子集.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -11751,7 +13818,7 @@ canPartition([1, 2, 5]);
 
 ### 437.路径总和-iii<a href="./src/437.路径总和-iii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -11883,9 +13950,91 @@ pathSum([10,5,-3,3,2,null,11,3,-2,null,1], 8);
 ```
 </details>
 
+### 448.找到所有数组中消失的数字<a href="./src/448.找到所有数组中消失的数字.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=448 lang=javascript
+ *
+ * [448] 找到所有数组中消失的数字
+ *
+ * https://leetcode-cn.com/problems/find-all-numbers-disappeared-in-an-array/description/
+ *
+ * algorithms
+ * Easy (60.62%)
+ * Likes:    517
+ * Dislikes: 0
+ * Total Accepted:    65.9K
+ * Total Submissions: 108.1K
+ * Testcase Example:  '[4,3,2,7,8,2,3,1]'
+ *
+ * 给定一个范围在  1 ≤ a[i] ≤ n ( n = 数组大小 ) 的 整型数组，数组中的元素一些出现了两次，另一些只出现一次。
+ * 
+ * 找到所有在 [1, n] 范围之间没有出现在数组中的数字。
+ * 
+ * 您能在不使用额外空间且时间复杂度为O(n)的情况下完成这个任务吗? 你可以假定返回的数组不算在额外空间内。
+ * 
+ * 示例:
+ * 
+ * 
+ * 输入:
+ * [4,3,2,7,8,2,3,1]
+ * 
+ * 输出:
+ * [5,6]
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * @param {number[]} nums
+ * @return {number[]}
+ */
+var findDisappearedNumbers = function(nums) {
+    // 1. 排序 T(n) = O(nlogn)      X
+    // 2. 类 Map 容器 S(n) = O(n)    X
+    // 3. 异或处理   缺失或多出 1 个    X
+    // 4. 自己作为 类 Map 容器         √
+
+    /**
+        S(n) = 1
+        T(n) = O(n)
+     */
+    for (let i = 0; i < nums.length; i++) {
+        // 1. 将正确值放在正确位置
+        while (nums[i] !== i + 1) {
+            const expectIdx = nums[i] - 1;
+            if (nums[expectIdx] === expectIdx + 1) {
+                // 对应位置已经有正确值了
+                break;
+            }
+            // swap
+            nums[i] = nums[expectIdx];
+            nums[expectIdx] = expectIdx + 1;
+        }
+    }
+    
+    const result = [];
+    for (let i = 0; i < nums.length; i++) {
+        if (nums[i] !== i + 1) {
+            result.push(i + 1);
+        }
+    }
+    return result;
+};
+// @lc code=end
+
+
+```
+</details>
+
 ### 454.四数相加-ii<a href="./src/454.四数相加-ii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -12025,7 +14174,7 @@ var fourSumCount = function(A, B, C, D) {
 
 ### 461.汉明距离<a href="./src/461.汉明距离.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -12097,7 +14246,7 @@ var hammingDistance = function(x, y) {
 
 ### 494.目标和<a href="./src/494.目标和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -12209,7 +14358,7 @@ findTargetSumWays([1,1,1,1,1], 3);
 
 ### 557.反转字符串中的单词-iii<a href="./src/557.反转字符串中的单词-iii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -12272,7 +14421,7 @@ var reverseWords = function(s) {
 
 ### 617.合并二叉树<a href="./src/617.合并二叉树.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -12357,7 +14506,7 @@ var mergeTrees = function(t1, t2) {
 
 ### 647.回文子串<a href="./src/647.回文子串.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -12610,7 +14759,7 @@ var countSubstrings = function(s) {
 
 ### 887.鸡蛋掉落<a href="./src/887.鸡蛋掉落.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -12910,7 +15059,7 @@ superEggDrop(2, 7) // Use for vscode debug
 
 ### 剑指 Offer 03. 数组中重复的数字<a href="./src/剑指 Offer 03. 数组中重复的数字.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -12932,7 +15081,7 @@ var findRepeatNumber = function(nums) {
 
 ### 剑指 Offer 05. 替换空格<a href="./src/剑指 Offer 05. 替换空格.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
@@ -12948,7 +15097,7 @@ var replaceSpace = function(s) {
 
 ### 剑指 Offer 09. 用两个栈实现队列<a href="./src/剑指 Offer 09. 用两个栈实现队列.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-<details>
+<details open>
 <summary>展开代码、题解</summary>
 
 ```js
