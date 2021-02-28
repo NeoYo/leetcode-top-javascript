@@ -65,14 +65,62 @@
  * 
  * 
  */
-
-// @lc code=start
 /**
- * @param {number[]} nums
- * @return {number}
+    解法:
+        1. Array.protype.sort 假设快排，虽然 S(n) = 1 ，但是 T(n) = O(nlogn) ，大于 O(n)
+        2. 类 Map 存储结构，key 是数字，value 是 0/1 (0 表示出现 2 次，1 表示出现 1次)
+        3. 异或运算 A^A = 0
+ */
+/**
+    解一：Map 结构存储
+        下面以数组为例子，还可以用 Object、Map、Set、二进制存储，可以看 Map（总结）
+            T(n) = O(n + n) = O(n)
+            S(n) = O(n)
+ */
+// @lc code=start
+var missingNumber = function(nums) {
+    const arr = [];
+    for (let i = 0; i < nums.length; i++) {
+        arr[nums[i]] = true;
+    }
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] !== true) {
+            return i;
+        }
+    }
+    return arr.length; // 边界处理
+};
+/**
+    解二：Array.prototype.sort
+        Array.prototype.sort 规定是原地排序，所以 空间复杂度 O(1)，如果宿主环境用快排，时间复杂度就是 O(nlogn)
+            T(n) = O(nlogn) + O(n) = O(nlogn)
+            S(n) = O(1)
  */
 var missingNumber = function(nums) {
-
+    nums.sort((n1, n2) => (n1 - n2));
+    let cursor = 0;
+    for (let i = 0; i < nums.length; i++) {
+        if (nums[i] !== cursor) {
+            return i;
+        }
+        cursor++;
+    }
+    return cursor;
+};
+/**
+    解三：异或运算
+        任一数字，异或自己等于 0
+            T(n) = O(n)
+            S(n) = O(1)
+*/
+var missingNumber = function(nums) {
+    let result = 0;
+    let cursor = 0;
+    for (let i = 0; i < nums.length; i++) {
+        result = result ^ nums[i] ^ cursor;
+        cursor++;
+    }
+    return result ^ cursor;
 };
 // @lc code=end
 

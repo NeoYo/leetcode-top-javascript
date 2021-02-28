@@ -74,16 +74,16 @@ var isValid = function(s) {
     }
 
     for (let i = 0; i < s.length; i++) {
-        if (s[i] in map) {
+        if (s[i] in map) {                  // 1. 左符号就入栈
             stack.push(s[i]);
             continue;
         }
-        if (map[stack.pop()] === s[i]) {
+        if (map[stack.pop()] === s[i]) {    // 2. 不是左符号，就出栈匹配
             continue;
         }
         return false;
     }
-    return stack.length === 0;
+    return stack.length === 0;              // 3. 检测 栈的length 
 };
 // @lc code=end
 

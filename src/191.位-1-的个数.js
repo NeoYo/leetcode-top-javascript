@@ -47,7 +47,8 @@
  * 在 Java 中，编译器使用二进制补码记法来表示有符号整数。因此，在上面的 示例 3 中，输入表示有符号整数 -3。
  * 
  * 
- * 
+ * 提示：
+ * 输入必须是长度为 32 的 二进制串 。
  * 
  * 进阶:
  * 如果多次调用这个函数，你将如何优化你的算法？
@@ -69,16 +70,17 @@
 var hammingWeight = function(n) {
     let cnt = 0;
     for (let i = 0; i < 32; i++) {
-        if ((n & 1) === 1) {
+        if ((n & 1) === 1) {    // 二进制与 & 1
             cnt++;
         }
-        n = n >> 1;
+        n = n >> 1;             // 不断右移 1
     }
     return cnt;    
 };
 /* 
-// 解二: n & (n - 1) 可以消去最低位 1
-//      n & (n - 1) 比移位更快，移位要处理全部 0 和 1，该方法每次都直接处理 1
+ * 解二: n & (n - 1) 可以消去最低位的 1
+ * https://pic.leetcode-cn.com/abfd6109e7482d70d20cb8fc1d632f90eacf1b5e89dfecb2e523da1bcb562f66-image.png
+ */
 var hammingWeight = function(n) {
     let cnt = 0;
     while (n != 0) {
@@ -87,6 +89,5 @@ var hammingWeight = function(n) {
     }
     return cnt;
 };
- */
 // @lc code=end
 

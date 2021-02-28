@@ -52,29 +52,41 @@
        S(n) = O(1)
        以每一个元素为中心，从左右扩散
        
-        column[i] = Math.max(0, 
+        column[i] = Math.max(
+            0,
             Math.min(maxLeft, maxRight) − height[i]
         )
 
-   二、单调栈
+   二、单调函数
        T(n) = O(n)
        S(n) = O(n)
        代码如下，对应着参考资料的 动态编程
 
-
-       leftMax     // 单调不减栈
+       leftMax     // 单调不减函数  （递增或不变）
                    // 记录左边数组的最大值
 
+                       /
+                      /
+                     /
+                    /
 
        rightMax
-                   // 单调不增栈
+                   // 单调不增函数  （递减或不变）
                    // 记录右边数组的最大值
+
+                    \
+                     \
+                      \
+                       \
+
+        列
+            leftMax     rightMax
+               /     |      \
+              /      |       \
+             /       |        \
+            /        |         \
 */
 // @lc code=start
-/**
- * @param {number[]} height
- * @return {number}
- */
 /**
  * @param {number[]} height
  * @return {number}

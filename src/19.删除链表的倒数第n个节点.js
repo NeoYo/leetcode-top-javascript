@@ -62,7 +62,7 @@ var removeNthFromEnd = function(head, n) {
         len++;
     }
     cursor = head;
-    if (len - n === 0) {
+    if (len - n === 0) {    // 删除第一个
         // case: Input: [1,2] 2; Output: [1];
         // case: Input: [1] 1; Output: null;
         return head.next;

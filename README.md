@@ -4,7 +4,20 @@
 
 <a href="https://leetcode-cn.com/u/yoweixi/" target="_blank"><img src="./assets/progress.jpg" width="385" height="234"/></a>
 
-[关于数据结构与算法的想法](README-GUIDE.md)
+## 关于数据结构与算法的想法
+
+记得自己是15年开始自学 iOS 开发，在学校把黑马程序员的iOS盗版视频看了 80% 左右，后面又做了一年左右 iOS 开发，等到 16 年因工作需要转 Web 前端开发。
+
+现在回想起来，那接近一年半的时间，只记住了一些 API 的调用，如果用来学习计算机基础相关的课程，那不管做前端或其他软件工程的工作，这辈子都有机会用得到。
+
+举个前端中使用了数据结构与算法的例子。前端的 JS 模块化，从 RequireJS、CommonJS、ES6 到 Webpack5的模块联邦的实现，只要涉及到 JS 模块之间的相互引用，就会遇到相同的子问题，需要进行递归地处理，更深入的理解，那就涉及到深度优先遍历，而通过 JS 模块之间的依赖关系，推导出全局的编译顺序，今天学习才发现，这个是属于拓扑排序的问题。
+
+虽然自己平时能挤出来的时间也不多，只能断断续续地学和做题，但亡羊补牢，为时不晚！ 
+
+小伙伴们一起加油💪吧！
+
+
+2020.07.15
 
 > License: 自由转载-非商用-非衍生-保持署名
 
@@ -48,7 +61,13 @@
 
   一、暴力. [x, y] => x+y=9 O(N^2)
   
-  二、Set x + y = 9 => y = 9 - x （记得把用过的 x remove）
+  二、Set 
+
+    Set 不可用，因为只记录值有无，没有记录索引结果
+
+  三、Map
+
+    x + y = 9 => y = 9 - x
 
     复杂度分析：
 
@@ -224,6 +243,7 @@ var addTwoNumbers = function (l1, l2) {
  */
 /**
     题解：
+        子序列与子串
     解一：暴力法
             暴力解法 O(n^3)  i j indexOf
             
@@ -272,9 +292,9 @@ var lengthOfLongestSubstring = function(s) {
 
     2. 双层 for 可以用 O(2n) 化解为 O(n)，在最糟糕的情况下，每个字符将被 i 和 j 访问两次。
         1. 举例1： abcdce 当走到 abcd 的下一个 c, a 后面的 bcd 已经无需再走了, 直接从 abcd 的 d 开始走。 
-        2. 不需要走的原因： abcdc... 中第一个 c， 相当于划分了两个时代
-            1. 包含第一个 c 的， abcd bcd cd d, 肯定是 abcd 最大。
-            2. 包含第一个 c 的，即 从 d 开始
+        2. 不需要走的原因： abcdc... 中第二个 c， 相当于划分了两个时代
+            1. 不包含第二个 c 前面部分， abcd bcd cd d, 肯定是 abcd 最大。
+            2. 包含第二个 c 的，即 从 d 开始
 
         3. 举例2：在最糟糕的情况下，每个字符将被访问接近两次， 如abab, 6次
  */
@@ -287,7 +307,7 @@ var lengthOfLongestSubstring = function(s) {
     let map = new Map();    // <出现过的字符, 对应 i 出现的位置>
     for (let i = 0, j = 0; j < s.length; j++) { // j 快指针，i 慢指针
         const char = s[j];
-        i = Math.max(map.get(char) || 0, i);
+        i = Math.max(map.get(char) || 0, i);    
         map.set(char, j + 1);
         max = Math.max(max, j - i + 1);        
     }
@@ -1046,8 +1066,11 @@ var isPalindrome = function(x) {
 var isPalindrome = function(x) {
     if (x < 0 || (x % 10 == 0 && x !== 0)) return false;
     let reverse = 0;
+    /**
+     * 关键代码
+     */
     while (x > reverse) {
-        reverse = reverse * 10 + x % 10;
+        reverse = reverse * 10 + x % 10;    // 进位+取10余数
         x = Math.floor(x / 10);
     }
     return x === reverse 
@@ -1209,8 +1232,8 @@ var isPalindrome = function(x) {
 
         2.3 例子
 
-                  j
-            p ccba*
+                   j
+            p ccbaa*
             s cca
                 i                            
 
@@ -1242,6 +1265,7 @@ var isMatch = function(s, p) {
                 DP[i][j] = equal(s[i], p[j]) && DP[i-1][j-1];
             } else {
                 DP[i][j] = DP[i][j-2] || DP[i][j-1] || (DP[i-1][j] && equal(s[i], p[j-1]));
+                        // 对应上面3种情形
             }
         }
     }
@@ -1993,7 +2017,7 @@ var removeNthFromEnd = function(head, n) {
         len++;
     }
     cursor = head;
-    if (len - n === 0) {
+    if (len - n === 0) {    // 删除第一个
         // case: Input: [1,2] 2; Output: [1];
         // case: Input: [1] 1; Output: null;
         return head.next;
@@ -2165,16 +2189,96 @@ var isValid = function(s) {
     }
 
     for (let i = 0; i < s.length; i++) {
-        if (s[i] in map) {
+        if (s[i] in map) {                  // 1. 左符号就入栈
             stack.push(s[i]);
             continue;
         }
-        if (map[stack.pop()] === s[i]) {
+        if (map[stack.pop()] === s[i]) {    // 2. 不是左符号，就出栈匹配
             continue;
         }
         return false;
     }
-    return stack.length === 0;
+    return stack.length === 0;              // 3. 检测 栈的length 
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 21.合并两个有序链表<a href="./src/21.合并两个有序链表.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=21 lang=javascript
+ *
+ * [21] 合并两个有序链表
+ *
+ * https://leetcode-cn.com/problems/merge-two-sorted-lists/description/
+ *
+ * algorithms
+ * Easy (64.64%)
+ * Likes:    1560
+ * Dislikes: 0
+ * Total Accepted:    479.5K
+ * Total Submissions: 733.2K
+ * Testcase Example:  '[1,2,4]\n[1,3,4]'
+ *
+ * 将两个升序链表合并为一个新的 升序 链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。 
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 
+ * 输入：l1 = [1,2,4], l2 = [1,3,4]
+ * 输出：[1,1,2,3,4,4]
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 输入：l1 = [], l2 = []
+ * 输出：[]
+ * 
+ * 
+ * 示例 3：
+ * 
+ * 
+ * 输入：l1 = [], l2 = [0]
+ * 输出：[0]
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 两个链表的节点数目范围是 [0, 50]
+ * -100 
+ * l1 和 l2 均按 非递减顺序 排列
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} l1
+ * @param {ListNode} l2
+ * @return {ListNode}
+ */
+var mergeTwoLists = function(l1, l2) {
+
 };
 // @lc code=end
 
@@ -2270,6 +2374,95 @@ var generateParenthesis = function(n) {
  * @return {string[]}
  */
 var generateParenthesis = function(n) {
+
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 23.合并k个升序链表<a href="./src/23.合并k个升序链表.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=23 lang=javascript
+ *
+ * [23] 合并K个升序链表
+ *
+ * https://leetcode-cn.com/problems/merge-k-sorted-lists/description/
+ *
+ * algorithms
+ * Hard (53.56%)
+ * Likes:    1168
+ * Dislikes: 0
+ * Total Accepted:    217K
+ * Total Submissions: 399.2K
+ * Testcase Example:  '[[1,4,5],[1,3,4],[2,6]]'
+ *
+ * 给你一个链表数组，每个链表都已经按升序排列。
+ * 
+ * 请你将所有链表合并到一个升序链表中，返回合并后的链表。
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 输入：lists = [[1,4,5],[1,3,4],[2,6]]
+ * 输出：[1,1,2,3,4,4,5,6]
+ * 解释：链表数组如下：
+ * [
+ * ⁠ 1->4->5,
+ * ⁠ 1->3->4,
+ * ⁠ 2->6
+ * ]
+ * 将它们合并到一个有序链表中得到。
+ * 1->1->2->3->4->4->5->6
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 输入：lists = []
+ * 输出：[]
+ * 
+ * 
+ * 示例 3：
+ * 
+ * 输入：lists = [[]]
+ * 输出：[]
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * k == lists.length
+ * 0 <= k <= 10^4
+ * 0 <= lists[i].length <= 500
+ * -10^4 <= lists[i][j] <= 10^4
+ * lists[i] 按 升序 排列
+ * lists[i].length 的总和不超过 10^4
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode[]} lists
+ * @return {ListNode}
+ */
+var mergeKLists = function(lists) {
 
 };
 // @lc code=end
@@ -3157,6 +3350,146 @@ var combinationSum = function(candidates, target) {
 ```
 </details>
 
+### 41.缺失的第一个正数<a href="./src/41.缺失的第一个正数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=41 lang=javascript
+ *
+ * [41] 缺失的第一个正数
+ *
+ * https://leetcode-cn.com/problems/first-missing-positive/description/
+ *
+ * algorithms
+ * Hard (40.30%)
+ * Likes:    974
+ * Dislikes: 0
+ * Total Accepted:    112.6K
+ * Total Submissions: 277K
+ * Testcase Example:  '[1,2,0]'
+ *
+ * 给你一个未排序的整数数组 nums ，请你找出其中没有出现的最小的正整数。
+ * 
+ * 
+ * 
+ * 进阶：你可以实现时间复杂度为 O(n) 并且只使用常数级别额外空间的解决方案吗？
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 
+ * 输入：nums = [1,2,0]
+ * 输出：3
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 输入：nums = [3,4,-1,1]
+ * 输出：2
+ * 
+ * 
+ * 示例 3：
+ * 
+ * 
+ * 输入：nums = [7,8,9,11,12]
+ * 输出：1
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 0 
+ * -2^31 
+ * 
+ * 
+ */
+/**
+    题解
+        1. Array.prototype.sort (时间复杂度 O(nlogn))
+        2. 类 Map 结构 （空间复杂度 O(n)）
+        3. 异或运算 （可能重复，不止一次， 所以不能使用异或运算） (输入 [1,1] => 输出 2)
+        4. 成环链表 (key 和 value 不是互相对应)
+        5. 将自身作为类 Map 容器
+        
+        1、2、3、4 都不行。
+
+    解：自身作为 类 Map 容器
+
+    算法思路
+        第一次循环
+            1. 把正确的值全都放到该放的位置，不在范围内的值不管;
+            2. 调换过来的值，也需要继续处理
+        第二次循环
+            1. 该放的位置没有对应值，就是缺失的值
+    
+    S(n) = 1
+    T(n) = O(n)     两层循环最多交换 n 次！
+
+    ```js
+    输入:       [3, 4, -1, 1]
+
+    索引:       [0, 1, 2, 3]
+    该放的位置: [1, 2, 3, 4]
+
+    过程:       [-1, 4, 3, 1]
+                |      |
+                
+                [-1, 1, 3, 4]
+                     |     |
+                    
+                [1, -1, 3, 4]
+                 |   |
+                
+    缺失:            2
+    ```
+
+    参考资料：
+        题解： [LeetCode 题解](https://leetcode-cn.com/problems/first-missing-positive/solution/tong-pai-xu-python-dai-ma-by-liweiwei1419/) 主要看 [3 4 -1 1] 的 PPT
+
+ */
+// @lc code=start
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var firstMissingPositive = function(nums) {
+    for (let i = 0; i < nums.length; i++) {
+        while (nums[i] != i + 1) {
+            if (nums[i] <= 0 || nums[i] > nums.length) {
+                // 不管这个 value 
+                break;
+            }
+            if (nums[i] === nums[nums[i] - 1]) {
+                // case: [1,1]，对应的位置，已经有期望值了
+                break;
+            }
+            // 将nums[i] 放置到对应位置上[1,2,3...]
+            let index = nums[i] - 1;
+            nums[i] = nums[index]; // 储存要被替换的值
+            nums[index] = index + 1; // 覆盖到对应的位置
+        }
+    }
+    for (let i = 0; i < nums.length; i++) {
+        if (nums[i] != (i + 1)) {
+            return (i + 1);
+        }
+    }
+    return (nums.length + 1);
+};
+
+// @lc code=end
+
+
+```
+</details>
+
 ### 42.接雨水<a href="./src/42.接雨水.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details open>
@@ -3217,29 +3550,41 @@ var combinationSum = function(candidates, target) {
        S(n) = O(1)
        以每一个元素为中心，从左右扩散
        
-        column[i] = Math.max(0, 
+        column[i] = Math.max(
+            0,
             Math.min(maxLeft, maxRight) − height[i]
         )
 
-   二、单调栈
+   二、单调函数
        T(n) = O(n)
        S(n) = O(n)
        代码如下，对应着参考资料的 动态编程
 
-
-       leftMax     // 单调不减栈
+       leftMax     // 单调不减函数  （递增或不变）
                    // 记录左边数组的最大值
 
+                       /
+                      /
+                     /
+                    /
 
        rightMax
-                   // 单调不增栈
+                   // 单调不增函数  （递减或不变）
                    // 记录右边数组的最大值
+
+                    \
+                     \
+                      \
+                       \
+
+        列
+            leftMax     rightMax
+               /     |      \
+              /      |       \
+             /       |        \
+            /        |         \
 */
 // @lc code=start
-/**
- * @param {number[]} height
- * @return {number}
- */
 /**
  * @param {number[]} height
  * @return {number}
@@ -5492,6 +5837,193 @@ var maxDepth = function(root) {
 ```
 </details>
 
+### 105.从前序与中序遍历序列构造二叉树<a href="./src/105.从前序与中序遍历序列构造二叉树.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=105 lang=javascript
+ *
+ * [105] 从前序与中序遍历序列构造二叉树
+ *
+ * https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/description/
+ *
+ * algorithms
+ * Medium (68.47%)
+ * Likes:    873
+ * Dislikes: 0
+ * Total Accepted:    153.2K
+ * Total Submissions: 221.9K
+ * Testcase Example:  '[3,9,20,15,7]\n[9,3,15,20,7]'
+ *
+ * 根据一棵树的前序遍历与中序遍历构造二叉树。
+ * 
+ * 注意:
+ * 你可以假设树中没有重复的元素。
+ * 
+ * 例如，给出
+ * 
+ * 前序遍历 preorder = [3,9,20,15,7]
+ * 中序遍历 inorder = [9,3,15,20,7]
+ * 
+ * 返回如下的二叉树：
+ * 
+ * ⁠   3
+ * ⁠  / \
+ * ⁠ 9  20
+ * ⁠   /  \
+ * ⁠  15   7
+ * 
+ */
+/**
+    2.2 题解
+
+    利用 前序遍历 来定位每棵子树的 根节点 [3,9,20,15,7]
+    利用 中序遍历和递归 来获得每个根节点的左、右子树
+    官方题解 - 从前序和中序遍历序列构造二叉树 可以看动画图解
+
+    精选题解 比较好理解的
+
+    先来了解一下前序遍历和中序遍历是什么。
+
+    前序遍历：遍历顺序为 父节点 -> 左子节点 -> 右子节点
+    中序遍历：遍历顺序为 左子节点 -> 父节点 -> 右子节点
+    我们可以发现：前序遍历的第一个元素为根节点，而在中序遍历中，该根节点所在位置的左侧为左子树，右侧为右子树。
+
+    拓展：前序、中序、后序、https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/solution/si-lu-qing-xi-dai-ma-jian-ji-he-105ti-si-lu-yi-z-2/
+ */
+
+// @lc code=start
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+
+/**
+ * @param {number[]} preorder
+ * @param {number[]} inorder
+ * @return {TreeNode}
+ */
+var buildTree = function(preorder, inorder) {
+    const indexMap = {}; // <value, index> of inorder
+    let preOrderIndex = 0;
+    for (let i = 0; i < inorder.length; i++) {
+        indexMap[inorder[i]] = i;
+    }
+    function helper(inOrderLeft, inOrderRight) {
+        // if there is no elements to construct subtrees
+        // inOrderRight 是预留的多余的空值
+        if (inOrderLeft === inOrderRight) {
+            return null;
+        }
+        // pick up pre_idx element as a root
+        const rootVal = preorder[preOrderIndex];
+        const root = new TreeNode(rootVal);
+
+        // root splits inorder list
+        // into left and right subtrees
+        const inorderIndex = indexMap[rootVal];
+
+        // recursion 
+        preOrderIndex++;
+        // build left subtree
+        root.left = helper(inOrderLeft, inorderIndex);
+        // build right subtree
+        root.right = helper(inorderIndex + 1, inOrderRight);
+        return root;
+    }
+
+    return helper(0, inorder.length);
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 108.将有序数组转换为二叉搜索树<a href="./src/108.将有序数组转换为二叉搜索树.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=108 lang=javascript
+ *
+ * [108] 将有序数组转换为二叉搜索树
+ *
+ * https://leetcode-cn.com/problems/convert-sorted-array-to-binary-search-tree/description/
+ *
+ * algorithms
+ * Easy (74.36%)
+ * Likes:    696
+ * Dislikes: 0
+ * Total Accepted:    138.2K
+ * Total Submissions: 185K
+ * Testcase Example:  '[-10,-3,0,5,9]'
+ *
+ * 将一个按照升序排列的有序数组，转换为一棵高度平衡二叉搜索树。
+ * 
+ * 本题中，一个高度平衡二叉树是指一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1。
+ * 
+ * 示例:
+ * 
+ * 给定有序数组: [-10,-3,0,5,9],
+ * 
+ * 一个可能的答案是：[0,-3,9,-10,null,5]，它可以表示下面这个高度平衡二叉搜索树：
+ * 
+ * ⁠     0
+ * ⁠    / \
+ * ⁠  -3   9
+ * ⁠  /   /
+ * ⁠-10  5
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ *  BST 的中序遍历可以得到唯一的有序数组; 中序遍历可以得到一个升序数组;
+ *  利用中序遍历的特性求解：左子树 - 父节点 - 右子树
+ */
+/**
+ * @param {number[]} nums
+ * @return {TreeNode}
+ */
+var sortedArrayToBST = function(nums) {
+    const helper = (left, right) => {
+        if (left > right) {
+            return null;
+        }
+        // 每次都一分为二，中间的为根节点
+        const rootIndex = Math.floor((left + right) / 2);        
+        const root = new TreeNode(nums[rootIndex]); 
+        root.left = helper(left, rootIndex - 1);
+        root.right = helper(rootIndex + 1, right);
+        return root;
+    }
+    return helper(0, nums.length - 1);
+};
+// @lc code=end
+
+
+```
+</details>
+
 ### 111.二叉树的最小深度<a href="./src/111.二叉树的最小深度.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details open>
@@ -7018,6 +7550,280 @@ var wordBreak = function(s, wordDict) {
 ```
 </details>
 
+### 141.环形链表<a href="./src/141.环形链表.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=141 lang=javascript
+ *
+ * [141] 环形链表
+ *
+ * https://leetcode-cn.com/problems/linked-list-cycle/description/
+ *
+ * algorithms
+ * Easy (50.33%)
+ * Likes:    948
+ * Dislikes: 0
+ * Total Accepted:    339.1K
+ * Total Submissions: 666.8K
+ * Testcase Example:  '[3,2,0,-4]\n1'
+ *
+ * 给定一个链表，判断链表中是否有环。
+ * 
+ * 如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。 为了表示给定链表中的环，我们使用整数 pos
+ * 来表示链表尾连接到链表中的位置（索引从 0 开始）。 如果 pos 是 -1，则在该链表中没有环。注意：pos
+ * 不作为参数进行传递，仅仅是为了标识链表的实际情况。
+ * 
+ * 如果链表中存在环，则返回 true 。 否则，返回 false 。
+ * 
+ * 
+ * 
+ * 进阶：
+ * 
+ * 你能用 O(1)（即，常量）内存解决此问题吗？
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 
+ * 
+ * 输入：head = [3,2,0,-4], pos = 1
+ * 输出：true
+ * 解释：链表中有一个环，其尾部连接到第二个节点。
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 
+ * 输入：head = [1,2], pos = 0
+ * 输出：true
+ * 解释：链表中有一个环，其尾部连接到第一个节点。
+ * 
+ * 
+ * 示例 3：
+ * 
+ * 
+ * 
+ * 输入：head = [1], pos = -1
+ * 输出：false
+ * 解释：链表中没有环。
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 链表中节点的数目范围是 [0, 10^4]
+ * -10^5 <= Node.val <= 10^5
+ * pos 为 -1 或者链表中的一个 有效索引 。
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+/**
+    解一：类 Map 容器
+    解二：快慢指针
+ */
+/**
+    解一：类 Map 容器
+ * @param {ListNode} head
+ * @return {boolean}
+ */
+var hasCycle = function (head) {
+    if (!head) return false;
+    let set = new Set();
+    let size = 0;
+    let cur = head;
+    while (cur.next) {
+        set.add(cur.next);
+        size = size + 1;
+        if (set.size !== size) {
+            return true
+        }
+        cur = cur.next;
+    }
+    return false;
+};
+/**
+    解二：快慢指针
+        快慢指针加起来，相当于每个循环内多走一步
+        直到快指针的距离 = 慢指针的距离*2
+ */
+var hasCycle = function(head) {
+    const p1 = head
+    const p2 = head
+    while(p2!==null&& p2.next!==null){
+        p1 = p1.next
+        p2 = p2.next.next
+        if(p1 === p2){
+            return true
+        }
+    }
+    return false
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 142.环形链表-ii<a href="./src/142.环形链表-ii.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=142 lang=javascript
+ *
+ * [142] 环形链表 II
+ *
+ * https://leetcode-cn.com/problems/linked-list-cycle-ii/description/
+ *
+ * algorithms
+ * Medium (53.94%)
+ * Likes:    878
+ * Dislikes: 0
+ * Total Accepted:    185.1K
+ * Total Submissions: 340K
+ * Testcase Example:  '[3,2,0,-4]\n1'
+ *
+ * 给定一个链表，返回链表开始入环的第一个节点。 如果链表无环，则返回 null。
+ * 
+ * 为了表示给定链表中的环，我们使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。 如果 pos 是
+ * -1，则在该链表中没有环。注意，pos 仅仅是用于标识环的情况，并不会作为参数传递到函数中。
+ * 
+ * 说明：不允许修改给定的链表。
+ * 
+ * 进阶：
+ * 
+ * 
+ * 你是否可以使用 O(1) 空间解决此题？
+ * 
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 
+ * 
+ * 
+ * 输入：head = [3,2,0,-4], pos = 1
+ * 输出：返回索引为 1 的链表节点
+ * 解释：链表中有一个环，其尾部连接到第二个节点。
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 
+ * 
+ * 输入：head = [1,2], pos = 0
+ * 输出：返回索引为 0 的链表节点
+ * 解释：链表中有一个环，其尾部连接到第一个节点。
+ * 
+ * 
+ * 示例 3：
+ * 
+ * 
+ * 
+ * 
+ * 输入：head = [1], pos = -1
+ * 输出：返回 null
+ * 解释：链表中没有环。
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 链表中节点的数目范围在范围 [0, 10^4] 内
+ * -10^5 
+ * pos 的值为 -1 或者链表中的一个有效索引
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+/**
+    快慢指针，测环位置
+ */
+/**
+ * @param {ListNode} head
+ * @return {ListNode}
+ */
+var detectCycle = function (head) {
+    /**
+        阶段一：快慢指针
+            快慢指针加起来，相当于每个 while 内多走一步
+            直到快指针的距离 = 慢指针的距离*2
+
+            快 -------------------
+            慢 ---------
+     */
+    let fast = head;
+    let slow = head;
+    let hasCycle = false;
+    while (slow && fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (fast === slow) {
+            hasCycle = true;
+            break;
+        }
+    }
+    if (!hasCycle) return null;
+    /**
+        阶段二：
+            参考资料：
+                题解一 详细图解(肯定看的明白) https://leetcode-cn.com/problems/linked-list-cycle-ii/solution/xiang-xi-tu-jie-ken-ding-kan-de-ming-bai-by-xixili/
+                    是题解二 - 142. 环形链表 II ：简化公式，简单易懂！https://leetcode-cn.com/problems/linked-list-cycle-ii/solution/142-huan-xing-lian-biao-ii-jian-hua-gong-shi-jia-2/ 的特例
+
+            假设 x 表示 离起点的节点数，y 表示 相遇点 ，z 表示 相遇点离环入口距离
+
+            相遇时 (x + y) * 2 = x + y + n (y + z)
+            求 x:
+                x + y = n (y + z)
+                x = n (y + z) - y
+
+            等式总会成立，代表的意义
+                【新指针 p 从起点走 x】 = 【慢指针 s 从相遇点开始走 n (y + z) - y】
+     */
+    let p = head;
+    while (p !== slow) {
+        p = p.next;
+        slow = slow.next;
+    }
+    return p;
+};
+// @lc code=end
+
+
+```
+</details>
+
 ### 146.lru缓存机制<a href="./src/146.lru缓存机制.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details open>
@@ -7808,7 +8614,7 @@ var maxProduct = function(nums) {
     - 总结
         1. 辅助栈 或 辅助队列，都用于历史记录，记录“破记录的最小值”
         2. 出栈和出队列时，要同时维护辅助栈
-        3. 最小队列，入队时，可能会更新整个辅助队列
+        3. 最小队列，入队时，可能会更新整个辅助队列 （注意）
  */
 // @lc code=start
 /**
@@ -7817,6 +8623,7 @@ var maxProduct = function(nums) {
 var MinStack = function() {
     this.stack = [];
     this.minIdxs = []; // small ... smaller ... smallest
+                       // minIdxs 只是索引
 };
 
 /** 
@@ -7825,7 +8632,8 @@ var MinStack = function() {
  */
 MinStack.prototype.push = function(x) {
     this.stack.push(x);
-    if (x <= this.getCompareMin()) {
+    // 如果需要，再把添加索引，添加进 minIdxs
+    if (x <= this.getCompareMin()) {    // 注意：这里是 <=
         this.minIdxs.push(this.stack.length - 1);
     }
 };
@@ -7993,6 +8801,10 @@ MinStack.prototype.getMin = function() {
 //     }
 //     return null;
 // };
+/**
+ * 
+ * 解法2. 拼接两个链表 https://leetcode-cn.com/problems/intersection-of-two-linked-lists/solution/intersection-of-two-linked-lists-shuang-zhi-zhen-l/
+ */
 var getIntersectionNode = function(headA, headB) {
     let cursorA = headA;
     let cursorB = headB;
@@ -8002,7 +8814,7 @@ var getIntersectionNode = function(headA, headB) {
         }
         cursorA = cursorA.next;
         cursorB = cursorB.next;
-        if (!!cursorA ^ !!cursorB) {
+        if (cursorA == null || cursorB == null) {
             // 拼接
             if (cursorA) {
                 cursorB = headA;
@@ -8011,7 +8823,7 @@ var getIntersectionNode = function(headA, headB) {
             }
         }
     }
-    return;
+    return null;
 };
 // @lc code=end
 
@@ -8728,7 +9540,8 @@ var reverseBits = function(n) {
  * 在 Java 中，编译器使用二进制补码记法来表示有符号整数。因此，在上面的 示例 3 中，输入表示有符号整数 -3。
  * 
  * 
- * 
+ * 提示：
+ * 输入必须是长度为 32 的 二进制串 。
  * 
  * 进阶:
  * 如果多次调用这个函数，你将如何优化你的算法？
@@ -8750,16 +9563,17 @@ var reverseBits = function(n) {
 var hammingWeight = function(n) {
     let cnt = 0;
     for (let i = 0; i < 32; i++) {
-        if ((n & 1) === 1) {
+        if ((n & 1) === 1) {    // 二进制与 & 1
             cnt++;
         }
-        n = n >> 1;
+        n = n >> 1;             // 不断右移 1
     }
     return cnt;    
 };
 /* 
-// 解二: n & (n - 1) 可以消去最低位 1
-//      n & (n - 1) 比移位更快，移位要处理全部 0 和 1，该方法每次都直接处理 1
+ * 解二: n & (n - 1) 可以消去最低位的 1
+ * https://pic.leetcode-cn.com/abfd6109e7482d70d20cb8fc1d632f90eacf1b5e89dfecb2e523da1bcb562f66-image.png
+ */
 var hammingWeight = function(n) {
     let cnt = 0;
     while (n != 0) {
@@ -8768,7 +9582,6 @@ var hammingWeight = function(n) {
     }
     return cnt;
 };
- */
 // @lc code=end
 
 
@@ -9624,6 +10437,117 @@ var findKthLargest = function(nums, k) {
 ```
 </details>
 
+### 217.存在重复元素<a href="./src/217.存在重复元素.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=217 lang=javascript
+ *
+ * [217] 存在重复元素
+ *
+ * https://leetcode-cn.com/problems/contains-duplicate/description/
+ *
+ * algorithms
+ * Easy (53.24%)
+ * Likes:    365
+ * Dislikes: 0
+ * Total Accepted:    236.3K
+ * Total Submissions: 428.8K
+ * Testcase Example:  '[1,2,3,1]'
+ *
+ * 给定一个整数数组，判断是否存在重复元素。
+ * 
+ * 如果存在一值在数组中出现至少两次，函数返回 true 。如果数组中每个元素都不相同，则返回 false 。
+ * 
+ * 
+ * 
+ * 示例 1:
+ * 
+ * 
+ * 输入: [1,2,3,1]
+ * 输出: true
+ * 
+ * 示例 2:
+ * 
+ * 
+ * 输入: [1,2,3,4]
+ * 输出: false
+ * 
+ * 示例 3:
+ * 
+ * 
+ * 输入: [1,1,1,3,3,4,3,2,4,2]
+ * 输出: true
+ * 
+ */
+/**
+    解一：暴力法
+        T(n) = O(n^2); S(n) = O(1)
+    解二：类 Map 容器
+        if (BSTSet) T(n) = O(n*logn); S(n) = O(n)
+        遍历n次
+    解三：Array.prototype.sort
+        T(n) = O(nlogn) S(n) = 1
+        原地排序，影响原始数据
+ */
+// @lc code=start
+/**
+    解一：暴力法
+        T(n) = O(n^2); S(n) = O(1)
+ */
+/**
+ * @param {number[]} nums
+ * @return {boolean}
+ */
+var containsDuplicate = function(nums) {
+    for (let i = 0; i < nums.length; i++) {
+        for (let j = i + 1; j < nums.length; j++) {
+            if (nums[i] === nums[j]) {
+                return true;
+            }
+        }
+    }
+    return false;
+};
+/**
+    解二：类 Map 容器
+        if (BSTSet) T(n) = O(n*logn); S(n) = O(n)
+        遍历 n 次
+ */
+var containsDuplicate = function(nums) {
+    const set = new Set();
+    for (let i = 0; i < nums.length; i++) {
+        if (set.has(nums[i])) {
+            return true;
+        } else {
+            set.add(nums[i])
+        }
+    }
+    return false;
+};
+/**
+    解三：Array.prototype.sort
+        T(n) = O(nlogn) S(n) = 1
+        原地排序，影响原始数据
+ */
+var containsDuplicate = function(nums) {
+    nums.sort((n1, n2) => (n1 - n2));
+    for (let i = 0; i < nums.length - 1; i++) {
+        if (nums[i] === nums[i+1]) {
+            return true;
+        }
+    }
+    return false;
+};
+// @lc code=end
+
+
+```
+</details>
+
 ### 221.最大正方形<a href="./src/221.最大正方形.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details open>
@@ -9813,15 +10737,15 @@ var maximalSquare = function(matrix) {
     题解：栈和队列的相互实现
 
     1. [栈实现队列](https://leetcode-cn.com/problems/implement-queue-using-stacks/)
+
+        两个栈实现队列
+
         - 栈 array.push array.pop
-        - 小心 for 循环的条件，会在 for 循环里改变， 如 `this.inStack.length`
-        ``` 
-        // false
-        for (let i = 0; i < this.inStack.length; i++) {
-            this.outStack.push(this.inStack.pop());
-        }
-        ```
+       
     2. [队列实现栈](https://leetcode-cn.com/problems/implement-stack-using-queues/)
+
+        一个队列就可实现一个栈
+
         - 队列 array.push array.shift
         - 注意 array.shift 复杂度是 0(n)
         - JS 自己实现 LinkedListQueue
@@ -9843,8 +10767,9 @@ var MyStack = function() {
  */
 MyStack.prototype.push = function(x) {
   this.list.addLast(x);
-  let i = this.list.length - 1;
+  let i = this.list.length - 1;   // 最新的那个元素，留在原来位置，所以 -1
   while (i > 0) {
+    // 原来的元素，一个个取出，压到最新那个元素上面
     this.list.addLast(this.list.removeFirst());
     i--;
   }
@@ -10244,19 +11169,18 @@ isPowerOfTwo(2);
     题解：栈和队列的相互实现
 
     1. [栈实现队列](https://leetcode-cn.com/problems/implement-queue-using-stacks/)
+
+        两个栈实现队列
+
         - 栈 array.push array.pop
-        - 小心 for 循环的条件，会在 for 循环里改变， 如 `this.inStack.length`
-        ``` 
-        // false
-        for (let i = 0; i < this.inStack.length; i++) {
-            this.outStack.push(this.inStack.pop());
-        }
-        ```
+       
     2. [队列实现栈](https://leetcode-cn.com/problems/implement-stack-using-queues/)
+
+        一个队列就可实现一个栈
+
         - 队列 array.push array.shift
         - 注意 array.shift 复杂度是 0(n)
         - JS 自己实现 LinkedListQueue
-
  */
 // @lc code=start
 /**
@@ -10281,6 +11205,7 @@ MyQueue.prototype.push = function(x) {
  * @return {number}
  */
 MyQueue.prototype.pop = function() {
+    // pop 时，如果 outStack 为空，则全量更新
     if (this.outStack.length === 0) {      
       while (this.inStack.length !== 0) {
         this.outStack.push(this.inStack.pop());
@@ -10294,6 +11219,7 @@ MyQueue.prototype.pop = function() {
  * @return {number}
  */
 MyQueue.prototype.peek = function() {
+    // peek 时，如果 outStack 为空，则全量更新
     if (this.outStack.length === 0) {
       while (this.inStack.length !== 0) {
         this.outStack.push(this.inStack.pop());
@@ -11217,14 +12143,62 @@ isAnagram("anagram", "nagaram");
  * 
  * 
  */
-
-// @lc code=start
 /**
- * @param {number[]} nums
- * @return {number}
+    解法:
+        1. Array.protype.sort 假设快排，虽然 S(n) = 1 ，但是 T(n) = O(nlogn) ，大于 O(n)
+        2. 类 Map 存储结构，key 是数字，value 是 0/1 (0 表示出现 2 次，1 表示出现 1次)
+        3. 异或运算 A^A = 0
+ */
+/**
+    解一：Map 结构存储
+        下面以数组为例子，还可以用 Object、Map、Set、二进制存储，可以看 Map（总结）
+            T(n) = O(n + n) = O(n)
+            S(n) = O(n)
+ */
+// @lc code=start
+var missingNumber = function(nums) {
+    const arr = [];
+    for (let i = 0; i < nums.length; i++) {
+        arr[nums[i]] = true;
+    }
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] !== true) {
+            return i;
+        }
+    }
+    return arr.length; // 边界处理
+};
+/**
+    解二：Array.prototype.sort
+        Array.prototype.sort 规定是原地排序，所以 空间复杂度 O(1)，如果宿主环境用快排，时间复杂度就是 O(nlogn)
+            T(n) = O(nlogn) + O(n) = O(nlogn)
+            S(n) = O(1)
  */
 var missingNumber = function(nums) {
-
+    nums.sort((n1, n2) => (n1 - n2));
+    let cursor = 0;
+    for (let i = 0; i < nums.length; i++) {
+        if (nums[i] !== cursor) {
+            return i;
+        }
+        cursor++;
+    }
+    return cursor;
+};
+/**
+    解三：异或运算
+        任一数字，异或自己等于 0
+            T(n) = O(n)
+            S(n) = O(1)
+*/
+var missingNumber = function(nums) {
+    let result = 0;
+    let cursor = 0;
+    for (let i = 0; i < nums.length; i++) {
+        result = result ^ nums[i] ^ cursor;
+        cursor++;
+    }
+    return result ^ cursor;
 };
 // @lc code=end
 
@@ -11375,6 +12349,171 @@ var moveZeroes = function(nums) {
 };
 
 console.assert(moveZeroes([0,1,0,3,12]));
+```
+</details>
+
+### 283.移动零<a href="./src/283.移动零.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=283 lang=javascript
+ *
+ * [283] 移动零
+ *
+ * https://leetcode-cn.com/problems/move-zeroes/description/
+ *
+ * algorithms
+ * Easy (62.68%)
+ * Likes:    964
+ * Dislikes: 0
+ * Total Accepted:    316K
+ * Total Submissions: 496.1K
+ * Testcase Example:  '[0,1,0,3,12]'
+ *
+ * 给定一个数组 nums，编写一个函数将所有 0 移动到数组的末尾，同时保持非零元素的相对顺序。
+ * 
+ * 示例:
+ * 
+ * 输入: [0,1,0,3,12]
+ * 输出: [1,3,12,0,0]
+ * 
+ * 说明:
+ * 
+ * 
+ * 必须在原数组上操作，不能拷贝额外的数组。
+ * 尽量减少操作次数。
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * @param {number[]} nums
+ * @return {void} Do not return anything, modify nums in-place instead.
+ */
+var moveZeroes = function(nums) {
+
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 287.寻找重复数<a href="./src/287.寻找重复数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=287 lang=javascript
+ *
+ * [287] 寻找重复数
+ *
+ * https://leetcode-cn.com/problems/find-the-duplicate-number/description/
+ *
+ * algorithms
+ * Medium (65.98%)
+ * Likes:    1096
+ * Dislikes: 0
+ * Total Accepted:    123K
+ * Total Submissions: 185.4K
+ * Testcase Example:  '[1,3,4,2,2]'
+ *
+ * 给定一个包含 n + 1 个整数的数组 nums ，其数字都在 1 到 n 之间（包括 1 和 n），可知至少存在一个重复的整数。
+ * 
+ * 假设 nums 只有 一个重复的整数 ，找出 这个重复的数 。
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 
+ * 输入：nums = [1,3,4,2,2]
+ * 输出：2
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 输入：nums = [3,1,3,4,2]
+ * 输出：3
+ * 
+ * 
+ * 示例 3：
+ * 
+ * 
+ * 输入：nums = [1,1]
+ * 输出：1
+ * 
+ * 
+ * 示例 4：
+ * 
+ * 
+ * 输入：nums = [1,1,2]
+ * 输出：1
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 2 
+ * nums.length == n + 1
+ * 1 
+ * nums 中 只有一个整数 出现 两次或多次 ，其余整数均只出现 一次
+ * 
+ * 
+ * 
+ * 
+ * 进阶：
+ * 
+ * 
+ * 如何证明 nums 中至少存在一个重复的数字?
+ * 你可以在不修改数组 nums 的情况下解决这个问题吗？
+ * 你可以只用常量级 O(1) 的额外空间解决这个问题吗？
+ * 你可以设计一个时间复杂度小于 O(n^2) 的解决方案吗？
+ * 
+ * 
+ */
+/**
+    题解
+        1. Array.prototype.sort (时间复杂度 O(nlogn))
+        2. 类 Map 结构 (空间复杂度 O(n))
+        3. 异或运算 (可能重复，不止一次， 所以不能使用异或运算)
+        4. 成环链表
+        5. 将自身作为 Map 结构
+
+    使用成环链表 II 的解法
+ */
+// @lc code=start
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var findDuplicate = function(nums) {
+    let slow = 0;
+    let fast = 0;    
+    do {
+        slow = nums[slow];
+        fast = nums[nums[fast]];
+    } while (slow !== fast)
+    
+    let cursor = 0;
+    do {
+        cursor = nums[cursor];
+        slow = nums[slow];
+    } while (slow !== cursor)
+    return cursor;
+};
+// @lc code=end
+
+
 ```
 </details>
 
@@ -12115,7 +13254,7 @@ var isPowerOfThree = function(n) {
     /**
      * 思路
      * 2^0 = 1; 2^1 = 10; 2^2 = 100; 2^3 = 1000; ...
-     * 2^0 = 1; 3^1 = 10; 3^2 = 100; 3^3 = 1000; ...
+     * 3^0 = 1; 3^1 = 10; 3^2 = 100; 3^3 = 1000; ...
      * 注意点
      * 1. 是 2^0 开始
      * 2. 正则中要有 ^ 和 $ 约束
@@ -14351,6 +15490,86 @@ findTargetSumWays([1,1,1,1,1], 3);
 /*
 
  */
+
+
+```
+</details>
+
+### 509.斐波那契数<a href="./src/509.斐波那契数.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=509 lang=javascript
+ *
+ * [509] 斐波那契数
+ *
+ * https://leetcode-cn.com/problems/fibonacci-number/description/
+ *
+ * algorithms
+ * Easy (66.15%)
+ * Likes:    243
+ * Dislikes: 0
+ * Total Accepted:    145.6K
+ * Total Submissions: 213.2K
+ * Testcase Example:  '2'
+ *
+ * 斐波那契数，通常用 F(n) 表示，形成的序列称为 斐波那契数列 。该数列由 0 和 1 开始，后面的每一项数字都是前面两项数字的和。也就是：
+ * 
+ * 
+ * F(0) = 0，F(1) = 1
+ * F(n) = F(n - 1) + F(n - 2)，其中 n > 1
+ * 
+ * 
+ * 给你 n ，请计算 F(n) 。
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 
+ * 输入：2
+ * 输出：1
+ * 解释：F(2) = F(1) + F(0) = 1 + 0 = 1
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 输入：3
+ * 输出：2
+ * 解释：F(3) = F(2) + F(1) = 1 + 1 = 2
+ * 
+ * 
+ * 示例 3：
+ * 
+ * 
+ * 输入：4
+ * 输出：3
+ * 解释：F(4) = F(3) + F(2) = 2 + 1 = 3
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 0 
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * @param {number} n
+ * @return {number}
+ */
+var fib = function(n) {
+
+};
+// @lc code=end
 
 
 ```

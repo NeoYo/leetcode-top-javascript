@@ -68,7 +68,7 @@
     - 总结
         1. 辅助栈 或 辅助队列，都用于历史记录，记录“破记录的最小值”
         2. 出栈和出队列时，要同时维护辅助栈
-        3. 最小队列，入队时，可能会更新整个辅助队列
+        3. 最小队列，入队时，可能会更新整个辅助队列 （注意）
  */
 // @lc code=start
 /**
@@ -77,6 +77,7 @@
 var MinStack = function() {
     this.stack = [];
     this.minIdxs = []; // small ... smaller ... smallest
+                       // minIdxs 只是索引
 };
 
 /** 
@@ -85,7 +86,8 @@ var MinStack = function() {
  */
 MinStack.prototype.push = function(x) {
     this.stack.push(x);
-    if (x <= this.getCompareMin()) {
+    // 如果需要，再把添加索引，添加进 minIdxs
+    if (x <= this.getCompareMin()) {    // 注意：这里是 <=
         this.minIdxs.push(this.stack.length - 1);
     }
 };

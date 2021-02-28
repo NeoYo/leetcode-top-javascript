@@ -100,6 +100,10 @@
 //     }
 //     return null;
 // };
+/**
+ * 
+ * 解法2. 拼接两个链表 https://leetcode-cn.com/problems/intersection-of-two-linked-lists/solution/intersection-of-two-linked-lists-shuang-zhi-zhen-l/
+ */
 var getIntersectionNode = function(headA, headB) {
     let cursorA = headA;
     let cursorB = headB;
@@ -109,7 +113,7 @@ var getIntersectionNode = function(headA, headB) {
         }
         cursorA = cursorA.next;
         cursorB = cursorB.next;
-        if (!!cursorA ^ !!cursorB) {
+        if (cursorA == null || cursorB == null) {
             // 拼接
             if (cursorA) {
                 cursorB = headA;
@@ -118,7 +122,7 @@ var getIntersectionNode = function(headA, headB) {
             }
         }
     }
-    return;
+    return null;
 };
 // @lc code=end
 

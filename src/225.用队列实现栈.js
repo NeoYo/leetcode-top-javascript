@@ -36,15 +36,15 @@
     题解：栈和队列的相互实现
 
     1. [栈实现队列](https://leetcode-cn.com/problems/implement-queue-using-stacks/)
+
+        两个栈实现队列
+
         - 栈 array.push array.pop
-        - 小心 for 循环的条件，会在 for 循环里改变， 如 `this.inStack.length`
-        ``` 
-        // false
-        for (let i = 0; i < this.inStack.length; i++) {
-            this.outStack.push(this.inStack.pop());
-        }
-        ```
+       
     2. [队列实现栈](https://leetcode-cn.com/problems/implement-stack-using-queues/)
+
+        一个队列就可实现一个栈
+
         - 队列 array.push array.shift
         - 注意 array.shift 复杂度是 0(n)
         - JS 自己实现 LinkedListQueue
@@ -66,8 +66,9 @@ var MyStack = function() {
  */
 MyStack.prototype.push = function(x) {
   this.list.addLast(x);
-  let i = this.list.length - 1;
+  let i = this.list.length - 1;   // 最新的那个元素，留在原来位置，所以 -1
   while (i > 0) {
+    // 原来的元素，一个个取出，压到最新那个元素上面
     this.list.addLast(this.list.removeFirst());
     i--;
   }

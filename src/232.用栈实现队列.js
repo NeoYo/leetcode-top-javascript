@@ -50,19 +50,18 @@
     题解：栈和队列的相互实现
 
     1. [栈实现队列](https://leetcode-cn.com/problems/implement-queue-using-stacks/)
+
+        两个栈实现队列
+
         - 栈 array.push array.pop
-        - 小心 for 循环的条件，会在 for 循环里改变， 如 `this.inStack.length`
-        ``` 
-        // false
-        for (let i = 0; i < this.inStack.length; i++) {
-            this.outStack.push(this.inStack.pop());
-        }
-        ```
+       
     2. [队列实现栈](https://leetcode-cn.com/problems/implement-stack-using-queues/)
+
+        一个队列就可实现一个栈
+
         - 队列 array.push array.shift
         - 注意 array.shift 复杂度是 0(n)
         - JS 自己实现 LinkedListQueue
-
  */
 // @lc code=start
 /**
@@ -87,6 +86,7 @@ MyQueue.prototype.push = function(x) {
  * @return {number}
  */
 MyQueue.prototype.pop = function() {
+    // pop 时，如果 outStack 为空，则全量更新
     if (this.outStack.length === 0) {      
       while (this.inStack.length !== 0) {
         this.outStack.push(this.inStack.pop());
@@ -100,6 +100,7 @@ MyQueue.prototype.pop = function() {
  * @return {number}
  */
 MyQueue.prototype.peek = function() {
+    // peek 时，如果 outStack 为空，则全量更新
     if (this.outStack.length === 0) {
       while (this.inStack.length !== 0) {
         this.outStack.push(this.inStack.pop());

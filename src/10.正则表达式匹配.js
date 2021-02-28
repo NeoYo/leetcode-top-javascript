@@ -112,8 +112,8 @@
 
         2.3 例子
 
-                  j
-            p ccba*
+                   j
+            p ccbaa*
             s cca
                 i                            
 
@@ -145,6 +145,7 @@ var isMatch = function(s, p) {
                 DP[i][j] = equal(s[i], p[j]) && DP[i-1][j-1];
             } else {
                 DP[i][j] = DP[i][j-2] || DP[i][j-1] || (DP[i-1][j] && equal(s[i], p[j-1]));
+                        // 对应上面3种情形
             }
         }
     }
