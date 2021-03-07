@@ -79,6 +79,7 @@ var longestPalindrome = function(s) {
 /**
     解二：中心扩展算法  O(n^2)
         奇数的回文中心 n 个，偶数的回文中心 n - 1 个，即 2n - 1, 乘以 i 扩散就是 O(n^2)
+        代码参考 647.回文子串，下面的不好理解
  */
 // @lc code=start
 /**

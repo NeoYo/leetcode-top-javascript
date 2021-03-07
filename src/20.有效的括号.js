@@ -76,14 +76,17 @@ var isValid = function(s) {
     for (let i = 0; i < s.length; i++) {
         if (s[i] in map) {                  // 1. 左符号就入栈
             stack.push(s[i]);
-            continue;
+        } else {                            // 2. 不是左符号
+            const right = s[i];                 // 说明是右符号
+            const left = stack.pop();           // 左符号出栈
+            if (map[left] === right) {          // 判断是否匹配
+                continue;
+            } else {
+                return false;
+            }
         }
-        if (map[stack.pop()] === s[i]) {    // 2. 不是左符号，就出栈匹配
-            continue;
-        }
-        return false;
     }
-    return stack.length === 0;              // 3. 检测 栈的length 
+    return stack.length === 0;              // 3. 检测 栈的length 为空
 };
 // @lc code=end
 

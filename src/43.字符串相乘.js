@@ -54,12 +54,24 @@
         官方题解 https://leetcode-cn.com/problems/multiply-strings/solution/zi-fu-chuan-xiang-cheng-by-leetcode-solution/
  */
 /**
- * @param {string} num1
- * @param {string} num2
- * @return {string}
- */
+* @param {string} num1
+* @param {string} num2
+* @return {string}
+*/
 var multiply = function(num1, num2) {
-    const res = Array(num1.length + num2.length).fill(0); // res  从右边到左边；数值：最低位 -> 最高位；数组索引： 高 -> 低
+    const num2L = num2.length - 1;
+    let num2Idx = num2.length - 1;
+    let res = 0;
+    // 竖式乘法
+    while (num2Idx >= 0) {
+        res += num2[num2Idx] * num1 * Math.pow(10, num2L - num2Idx);
+        num2Idx--;
+    }
+    return String(res);
+};
+// 没通过的解法
+var multiply = function(num1, num2) {
+    const res = Array(num1.length + num2.length).fill(0); // res  从右边到左边；数值：最低位 -> 最高位；数组索引：高 -> 低
     let num2Idx = num2.length - 1;                        // num2 从右边到左边；数值：最低位 -> 最高位；数组索引：高 -> 低
     while (num2Idx >= 0) {
         let num1Idx = num1.length - 1;                    // num1 从右边到左边；数值：最低位 -> 最高位；数组索引：高 -> 低
@@ -75,7 +87,6 @@ var multiply = function(num1, num2) {
     return res.join('').replace(/^0*/, '') || '0';
 };
 // @lc code=end
-
 multiply('123', '456');
 /**
     错误实例如下，会出现大数溢出，使得结果错误
@@ -88,15 +99,3 @@ multiply('123', '456');
     Expected Answer
         "121932631112635269"
  */
-var multiply = function(num1, num2) {
-    const num2L = num2.length - 1;
-    let num2Idx = num2.length - 1;
-    let res = 0;
-    // 竖式乘法
-    while (num2Idx >= 0) {
-        res += num2[num2Idx] * num1 * Math.pow(10, num2L - num2Idx);
-        // console.log(res);
-        num2Idx--;
-    }
-    return String(res);
-};

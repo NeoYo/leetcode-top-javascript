@@ -102,10 +102,13 @@ var lengthOfLongestSubstring = function(s) {
 var lengthOfLongestSubstring = function(s) {
     let max = 0;
     let map = new Map();    // <出现过的字符, 对应 i 出现的位置>
-    for (let i = 0, j = 0; j < s.length; j++) { // j 快指针，i 慢指针
-        const char = s[j];
-        i = Math.max(map.get(char) || 0, i);    
-        map.set(char, j + 1);
+    for (let i = 0, j = 0; j < s.length; j++) { // j 快指针，i 慢指针；i 到 j 组成了滑动窗口
+        const char = s[j];                      // 滑动窗口 处理 右边出现新字符
+        const found = map.get(char);
+        if (found) {                            // 判断新字符 是否已存在
+            i = Math.max(found, i);             // 存在则将 滑动窗口的左边 右移到发现的位置+1
+        }
+        map.set(char, j + 1);                   // 将新字符（或旧字符新位置）存进 map 里。这里故意+1 是给上面用的
         max = Math.max(max, j - i + 1);        
     }
     return max;

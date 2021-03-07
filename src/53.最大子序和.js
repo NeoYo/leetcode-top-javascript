@@ -27,7 +27,10 @@
  * 如果你已经实现复杂度为 O(n) 的解法，尝试使用更为精妙的分治法求解。
  * 
  */
-
+/**
+    学习资料：
+        [推导 Kadane算法（JavaScript）](https://juejin.cn/post/6844904066032599053)
+ */
 // @lc code=start
 /**
  * @param {number[]} nums

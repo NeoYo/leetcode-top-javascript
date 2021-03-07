@@ -76,22 +76,14 @@
  */
 
 // @lc code=start
-/**
- * @param {string} s
- * @return {number}
- */
-var myAtoi = function(s) {
-
-};
 /*
+    对 JS 来说，相当于实现 parseInt(str)
+
     1. 正则表达式
-
-    正则解释
-
-    ^\s* 只能以 大于等于0个 空白字符 开头
-    [\+|\-]? 出现 + 或 - 号
-    \d+ 至少一位数字
-
+        正则解释
+        ^\s*        以 >= 0个 空白字符 开头
+        [\+|\-]?    出现 0个或1个 + 或 - 号
+        \d+         至少一位数字
  */
 /**
  * @param {string} str
@@ -115,8 +107,7 @@ var myAtoi = function(str) {
 };
 /*
     2. parseInt
-    
-    这道题是对 parseInt 的实现
+        这道题是对 parseInt 的实现
  */
 /**
  * @param {string} str
