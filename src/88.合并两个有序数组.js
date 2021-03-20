@@ -48,6 +48,7 @@
  */
 /**
     题解
+        0. 先看下面画解，他写得很清楚^_^
         1. nums1 最后往前移动 index
         2. nums1 最后 i 和 nums2 最后 j 两两比较
 
@@ -66,11 +67,13 @@
  */
 var merge = function(nums1, m, nums2, n) {
     for (
-        let i = m - 1, j = n - 1, index = nums1.length -1;
+        let i = m - 1,                          // i nums1 真实长度
+            j = n - 1,                          // j nums2 真实长度
+            index = nums1.length -1;            // 根据题意，index = nums1.length - 1 = m + n
         index >= 0;
-        index--
+        index--                                 // 从后往前排
     ) {
-        if (nums1[i] > nums2[j] || j < 0) {
+        if (nums1[i] > nums2[j] || j < 0) {     // j < 0，用于 nums2 拷贝完的情况
             nums1[index] = nums1[i];
             i--;
         } else {

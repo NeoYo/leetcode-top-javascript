@@ -74,7 +74,11 @@
  * 
  * 
  */
-
+/**
+    官方题解 - 有限状态机 deterministic finite automaton, DFA  有限：有限的状态
+        挺有趣的，这实际上是编译原理中的 token 词法分析部分，自动状态机，让它转移更清晰有条理，自动化
+        https://leetcode-cn.com/problems/string-to-integer-atoi/solution/zi-fu-chuan-zhuan-huan-zheng-shu-atoi-by-leetcode-/
+ */
 // @lc code=start
 /*
     对 JS 来说，相当于实现 parseInt(str)
@@ -122,6 +126,61 @@ var myAtoi = function(str) {
         return Math.pow(-2, 31);
     }
     return res
+};
+/**
+    3. 有趣的解法-自动机  代码抄的，还没理解=.=
+ */
+var myAtoi = function (s) {
+    class AutoMaton {
+        constructor() {
+            this.state = 'start'
+            this.sign = 1               // 正负: +1 或 -1
+            this.answer = 0             // 数值 
+            this.max = 2147483648
+
+            this.map = new Map([
+                ['start', ['start', 'signed', 'number', 'end']],
+                ['signed', ['end', 'end', 'number', 'end']],
+                ['number', ['end', 'end', 'number', 'end']],
+            ])
+        }
+        getIndex(char) {
+            if (char === ' ') {
+                return 0
+            } else if (char == '-' || char == '+') {
+                return 1
+            } else if (!isNaN(char)) {
+                return 2
+            } else {
+                return 3
+            }
+        }
+
+        get(char) {
+            this.state = this.getIndex(char) == 3 ? '' : this.map.get(this.state)[this.getIndex(char)]
+            if (this.state == '' || this.state == 'end') {
+                return false
+            }
+            if (this.state === 'number') {
+                this.answer = this.answer * 10 + (char - 0)
+                // 边界处理
+                this.answer = this.sign == 1 ? Math.min(this.max - 1, this.answer) : Math.min(this.max, this.answer)
+            } else if (this.state === 'signed') {
+                this.sign = char == '+' ? 1 : -1
+            }
+            return true
+        }
+    }
+
+    let autoMaton = new AutoMaton()
+
+    for (let char of s) {
+        if (!autoMaton.get(char)) {
+            break
+        }
+    }
+
+    return autoMaton.sign * autoMaton.answer
 };
 // @lc code=end
 

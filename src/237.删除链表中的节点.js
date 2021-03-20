@@ -70,10 +70,8 @@
 var deleteNode = function(node) {
     // if (node == null) { return; }
     // if (node.next == null) { delete node.val; return; }
+    // 与下一个节点交换
     node.val = node.next.val;
-    const next = node.next;
     node.next = node.next.next;
-    next.next = null;
 }
 // @lc code=end
-

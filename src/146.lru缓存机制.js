@@ -93,6 +93,10 @@
  * var param_1 = obj.get(key)
  * obj.put(key,value)
  */
+/**
+ * LRU  淘汰最长时间未被使用的页面（Map+双向链表）
+ * LFU  淘汰一定时期内被访问次数最少的页 
+ */
 class ListNode {
     constructor(key, value) {
         this.key = key
@@ -102,6 +106,10 @@ class ListNode {
     }
 }
 
+/**
+ * 以下代码，头部结点，是最新的
+ * 最近的链表头部 .->.->.->. 
+*/
 class LRUCache {
     constructor(capacity) {
         this.capacity = capacity
@@ -149,6 +157,9 @@ class LRUCache {
         tempForNext.prev = tempForPrev
     }
 
+    /**
+        添加到头部
+     */
     addToHead(node) {
         node.prev = this.dummyHead
         node.next = this.dummyHead.next
@@ -162,6 +173,9 @@ class LRUCache {
         this.count--
     }
 
+    /**
+       移除尾部
+    */
     popTail() {
         let tailItem = this.dummyTail.prev
         this.removeFromList(tailItem)

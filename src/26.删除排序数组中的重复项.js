@@ -59,9 +59,9 @@
  */
 /**
     题解：前后指针
-        1. 把不重复的值往前挪，使得前面是排序好的
-        2. 快指针j：探路，发现不重复的元素
-        3. 慢指针i：已过滤重复项的索引
+        1. 把不重复的值往前挪，使得前面 <= slow 的是已排序，不重复的
+        2. 快指针 fast：探路，发现不同的元素，就挪到 slow 前面一位（slow + 1）
+        3. 慢指针 slow：小于等于 slow 的是已排序，不重复的
         https://pic.leetcode-cn.com/0039d16b169059e8e7f998c618b6c2b269c2d95b02f43415350bde1f661e503a-1.png
 
     参考资料：
@@ -73,14 +73,14 @@
  * @return {number}
  */
 var removeDuplicates = function(nums) {
-    let i = 0;
-    for (let j = 1; j < nums.length; j++) {
-        if (nums[i] !== nums[j]) {
-            nums[i + 1] = nums[j];
-            i++;
+    let slow = 0;
+    for (let fast = 1; fast < nums.length; fast++) {
+        if (nums[slow] !== nums[fast]) {                // 一发现有 nums[fast]，就把它挪到 slow + 1
+            nums[slow + 1] = nums[fast];                
+            slow++;                                     // slow++
         }
     }
-    return i + 1;
+    return slow + 1;
 };
 // @lc code=end
 

@@ -43,55 +43,61 @@
  */
 // @lc code=start
 /**
+   解一：暴力法
+   原理：
+       将两个数组合并，再进行排序，假设是快排，则 T(n) = O(nlogn)
+*/
+/**
  * @param {number[]} nums1
  * @param {number[]} nums2
  * @return {number}
  */
 var findMedianSortedArrays = function(nums1, nums2) {
-    /**
-        解一：暴力法
-        原理：
-            将两个数组合并，再进行排序，假设是快排，则 T(n) = O(nlogn)
-     */
+
     const nums = [...nums1, ...nums2];
     nums.sort((n1, n2) => (n1 - n2));
     if (nums.length % 2 === 0) {
         const mid = nums.length>>1;
-        return (nums[mid] + nums[mid-1])/2; // 中位数要除以2
+        return (nums[mid] + nums[mid-1])/2; // 偶数中位数要除以2
     } else {
         return nums[(nums.length>>1)]
     }
-    /**
-        解二：二分查找法
-        例子：
-      nums1  1   2   3   4   8
-            l1              r1
-                mid1
-
-      nums2  6       7       9
-            l2              r2       
-                mid2
-
-            进行二分查找:
-
-                1   2   3   4   8
-                l1              r1
-                    mid1
-            第一轮：
-                            l1  r1
-                            mid1
-
-                6       7       9
-                l2              r2      
-                        mid2
-            第一轮：
-                l2r2
-                mid2
-
-            4、6 将两个数组划分为：
-            1 2 3 和 7 8 9
-     */
 };
+/**
+    解二：一个一个地取出，num1 和 num2 哪个小就拿哪个，拿到一半时就可以了 T(n) = O((n+m)>>1) = O(n+m)
+ */
+/**
+    解三：二分查找法
+    例子：
+ nums1  1   2   3   4   8
+       l1              r1
+           mid1
+
+ nums2  6       7       9
+       l2              r2       
+           mid2
+
+       进行二分查找:
+
+           1   2   3   4   8
+           l1              r1
+               mid1
+       第一轮：
+                       l1  r1
+                       mid1
+
+           6       7       9
+           l2              r2      
+                   mid2
+       第一轮：
+           l2r2
+           mid2
+
+       分割线 4、6 将两个数组划分为：
+       1 2 3 和 7 8 9
+
+   代码参考了 https://leetcode-cn.com/problems/median-of-two-sorted-arrays/solution/er-fen-fa-duo-yu-yan-javajs4-xun-zhao-liang-ge-zhe/
+*/
 /**
  * 二分解法
  * @param {number[]} nums1
@@ -99,38 +105,6 @@ var findMedianSortedArrays = function(nums1, nums2) {
  * @return {number}
  */
 var findMedianSortedArrays = function (nums1, nums2) {
-    /**
-        解二：二分查找法
-        例子：
-      nums1  1   2   3   4   8
-            l1              r1
-                mid1
-
-      nums2  6       7       9
-            l2              r2       
-                mid2
-
-            进行二分查找:
-
-                1   2   3   4   8
-                l1              r1
-                    mid1
-            第一轮：
-                            l1  r1
-                            mid1
-
-                6       7       9
-                l2              r2      
-                        mid2
-            第一轮：
-                l2r2
-                mid2
-
-            4、6 将两个数组划分为：
-            1 2 3 和 7 8 9
-
-        代码参考了 https://leetcode-cn.com/problems/median-of-two-sorted-arrays/solution/er-fen-fa-duo-yu-yan-javajs4-xun-zhao-liang-ge-zhe/
-     */
     // make sure to do binary search for shorten array
     if (nums1.length > nums2.length) {
         [nums1, nums2] = [nums2, nums1]
@@ -140,19 +114,20 @@ var findMedianSortedArrays = function (nums1, nums2) {
     let low = 0
     let high = m
     while (low <= high) {
-        const i = low + Math.floor((high - low) / 2)
-        const j = Math.floor((m + n + 1) / 2) - i
+        const i = low + Math.floor((high - low) / 2)            // num1 分割线 i
+        const j = Math.floor((m + n + 1) / 2) - i               // num2 分割线 j
 
-        const maxLeftA = i === 0 ? -Infinity : nums1[i - 1]
-        const minRightA = i === m ? Infinity : nums1[i]
-        const maxLeftB = j === 0 ? -Infinity : nums2[j - 1]
-        const minRightB = j === n ? Infinity : nums2[j]
+        const num1Left = i === 0 ? -Infinity : nums1[i - 1]     // num1 分割线左边
+        const num1Right = i === m ? Infinity : nums1[i]         // num1 分割线右边
+        const num2Left = j === 0 ? -Infinity : nums2[j - 1]     // num2 分割线左边
+        const num2Right = j === n ? Infinity : nums2[j]         // num2 分割线右边
 
-        if (maxLeftA <= minRightB && minRightA >= maxLeftB) {
+        if (num1Left <= num2Right && num1Right >= num2Left) {
             return (m + n) % 2 === 1
-                ? Math.max(maxLeftA, maxLeftB)
-                : (Math.max(maxLeftA, maxLeftB) + Math.min(minRightA, minRightB)) / 2
-        } else if (maxLeftA > minRightB) {
+                ? Math.max(num1Left, num2Left)
+                : (Math.max(num1Left, num2Left) + Math.min(num1Right, num2Right)) / 2
+        }
+        if (num1Left > num2Right) {
             high = i - 1
         } else {
             low = low + 1
