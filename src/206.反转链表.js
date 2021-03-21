@@ -63,19 +63,13 @@
                                                     // 第五步：递归终止条件（边界处理）
         代码如下
  */
-function reverseList(head) {
-    if (head == null || head.next == null) {
-        return head;
-    }
-    let next = null;
-    let pre = head.next;
-    while (head != null) {
-        pre = head.next;
-        head.next = next;
-        next = head;
-        head = pre;
-    }
-    return next;
+var reverseList = function(head) {
+    if (head == null || head.next == null) { return head; }
+    const pre = head.next;
+    const cur = reverseList(pre);
+    head.next = null;    
+    pre.next = head;
+    return cur;
 };
 /**
     解法二：非递归
