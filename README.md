@@ -22,21 +22,32 @@
 > License: 自由转载-非商用-非衍生-保持署名
 
 ## 题目
+### 0.收起全部<a href="./src/0.收起全部.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
-// 控制台操作全局~~~
-// 展开全部
-function allOpen() {
-  document.querySelectorAll('h3+details').forEach((node) => {
-    node.setAttribute('open', true);
-  });
-}
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+// 控制台操作全局~~~ 
+// 展开全部 
+function allOpen() { 
+    document
+        .querySelectorAll('h3+details')
+        .forEach((node) => { 
+            node.setAttribute('open', true);
+        }); 
+} 
 // 收起全部
-function allClose() {
-  document.querySelectorAll('h3+details').forEach((node) => {
-    node.removeAttribute('open');
-  });
+function allClose() { 
+    document
+        .querySelectorAll('h3+details')
+        .forEach((node) => {
+            node.removeAttribute('open'); });
 }
+
 allClose();
+```
+</details>
 
 ### 1.两数之和<a href="./src/1.两数之和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
@@ -80,6 +91,7 @@ allClose();
   二、Set 
 
     Set 不可用，因为只记录值有无，没有记录索引结果
+    因为要返回他们的数组下标。要用 Map
 
   三、Map
 
@@ -321,10 +333,13 @@ var lengthOfLongestSubstring = function(s) {
 var lengthOfLongestSubstring = function(s) {
     let max = 0;
     let map = new Map();    // <出现过的字符, 对应 i 出现的位置>
-    for (let i = 0, j = 0; j < s.length; j++) { // j 快指针，i 慢指针
-        const char = s[j];
-        i = Math.max(map.get(char) || 0, i);    
-        map.set(char, j + 1);
+    for (let i = 0, j = 0; j < s.length; j++) { // j 快指针，i 慢指针；i 到 j 组成了滑动窗口
+        const char = s[j];                      // 滑动窗口 处理 右边出现新字符
+        const found = map.get(char);
+        if (found) {                            // 判断新字符 是否已存在
+            i = Math.max(found, i);             // 存在则将 滑动窗口的左边 右移到发现的位置+1
+        }
+        map.set(char, j + 1);                   // 将新字符（或旧字符新位置）存进 map 里。这里故意+1 是给上面用的
         max = Math.max(max, j - i + 1);        
     }
     return max;
@@ -386,55 +401,61 @@ var lengthOfLongestSubstring = function(s) {
  */
 // @lc code=start
 /**
+   解一：暴力法
+   原理：
+       将两个数组合并，再进行排序，假设是快排，则 T(n) = O(nlogn)
+*/
+/**
  * @param {number[]} nums1
  * @param {number[]} nums2
  * @return {number}
  */
 var findMedianSortedArrays = function(nums1, nums2) {
-    /**
-        解一：暴力法
-        原理：
-            将两个数组合并，再进行排序，假设是快排，则 T(n) = O(nlogn)
-     */
+
     const nums = [...nums1, ...nums2];
     nums.sort((n1, n2) => (n1 - n2));
     if (nums.length % 2 === 0) {
         const mid = nums.length>>1;
-        return (nums[mid] + nums[mid-1])/2; // 中位数要除以2
+        return (nums[mid] + nums[mid-1])/2; // 偶数中位数要除以2
     } else {
         return nums[(nums.length>>1)]
     }
-    /**
-        解二：二分查找法
-        例子：
-      nums1  1   2   3   4   8
-            l1              r1
-                mid1
-
-      nums2  6       7       9
-            l2              r2       
-                mid2
-
-            进行二分查找:
-
-                1   2   3   4   8
-                l1              r1
-                    mid1
-            第一轮：
-                            l1  r1
-                            mid1
-
-                6       7       9
-                l2              r2      
-                        mid2
-            第一轮：
-                l2r2
-                mid2
-
-            4、6 将两个数组划分为：
-            1 2 3 和 7 8 9
-     */
 };
+/**
+    解二：一个一个地取出，num1 和 num2 哪个小就拿哪个，拿到一半时就可以了 T(n) = O((n+m)>>1) = O(n+m)
+ */
+/**
+    解三：二分查找法
+    例子：
+ nums1  1   2   3   4   8
+       l1              r1
+           mid1
+
+ nums2  6       7       9
+       l2              r2       
+           mid2
+
+       进行二分查找:
+
+           1   2   3   4   8
+           l1              r1
+               mid1
+       第一轮：
+                       l1  r1
+                       mid1
+
+           6       7       9
+           l2              r2      
+                   mid2
+       第一轮：
+           l2r2
+           mid2
+
+       分割线 4、6 将两个数组划分为：
+       1 2 3 和 7 8 9
+
+   代码参考了 https://leetcode-cn.com/problems/median-of-two-sorted-arrays/solution/er-fen-fa-duo-yu-yan-javajs4-xun-zhao-liang-ge-zhe/
+*/
 /**
  * 二分解法
  * @param {number[]} nums1
@@ -442,38 +463,6 @@ var findMedianSortedArrays = function(nums1, nums2) {
  * @return {number}
  */
 var findMedianSortedArrays = function (nums1, nums2) {
-    /**
-        解二：二分查找法
-        例子：
-      nums1  1   2   3   4   8
-            l1              r1
-                mid1
-
-      nums2  6       7       9
-            l2              r2       
-                mid2
-
-            进行二分查找:
-
-                1   2   3   4   8
-                l1              r1
-                    mid1
-            第一轮：
-                            l1  r1
-                            mid1
-
-                6       7       9
-                l2              r2      
-                        mid2
-            第一轮：
-                l2r2
-                mid2
-
-            4、6 将两个数组划分为：
-            1 2 3 和 7 8 9
-
-        代码参考了 https://leetcode-cn.com/problems/median-of-two-sorted-arrays/solution/er-fen-fa-duo-yu-yan-javajs4-xun-zhao-liang-ge-zhe/
-     */
     // make sure to do binary search for shorten array
     if (nums1.length > nums2.length) {
         [nums1, nums2] = [nums2, nums1]
@@ -483,19 +472,20 @@ var findMedianSortedArrays = function (nums1, nums2) {
     let low = 0
     let high = m
     while (low <= high) {
-        const i = low + Math.floor((high - low) / 2)
-        const j = Math.floor((m + n + 1) / 2) - i
+        const i = low + Math.floor((high - low) / 2)            // num1 分割线 i
+        const j = Math.floor((m + n + 1) / 2) - i               // num2 分割线 j
 
-        const maxLeftA = i === 0 ? -Infinity : nums1[i - 1]
-        const minRightA = i === m ? Infinity : nums1[i]
-        const maxLeftB = j === 0 ? -Infinity : nums2[j - 1]
-        const minRightB = j === n ? Infinity : nums2[j]
+        const num1Left = i === 0 ? -Infinity : nums1[i - 1]     // num1 分割线左边
+        const num1Right = i === m ? Infinity : nums1[i]         // num1 分割线右边
+        const num2Left = j === 0 ? -Infinity : nums2[j - 1]     // num2 分割线左边
+        const num2Right = j === n ? Infinity : nums2[j]         // num2 分割线右边
 
-        if (maxLeftA <= minRightB && minRightA >= maxLeftB) {
+        if (num1Left <= num2Right && num1Right >= num2Left) {
             return (m + n) % 2 === 1
-                ? Math.max(maxLeftA, maxLeftB)
-                : (Math.max(maxLeftA, maxLeftB) + Math.min(minRightA, minRightB)) / 2
-        } else if (maxLeftA > minRightB) {
+                ? Math.max(num1Left, num2Left)
+                : (Math.max(num1Left, num2Left) + Math.min(num1Right, num2Right)) / 2
+        }
+        if (num1Left > num2Right) {
             high = i - 1
         } else {
             low = low + 1
@@ -594,7 +584,11 @@ var longestPalindrome = function(s) {
 };
 /**
     解二：中心扩展算法  O(n^2)
+        
         奇数的回文中心 n 个，偶数的回文中心 n - 1 个，即 2n - 1, 乘以 i 扩散就是 O(n^2)
+        ！！！核心原理：一边扩散一边校验，时间复杂度少在这里
+
+        ！！！代码和思路 参考 647.回文子串，下面的不好理解
  */
 // @lc code=start
 /**
@@ -943,24 +937,20 @@ var reverse = function(x) {
  * 
  * 
  */
-
-// @lc code=start
 /**
- * @param {string} s
- * @return {number}
+    官方题解 - 有限状态机 deterministic finite automaton, DFA  有限：有限的状态
+        挺有趣的，这实际上是编译原理中的 token 词法分析部分，自动状态机，让它转移更清晰有条理，自动化
+        https://leetcode-cn.com/problems/string-to-integer-atoi/solution/zi-fu-chuan-zhuan-huan-zheng-shu-atoi-by-leetcode-/
  */
-var myAtoi = function(s) {
-
-};
+// @lc code=start
 /*
+    对 JS 来说，相当于实现 parseInt(str)
+
     1. 正则表达式
-
-    正则解释
-
-    ^\s* 只能以 大于等于0个 空白字符 开头
-    [\+|\-]? 出现 + 或 - 号
-    \d+ 至少一位数字
-
+        正则解释
+        ^\s*        以 >= 0个 空白字符 开头
+        [\+|\-]?    出现 0个或1个 + 或 - 号
+        \d+         至少一位数字
  */
 /**
  * @param {string} str
@@ -984,8 +974,7 @@ var myAtoi = function(str) {
 };
 /*
     2. parseInt
-    
-    这道题是对 parseInt 的实现
+        这道题是对 parseInt 的实现
  */
 /**
  * @param {string} str
@@ -1000,6 +989,61 @@ var myAtoi = function(str) {
         return Math.pow(-2, 31);
     }
     return res
+};
+/**
+    3. 有趣的解法-自动机  代码抄的，还没理解=.=
+ */
+var myAtoi = function (s) {
+    class AutoMaton {
+        constructor() {
+            this.state = 'start'
+            this.sign = 1               // 正负: +1 或 -1
+            this.answer = 0             // 数值 
+            this.max = 2147483648
+
+            this.map = new Map([
+                ['start', ['start', 'signed', 'number', 'end']],
+                ['signed', ['end', 'end', 'number', 'end']],
+                ['number', ['end', 'end', 'number', 'end']],
+            ])
+        }
+        getIndex(char) {
+            if (char === ' ') {
+                return 0
+            } else if (char == '-' || char == '+') {
+                return 1
+            } else if (!isNaN(char)) {
+                return 2
+            } else {
+                return 3
+            }
+        }
+
+        get(char) {
+            this.state = this.getIndex(char) == 3 ? '' : this.map.get(this.state)[this.getIndex(char)]
+            if (this.state == '' || this.state == 'end') {
+                return false
+            }
+            if (this.state === 'number') {
+                this.answer = this.answer * 10 + (char - 0)
+                // 边界处理
+                this.answer = this.sign == 1 ? Math.min(this.max - 1, this.answer) : Math.min(this.max, this.answer)
+            } else if (this.state === 'signed') {
+                this.sign = char == '+' ? 1 : -1
+            }
+            return true
+        }
+    }
+
+    let autoMaton = new AutoMaton()
+
+    for (let char of s) {
+        if (!autoMaton.get(char)) {
+            break
+        }
+    }
+
+    return autoMaton.sign * autoMaton.answer
 };
 // @lc code=end
 
@@ -1377,12 +1421,28 @@ const equal = (sChar, pChar) => (
  * 
  */
 /**
-     解一：暴力法
-       T(n) = O()
-       S(n) = O()
+    解一：暴力法
+        T(n) = O(n^2)
+            快指针 i 和慢指针 j
+            let maxArea = 0;
+            for (let i = 0; i < height.length; i++) {
+                for (let j = 0; j < height.length; j++) {
+                    area = Math.min(height[j], height[i]) * (j - i);
+                    maxArea = Math.max(area, maxArea)
+                }
+            }
+    解二：双指针，从两边往中间
+        关键：数字较小的那个指针
+        为什么可以？
+            假设某次比较，左指针 i，出现 height[i] < height[j]，这时为 area = height[i] * (j - i)
+                以 i 为左指针，右指针 cursor 取 (i, j) 中任意一个，存在以下几种情况
+                    1. height[cursor] > height[i]，高度取决于 height[i]，但宽度变小了，所以 < area
+                    2. height[cursor] < height[i]，高度更低（height[cursor]），宽度更小，所以 < area
+            所以证明可以 移动数字较小的那个指针
 
-    解二：双指针
-    这道题进阶版：接雨水            
+        这个知识点需要理解和记忆，快速反映
+
+        这道题进阶版：接雨水
 */
 // @lc code=start
 /**
@@ -1392,18 +1452,18 @@ const equal = (sChar, pChar) => (
 var maxArea = function(height) {
     let maxArea = 0;
     for (let i = 0, j = height.length - 1; i < j; ) {
-        if (height[i] > height[j]) {
+        if (height[i] > height[j]) {            // 哪边低，使用哪个
             const area = height[j] * (j - i);
             if (area > maxArea) {
                 maxArea = area;
             }
-            j--;
+            j--;                                // 数字较小的那个指针 j
         } else {
             const area = height[i] * (j - i);
             if (area > maxArea) {
                 maxArea = area;
             }
-            i++;
+            i++;                                // 数字较小的那个指针 i
         }
     }
     return maxArea;
@@ -2207,14 +2267,17 @@ var isValid = function(s) {
     for (let i = 0; i < s.length; i++) {
         if (s[i] in map) {                  // 1. 左符号就入栈
             stack.push(s[i]);
-            continue;
+        } else {                            // 2. 不是左符号
+            const right = s[i];                 // 说明是右符号
+            const left = stack.pop();           // 左符号出栈
+            if (map[left] === right) {          // 判断是否匹配
+                continue;
+            } else {
+                return false;
+            }
         }
-        if (map[stack.pop()] === s[i]) {    // 2. 不是左符号，就出栈匹配
-            continue;
-        }
-        return false;
     }
-    return stack.length === 0;              // 3. 检测 栈的length 
+    return stack.length === 0;              // 3. 检测 栈的length 为空
 };
 // @lc code=end
 
@@ -2289,12 +2352,67 @@ var isValid = function(s) {
  * }
  */
 /**
+题解
+    > 题解：[官方题解-合并两个有序链表](https://leetcode-cn.com/problems/merge-two-sorted-lists/solution/he-bing-liang-ge-you-xu-lian-biao-by-leetcode/)
+
+    > 题解: [画解算法：21. 合并两个有序链表](https://leetcode-cn.com/problems/merge-two-sorted-lists/solution/hua-jie-suan-fa-21-he-bing-liang-ge-you-xu-lian-bi/) 理解递归的动画
+
+    T(n) = O(n+m)
+    S(n) = O(1)
+    
+    解一：迭代
+
+    图解：![image](http://note.youdao.com/yws/res/19132/99B025BFCF534776AF65AFEE52E8BB42)
+ */
+/**
  * @param {ListNode} l1
  * @param {ListNode} l2
  * @return {ListNode}
  */
 var mergeTwoLists = function(l1, l2) {
+    const dummyHead = new ListNode(null);
+    let prev = dummyHead;
+    while (l1 && l2) {
+        if (l1.val < l2.val) {
+            prev.next = l1;
+            l1 = l1.next;
+        } else {
+            prev.next = l2;
+            l2 = l2.next;
+        }
+        prev = prev.next;
+    }
+    prev.next = l1 || l2;
+    return dummyHead.next;
+};
+/**
+    解二：递归
+        该递归解法执行顺序： 
+        1. 先一个个节点连结（递归调用） 
+        2. 直接遇到 null 
+        3. return 再把指针从从里往外（一个个递归函数里冒出来）
 
+        图解 http://note.youdao.com/yws/res/19112/532E18174E504C9F98CF6295822A1669
+*/
+/**
+ * @param {ListNode} l1
+ * @param {ListNode} l2
+ * @return {ListNode}
+ */
+var mergeTwoLists = function(l1, l2) {
+    if (l1 === null) {
+        return l2;
+    }
+    if (l2 === null) {
+        return l1;
+    }
+    if (l1.val < l2.val) {
+        l1.next = mergeTwoLists(l1.next, l2);
+        return l1;
+    } else {
+        l2.next = mergeTwoLists(l1, l2.next);
+        return l2;
+    }
 };
 // @lc code=end
 
@@ -2475,12 +2593,332 @@ var generateParenthesis = function(n) {
  * }
  */
 /**
+    题解：官方题解-合并K个排序链表
+    #### 解一：暴力排序
+
+        1. 把链表的节点，全部取出来 O(N)
+        2. 稳定排序算法，对数组排序 O(NlogN)
+        3. 遍历同时创建新的有序链表 O(N)
+
+        T(n) = O(NlogN)
+
+        S(n) = O(n)
+
+    #### 解二：暴力比较
+
+        1. 比较 k 个节点（每个链表的首节点），获得最小值的节点。
+        2. 将选中的节点接在新链表的后面
+
+        T(n) = O(Nk)
+
+        S(n) = O(N)
+
+    #### 解三：优先队列
+
+        对解二暴力比较的优化
+
+        > 继续理解
+
+        > 复习最小堆、最大堆、优先队列
+
+        > JS 实现最小、最大堆
+
+        T(n) = O(Nlogk)
+
+        S(n) = O(N)
+
+    #### 解四：两两合并
+
+        其实就是上一题的解法
+
+        T(n) = O(Nk)
+
+        S(n) = O(1)
+
+    #### 解五：分治算法
+
+ */
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+/**
  * @param {ListNode[]} lists
  * @return {ListNode}
  */
-var mergeKLists = function(lists) {
-
+var mergeKLists = function(lists) {    
+    if (lists.length === 0) {
+        return null;
+    }
+    if (lists.length === 1) {
+        return lists[0];
+    }
+    const half = (lists.length + 1) >> 1;
+    const halfKLists = [];
+    for (let i = 0; i < half; i++) {        
+        halfKLists.push(
+            mergeTwoLists(lists[i], lists[i + half])
+        );        
+    }    
+    return mergeKLists(halfKLists);
 };
+
+var mergeTwoLists = function(l1, l2) {
+    const dummyHead = new ListNode(null);
+    let cursor = dummyHead;
+    while(l1 && l2) {
+        if (l1.val < l2.val) {
+            cursor.next = l1;
+            l1 = l1.next;
+        } else {
+            cursor.next = l2;
+            l2 = l2.next;
+        }
+        cursor = cursor.next;
+    }
+    cursor.next = l1 || l2;
+    return dummyHead.next;    
+}
+/**
+    重要的细节
+        ```js
+        两两合并 vs 分治法
+
+        wysa002wysa002
+        （编辑过）5 个月前
+        @大力王 两个链表聚合确实发生了K-1次。但是注意，题解中把 K个链表两两聚合，生成K/2个链表的过程叫一次Merging。然后这样的Merging总共发生log(K)次。每一次Merging需要比较的次数是N。 所以总的时间复杂度是O(N*log(K))。 这才是两两聚合和逐一聚合的本质差别。 逐一聚合的情况下，两个聚合的链表长度会发生偏斜，其中一个链表长度越来越长。考虑最坏情况K个链表每个仅包含一个元素（N为总元素数，这里N=K)，那么逐一聚合的总复杂度就是O(1+2+3+...N-1) = O(K*N). 而两两聚合的情况下，仍然考虑刚才的例子，
+
+        第一轮K个链表，聚合完成后剩K/2个，发生的比较次数是 1 + 1 + 1 + ...+ 1 =1*K = N.
+
+        第二轮K/2个链表，聚合完成后剩K/4个，发生的比较次数是(最坏情况) 2+2+2+ ... + 2 = 2 * K/2 = N .
+
+        第三轮K/4个链表，聚合完成后剩K/8个，发生的比较次数 4 + 4 + 4 + .... + 4 = 4 * K/4 = N .
+
+        .....
+
+        最后一轮剩2个链表，比较次数 K/2 + K/2 = 2* K/2 = N .
+
+        总共有log(K)轮，总比较次数 N*log(K)
+        ```
+ */
+// @lc code=end
+
+
+```
+</details>
+
+### 24.两两交换链表中的节点<a href="./src/24.两两交换链表中的节点.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=24 lang=javascript
+ *
+ * [24] 两两交换链表中的节点
+ *
+ * https://leetcode-cn.com/problems/swap-nodes-in-pairs/description/
+ *
+ * algorithms
+ * Medium (68.41%)
+ * Likes:    831
+ * Dislikes: 0
+ * Total Accepted:    224.4K
+ * Total Submissions: 324.4K
+ * Testcase Example:  '[1,2,3,4]'
+ *
+ * 给定一个链表，两两交换其中相邻的节点，并返回交换后的链表。
+ * 
+ * 你不能只是单纯的改变节点内部的值，而是需要实际的进行节点交换。
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 
+ * 输入：head = [1,2,3,4]
+ * 输出：[2,1,4,3]
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 输入：head = []
+ * 输出：[]
+ * 
+ * 
+ * 示例 3：
+ * 
+ * 
+ * 输入：head = [1]
+ * 输出：[1]
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 链表中节点的数目在范围 [0, 100] 内
+ * 0 
+ * 
+ * 
+ * 
+ * 
+ * 进阶：你能在不修改链表节点值的情况下解决这个问题吗?（也就是说，仅修改节点本身。）
+ * 
+ */
+
+// @lc code=start
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @return {ListNode}
+ */
+var swapPairs = function(head) {
+    if (!head || !head.next) return head;
+    let p = swapPairs(head.next.next);
+    head.next.next = head;
+    let cur = head.next;
+    head.next = p;
+    return cur;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 25.k-个一组翻转链表<a href="./src/25.k-个一组翻转链表.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=25 lang=javascript
+ *
+ * [25] K 个一组翻转链表
+ *
+ * https://leetcode-cn.com/problems/reverse-nodes-in-k-group/description/
+ *
+ * algorithms
+ * Hard (63.53%)
+ * Likes:    920
+ * Dislikes: 0
+ * Total Accepted:    137.8K
+ * Total Submissions: 214.5K
+ * Testcase Example:  '[1,2,3,4,5]\n2'
+ *
+ * 给你一个链表，每 k 个节点一组进行翻转，请你返回翻转后的链表。
+ * 
+ * k 是一个正整数，它的值小于或等于链表的长度。
+ * 
+ * 如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。
+ * 
+ * 进阶：
+ * 
+ * 
+ * 你可以设计一个只使用常数额外空间的算法来解决此问题吗？
+ * 你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换。
+ * 
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 
+ * 输入：head = [1,2,3,4,5], k = 2
+ * 输出：[2,1,4,3,5]
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 输入：head = [1,2,3,4,5], k = 3
+ * 输出：[3,2,1,4,5]
+ * 
+ * 
+ * 示例 3：
+ * 
+ * 
+ * 输入：head = [1,2,3,4,5], k = 1
+ * 输出：[1,2,3,4,5]
+ * 
+ * 
+ * 示例 4：
+ * 
+ * 
+ * 输入：head = [1], k = 1
+ * 输出：[1]
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 列表中节点的数量在范围 sz 内
+ * 1 
+ * 0 
+ * 1 
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @param {number} k
+ * @return {ListNode}
+ */
+var reverseKGroup = function (head, k) {
+    let groupLast = head;
+    let hasNext = true;
+    for (let i = 1; i < k; i++) {
+        if (!groupLast) {
+            hasNext = false;
+            break;
+        }
+        groupLast = groupLast.next;
+    }
+    if (!hasNext || !groupLast) {
+        return head;
+    }
+    const next = reverseKGroup(groupLast.next, k);
+    groupLast.next = null;
+    const newHead = reverseNode(head);
+    head.next = next;
+    return newHead;
+}
+
+function reverseNode(head) {
+    if (!head || !head.next) {
+        return head;
+    }
+    const nextNode = reverseNode(head.next);
+    head.next.next = head;
+    head.next = null;
+    return nextNode;
+}
 // @lc code=end
 
 
@@ -2554,9 +2992,9 @@ var mergeKLists = function(lists) {
  */
 /**
     题解：前后指针
-        1. 把不重复的值往前挪，使得前面是排序好的
-        2. 快指针j：探路，发现不重复的元素
-        3. 慢指针i：已过滤重复项的索引
+        1. 把不重复的值往前挪，使得前面 <= slow 的是已排序，不重复的
+        2. 快指针 fast：探路，发现不同的元素，就挪到 slow 前面一位（slow + 1）
+        3. 慢指针 slow：小于等于 slow 的是已排序，不重复的
         https://pic.leetcode-cn.com/0039d16b169059e8e7f998c618b6c2b269c2d95b02f43415350bde1f661e503a-1.png
 
     参考资料：
@@ -2568,14 +3006,88 @@ var mergeKLists = function(lists) {
  * @return {number}
  */
 var removeDuplicates = function(nums) {
-    let i = 0;
-    for (let j = 1; j < nums.length; j++) {
-        if (nums[i] !== nums[j]) {
-            nums[i + 1] = nums[j];
-            i++;
+    let slow = 0;
+    for (let fast = 1; fast < nums.length; fast++) {
+        if (nums[slow] !== nums[fast]) {                // 一发现有 nums[fast]，就把它挪到 slow + 1
+            nums[slow + 1] = nums[fast];                
+            slow++;                                     // slow++
         }
     }
-    return i + 1;
+    return slow + 1;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 28.实现-str-str<a href="./src/28.实现-str-str.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=28 lang=javascript
+ *
+ * [28] 实现 strStr()
+ *
+ * https://leetcode-cn.com/problems/implement-strstr/description/
+ *
+ * algorithms
+ * Easy (39.62%)
+ * Likes:    718
+ * Dislikes: 0
+ * Total Accepted:    299.8K
+ * Total Submissions: 754K
+ * Testcase Example:  '"hello"\n"ll"'
+ *
+ * 实现 strStr() 函数。
+ * 
+ * 给定一个 haystack 字符串和一个 needle 字符串，在 haystack 字符串中找出 needle 字符串出现的第一个位置
+ * (从0开始)。如果不存在，则返回  -1。
+ * 
+ * 示例 1:
+ * 
+ * 输入: haystack = "hello", needle = "ll"
+ * 输出: 2
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 输入: haystack = "aaaaa", needle = "bba"
+ * 输出: -1
+ * 
+ * 
+ * 说明:
+ * 
+ * 当 needle 是空字符串时，我们应当返回什么值呢？这是一个在面试中很好的问题。
+ * 
+ * 对于本题而言，当 needle 是空字符串时我们应当返回 0 。这与C语言的 strstr() 以及 Java的 indexOf() 定义相符。
+ * 
+ */
+
+// @lc code=start
+/**
+ * @param {string} haystack
+ * @param {string} needle
+ * @return {number}
+ */
+ let strStr = function(haystack, needle) {
+    if (needle === '') return 0;
+    for (let i = 0; i <= haystack.length - needle.length; i++) {
+        let isFound = true;
+        for (let j = 0; j < needle.length; j++) {
+            if (needle[j] !== haystack[i + j]) {
+                isFound = false;
+                break;
+            }
+        }
+        if (isFound) {
+            return i;
+        }
+    }
+    return -1;
 };
 // @lc code=end
 
@@ -3701,12 +4213,24 @@ var trap = function (height) {
         官方题解 https://leetcode-cn.com/problems/multiply-strings/solution/zi-fu-chuan-xiang-cheng-by-leetcode-solution/
  */
 /**
- * @param {string} num1
- * @param {string} num2
- * @return {string}
- */
+* @param {string} num1
+* @param {string} num2
+* @return {string}
+*/
 var multiply = function(num1, num2) {
-    const res = Array(num1.length + num2.length).fill(0); // res  从右边到左边；数值：最低位 -> 最高位；数组索引： 高 -> 低
+    const num2L = num2.length - 1;
+    let num2Idx = num2.length - 1;
+    let res = 0;
+    // 竖式乘法
+    while (num2Idx >= 0) {
+        res += num2[num2Idx] * num1 * Math.pow(10, num2L - num2Idx);
+        num2Idx--;
+    }
+    return String(res);
+};
+// 没通过的解法
+var multiply = function(num1, num2) {
+    const res = Array(num1.length + num2.length).fill(0); // res  从右边到左边；数值：最低位 -> 最高位；数组索引：高 -> 低
     let num2Idx = num2.length - 1;                        // num2 从右边到左边；数值：最低位 -> 最高位；数组索引：高 -> 低
     while (num2Idx >= 0) {
         let num1Idx = num1.length - 1;                    // num1 从右边到左边；数值：最低位 -> 最高位；数组索引：高 -> 低
@@ -3722,7 +4246,6 @@ var multiply = function(num1, num2) {
     return res.join('').replace(/^0*/, '') || '0';
 };
 // @lc code=end
-
 multiply('123', '456');
 /**
     错误实例如下，会出现大数溢出，使得结果错误
@@ -3735,18 +4258,7 @@ multiply('123', '456');
     Expected Answer
         "121932631112635269"
  */
-var multiply = function(num1, num2) {
-    const num2L = num2.length - 1;
-    let num2Idx = num2.length - 1;
-    let res = 0;
-    // 竖式乘法
-    while (num2Idx >= 0) {
-        res += num2[num2Idx] * num1 * Math.pow(10, num2L - num2Idx);
-        // console.log(res);
-        num2Idx--;
-    }
-    return String(res);
-};
+
 ```
 </details>
 
@@ -3826,6 +4338,94 @@ permute([1, 2, 3])
 ```
 </details>
 
+### 50.pow-x-n<a href="./src/50.pow-x-n.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=50 lang=javascript
+ *
+ * [50] Pow(x, n)
+ *
+ * https://leetcode-cn.com/problems/powx-n/description/
+ *
+ * algorithms
+ * Medium (36.89%)
+ * Likes:    595
+ * Dislikes: 0
+ * Total Accepted:    159.2K
+ * Total Submissions: 426.6K
+ * Testcase Example:  '2.00000\n10'
+ *
+ * 实现 pow(x, n) ，即计算 x 的 n 次幂函数（即，x^n）。
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 
+ * 输入：x = 2.00000, n = 10
+ * 输出：1024.00000
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 输入：x = 2.10000, n = 3
+ * 输出：9.26100
+ * 
+ * 
+ * 示例 3：
+ * 
+ * 
+ * 输入：x = 2.00000, n = -2
+ * 输出：0.25000
+ * 解释：2^-2 = 1/2^2 = 1/4 = 0.25
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * -100.0 
+ * -2^31 
+ * -10^4 
+ * 
+ * 
+ */
+
+/**
+    快速幂 JavaScript 版😳
+
+    普通幂是 n
+    快速幂是 log2n
+    使用的是二分法
+ */
+// @lc code=start
+/**
+ * @param {number} x
+ * @param {number} n
+ * @return {number}
+ */
+var myPow = function(x, n) {
+    if(0 === n) {return 1;}
+    if(-1 === n) {return 1/x;} // 兼容 n 为负值
+    
+    if(n&1) {                // 负值 -3 % 2 === -1， 所以不用 if (n % 2 === 1)
+      return x * myPow(x, n - 1);   
+    }
+    let half = myPow(x,n/2);
+    return half*half;
+};
+// @lc code=end
+
+
+```
+</details>
+
 ### 53.最大子序和<a href="./src/53.最大子序和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details open>
@@ -3861,7 +4461,10 @@ permute([1, 2, 3])
  * 如果你已经实现复杂度为 O(n) 的解法，尝试使用更为精妙的分治法求解。
  * 
  */
-
+/**
+    学习资料：
+        [推导 Kadane算法（JavaScript）](https://juejin.cn/post/6844904066032599053)
+ */
 // @lc code=start
 /**
  * @param {number[]} nums
@@ -3949,17 +4552,17 @@ var spiralOrder = function(matrix) {
     if (matrix.length === 0) { return []; }
     //              top
     // (x, y) left      right
-    //            bottom
+    //             bottom
     const res = [];
     let left = 0,
         top = 0,
         bottom = matrix.length - 1,
         right = matrix[0].length - 1;
     while (left < right && top < bottom) {
-        for (let i = left; i < right; i++) res.push(matrix[top][i])   // 向右
-        for (let i = top; i < bottom; i++) res.push(matrix[i][right]) // 向下
-        for (let i = right; i > left; i--) res.push(matrix[bottom][i])// 向左
-        for (let i = bottom; i > top; i--) res.push(matrix[i][left])  // 向上
+        for (let i = left; i < right; i++) res.push(matrix[top][i])     // 向右
+        for (let i = top; i < bottom; i++) res.push(matrix[i][right])   // 向下
+        for (let i = right; i > left; i--) res.push(matrix[bottom][i])  // 向左
+        for (let i = bottom; i > top; i--) res.push(matrix[i][left])    // 向上
         // 缩小 “圈”
         left++;
         right--;
@@ -5122,6 +5725,7 @@ var subsets = function(nums) {
  */
 /**
     题解
+        0. 先看下面画解，他写得很清楚^_^
         1. nums1 最后往前移动 index
         2. nums1 最后 i 和 nums2 最后 j 两两比较
 
@@ -5140,11 +5744,13 @@ var subsets = function(nums) {
  */
 var merge = function(nums1, m, nums2, n) {
     for (
-        let i = m - 1, j = n - 1, index = nums1.length -1;
+        let i = m - 1,                          // i nums1 真实长度
+            j = n - 1,                          // j nums2 真实长度
+            index = nums1.length -1;            // 根据题意，index = nums1.length - 1 = m + n
         index >= 0;
-        index--
+        index--                                 // 从后往前排
     ) {
-        if (nums1[i] > nums2[j] || j < 0) {
+        if (nums1[i] > nums2[j] || j < 0) {     // j < 0，用于 nums2 拷贝完的情况
             nums1[index] = nums1[i];
             i--;
         } else {
@@ -7941,6 +8547,10 @@ var detectCycle = function (head) {
  * var param_1 = obj.get(key)
  * obj.put(key,value)
  */
+/**
+ * LRU  淘汰最长时间未被使用的页面（Map+双向链表）
+ * LFU  淘汰一定时期内被访问次数最少的页 
+ */
 class ListNode {
     constructor(key, value) {
         this.key = key
@@ -7950,6 +8560,10 @@ class ListNode {
     }
 }
 
+/**
+ * 以下代码，头部结点，是最新的
+ * 最近的链表头部 .->.->.->. 
+*/
 class LRUCache {
     constructor(capacity) {
         this.capacity = capacity
@@ -7997,6 +8611,9 @@ class LRUCache {
         tempForNext.prev = tempForPrev
     }
 
+    /**
+        添加到头部
+     */
     addToHead(node) {
         node.prev = this.dummyHead
         node.next = this.dummyHead.next
@@ -8010,6 +8627,9 @@ class LRUCache {
         this.count--
     }
 
+    /**
+       移除尾部
+    */
     popTail() {
         let tailItem = this.dummyTail.prev
         this.removeFromList(tailItem)
@@ -10054,19 +10674,13 @@ var countPrimes = function(n) {
                                                     // 第五步：递归终止条件（边界处理）
         代码如下
  */
-function reverseList(head) {
-    if (head == null || head.next == null) {
-        return head;
-    }
-    let next = null;
-    let pre = head.next;
-    while (head != null) {
-        pre = head.next;
-        head.next = next;
-        next = head;
-        head = pre;
-    }
-    return next;
+var reverseList = function(head) {
+    if (head == null || head.next == null) { return head; }
+    const pre = head.next;
+    const cur = reverseList(pre);
+    head.next = null;    
+    pre.next = head;
+    return cur;
 };
 /**
     解法二：非递归
@@ -11702,13 +12316,11 @@ var lowestCommonAncestor = function (root, p, q) {
 var deleteNode = function(node) {
     // if (node == null) { return; }
     // if (node.next == null) { delete node.val; return; }
+    // 与下一个节点交换
     node.val = node.next.val;
-    const next = node.next;
     node.next = node.next.next;
-    next.next = null;
 }
 // @lc code=end
-
 
 ```
 </details>
@@ -12567,7 +13179,13 @@ var findDuplicate = function(nums) {
  * 
  * 
  */
-
+/**
+                       .(4)
+                     /   \  \
+                   .      .   .
+                  / \     / \
+                 .   .   .   .
+ */
 // @lc code=start
 /**
  * @param {number} n
@@ -15583,7 +16201,9 @@ findTargetSumWays([1,1,1,1,1], 3);
  * @return {number}
  */
 var fib = function(n) {
-
+    if (n === 0) { return 0; }
+    if (n === 1) { return 1; }
+    return fib(n - 1) + fib(n - 2);
 };
 // @lc code=end
 
@@ -15647,6 +16267,60 @@ var reverseWords = function(s) {
         ))
         .join(' ')
     );
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 560.和为k的子数组<a href="./src/560.和为k的子数组.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=560 lang=javascript
+ *
+ * [560] 和为K的子数组
+ *
+ * https://leetcode-cn.com/problems/subarray-sum-equals-k/description/
+ *
+ * algorithms
+ * Medium (45.17%)
+ * Likes:    803
+ * Dislikes: 0
+ * Total Accepted:    94.4K
+ * Total Submissions: 210.7K
+ * Testcase Example:  '[1,1,1]\n2'
+ *
+ * 给定一个整数数组和一个整数 k，你需要找到该数组中和为 k 的连续的子数组的个数。
+ * 
+ * 示例 1 :
+ * 
+ * 
+ * 输入:nums = [1,1,1], k = 2
+ * 输出: 2 , [1,1] 与 [1,1] 为两种不同的情况。
+ * 
+ * 
+ * 说明 :
+ * 
+ * 
+ * 数组的长度为 [1, 20,000]。
+ * 数组中元素的范围是 [-1000, 1000] ，且整数 k 的范围是 [-1e7, 1e7]。
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {number}
+ */
+var subarraySum = function(nums, k) {
+
 };
 // @lc code=end
 
@@ -15811,6 +16485,9 @@ var mergeTrees = function(t1, t2) {
         T(n) = O(n^2)
         S(n) = O(1)
 
+        ！！！核心原理：一边扩散一边校验，时间复杂度少在这里
+        ！！！代码参考 647.回文子串，下面的不好理解
+
         本质：两层 for 循环变一层，第二层 for 循环 与 isPalindrome 合并
         注意点：
             回文串有两种情况，长度是奇数和偶数
@@ -15827,8 +16504,50 @@ var mergeTrees = function(t1, t2) {
                 以 i 为中心，左右拓展，同时 isPalindrome
                 是回文就继续拓展，不是回文就 break
             }
-
-    2. 马拉车算法
+ */
+// @lc code=start
+/**
+ * @param {string} s
+ * @return {number}
+ */
+var countSubstrings = function(s) {
+    // const result = [];
+    let total = 0;
+    for (let i = 0; i < s.length; i++) {
+        // 类型一：i 作为中心，得到奇数长度的回文串
+        let left = i - 1;
+        let right = i + 1;
+        // result.push(s[i]);                           // 用于调试
+        total++;                                        // 一个字符也可以作为回文串
+        while (left >= 0 && right < s.length            // 判断边界
+            && s[left] === s[right]) {                  // 相等
+            // result.push(s.slice(left, right+1));     // 用于调试
+            total++;                                    // 又多一个回文串
+            left--;
+            right++;
+        }
+        // 类型二： i 和 i+1 作为中心，得到偶数长度的回文串
+        /*
+            a a a
+            _ _ _   以每个 _ 位置对应的字母为中心，左右拓展，得到奇数长度的回文串
+             . .    以每个 _ 的右边 . 位置（相邻两字母的中间，即 i 和 i+1）为中心，左右拓展，得到偶数长度的回文串
+         */
+        left = i;
+        right = i + 1;
+        while (left >= 0 && right < s.length
+            && s[left] === s[right]) {
+            // result.push(s.slice(left, right+1));
+            total++;
+            left--;
+            right++;
+        }
+    }
+    return total;
+    // console.log('result: ', result);
+};
+// @lc code=end
+/**
+        2. 马拉车算法
         该算法实际上是对中心拓展算法的升级
         思想：
             中心拓展法之所以是 T(n) = O(n^2)，是因为 (2n-1) * n 时间复杂度 （2n-1 是奇数长度和偶数长度情况的和）
@@ -15865,8 +16584,8 @@ var mergeTrees = function(t1, t2) {
                 求索引 3 为中心的拓展距离是理解马拉车算法的关键
                 我们已经得到 [0, 2] 最大拓展距离, 而且 distance[2] = 3
                 如果把 索引 2 为中心当成一面 “镜子”，镜子里面的物品 distance[0~1] 和镜子外面的物品 distance[2~3]，就是完全相同的
-                那么，以 2 为中心，distance[3] = distance[1] = 2，这就是马拉车算法的核心啦
-                以 2 为中心的 distance 求出的距离是 3，覆盖范围 [0, 4]
+                那么，以 索引 2 为中心，distance[3] = distance[1] = 2，这就是马拉车算法的核心啦
+                以索引 2 为中心的 distance 求出的距离是 3，覆盖范围 [0, 4]
                 根据中心对称，知道 [0, 1] 的 distance，也就是知道了 [3, 4] 的 distance，省去了 distance[3~4] 的计算
 
                 这里还有一个问题，distance[3] = distance[1] = 2，就是 索引 3 为中心的拓展距离吗？
@@ -15935,53 +16654,73 @@ var mergeTrees = function(t1, t2) {
             aaa 只是对长度是奇数的回文串作处理，再加上偶数长度的回文串处理，aaa 转换为 a#a#a
 
     参考资料：
-        1. Leetcode 官方题解 https://leetcode-cn.com/problems/palindromic-substrings/solution/hui-wen-zi-chuan-by-leetcode-solution/
-        2. 【面试现场】如何找到字符串中的最长回文子串？ https://mp.weixin.qq.com/s?__biz=MzIzMTE1ODkyNQ==&mid=2649410225&idx=1&sn=ed045e8edc3c49a436a328e5f0f37a55&chksm=f0b60f53c7c18645b4c04a69ad314723cce94ed56994d6f963c2275a2db8d85f973f15f508e4&mpshare=1&scene=23&srcid=1001JCsBlpxgUWjgixasChNQ#rd
-    
+        1. 【面试现场】如何找到字符串中的最长回文子串？ https://mp.weixin.qq.com/s?__biz=MzIzMTE1ODkyNQ==&mid=2649410225&idx=1&sn=ed045e8edc3c49a436a328e5f0f37a55&chksm=f0b60f53c7c18645b4c04a69ad314723cce94ed56994d6f963c2275a2db8d85f973f15f508e4&mpshare=1&scene=23&srcid=1001JCsBlpxgUWjgixasChNQ#rd
+             ！！！这一篇最好理解
+                关键知识点：
+                    第一点. cabadabae 中 移动到第5位 d 时，扩散范围 abadaba 的半径有 4
+                        distance: 表示装每一位，能拓展的最远距离的容器，这里选用数组，数组也是一种 Map，distance <index, 能拓展的最远距离/半径>
+                        distance[5] = 4
+                          0 1 2 3 4 5 6 7 8 9
+                        这时 c a b a d a b a e
+                                    |   | |
+                                    |   | |
+                distance    1 1 2 1 4
+                              - - - - - - -
+                根据中心对称可推出       1       （因为 1 < 扩散半径）
+                                       >=2   (因为 2 已经到了第8位，复用2，基于2再扩散1位可知等于 2)
+                                         >=1 (因为 1 已经到了第8位，复用1，基于1再扩散1位可知等于 1)
+                                
 
+                    第二点. 摘抄小史的代码实现思路
+                        小史：
+                            1、先对字符串进行预处理，两个字符之间加上特殊符号#
+                            2、然后遍历整个字符串，用一个数组来记录以该字符为中心的回文长度，为了方便计算右边界，我在数组中记录长度的一半（向下取整）
+                            3、每一次遍历的时候，如果该字符在已知回文串最右边界的覆盖下，那么就计算其相对最右边界回文串中心对称的位置，得出已知回文串的长度
+                            4、判断该长度和右边界，如果达到了右边界，那么需要进行中心扩展探索。当然，如果第3步该字符没有在最右边界的“羽翼”下，则直接进行中心扩展探索。进行中心扩展探索的时候，同时又更新右边界
+                            5、最后得到最长回文之后，去掉其中的特殊符号即可
+
+                    第三点. 时间复杂度为什么是 1
+                            因为循环过程中，不是在挪位，就是在拓展右边界，拓展的每一次都有意义
+
+        2. [Manacher 只会求最长回文子串？太浪费了！](https://leetcode-cn.com/problems/palindromic-substrings/solution/manacher-zhi-hui-qiu-zui-chang-hui-wen-zi-chuan-ta/)
+              ！！！感觉比较好理解了~ 下次继续看
  */
-// @lc code=start
 /**
- * @param {string} s
- * @return {number}
+    官方题解，有 JavaScript 代码，但是还没理解
+    作者：LeetCode-Solution
+    链接：https://leetcode-cn.com/problems/palindromic-substrings/solution/hui-wen-zi-chuan-by-leetcode-solution/
+    来源：力扣（LeetCode）
  */
 var countSubstrings = function(s) {
-    // const result = [];
-    let total = 0;
-    for (let i = 0; i < s.length; i++) {
-        // 类型一：i 作为中心，得到奇数长度的回文串
-        let left = i - 1;
-        let right = i + 1;
-        // result.push(s[i]);
-        total++;
-        while (left >= 0 && right < s.length
-            && s[left] === s[right]) {
-            // result.push(s.slice(left, right+1));
-            total++;
-            left--;
-            right++;
-        }
-        // 类型二： i 和 i+1 作为中心，得到偶数长度的回文串
-        /*
-            a a a
-            _ _ _   以每个 _ 位置对应的字母为中心，左右拓展，得到奇数长度的回文串
-             . .    以每个 _ 的右边 . 位置（相邻两字母的中间，即 i 和 i+1）为中心，左右拓展，得到偶数长度的回文串
-         */
-        left = i;
-        right = i + 1;
-        while (left >= 0 && right < s.length
-            && s[left] === s[right]) {
-            // result.push(s.slice(left, right+1));
-            total++;
-            left--;
-            right++;
-        }
+    let n = s.length;
+    let t = ['$', '#'];
+    for (let i = 0; i < n; ++i) {
+        t.push(s.charAt(i));
+        t.push('#');
     }
-    return total;
-    // console.log('result: ', result);
-};
-// @lc code=end
+    n = t.length;
+    t.push('!');
+    t = t.join('');
 
+    const f = new Array(n);
+    let iMax = 0, rMax = 0, ans = 0;
+    for (let i = 1; i < n; ++i) {
+        // 初始化 f[i]
+        f[i] = i <= rMax ? Math.min(rMax - i + 1, f[2 * iMax - i]) : 1;
+        // 中心拓展
+        while (t.charAt(i + f[i]) == t.charAt(i - f[i])) {
+            ++f[i];
+        }
+        // 动态维护 iMax 和 rMax
+        if (i + f[i] - 1 > rMax) {
+            iMax = i;
+            rMax = i + f[i] - 1;
+        }
+        // 统计答案, 当前贡献为 (f[i] - 1) / 2 上取整
+        ans += Math.floor(f[i] / 2);
+    }
+    return ans;
+};
 /**
     VSCode Leetcode Plugin
     Write directly
