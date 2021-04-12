@@ -198,16 +198,16 @@ var twoSum = function(nums, target) {
  */
 var addTwoNumbers = function (l1, l2) {
     const sum = l1.val + l2.val;
-    let res = cur = new ListNode(sum % 10);
+    let res = cur = new ListNode(sum % 10);         // 起始
     let append = Math.floor(sum / 10);
 
     while ((l1 && l1.next) || (l2 && l2.next)) {
         l1 = l1 && l1.next || { val: 0 };
         l2 = l2 && l2.next || { val: 0 };
-        const sum = l1.val + l2.val + append;
-        cur.next = new ListNode(sum % 10);
-        cur = cur.next;
-        append = Math.floor(sum / 10);
+        const sum = l1.val + l2.val + append;       // 两位的和
+        cur.next = new ListNode(sum % 10);          // 赋值个位
+        cur = cur.next;                             // 移到下一位
+        append = Math.floor(sum / 10);              // 整除10进位
     }
 
     if (append !== 0) {
@@ -635,6 +635,21 @@ var longestPalindrome = function(s) {
 
         中心扩散法的升级，每个扩散都有意义
 
+        在本项目搜索马拉车算法
+ */
+
+/**
+    解三：动态规划
+        状态：   
+                DP[i][j] 表示 子串 s[i..j] 是否为回文子串
+        递推公式：
+                DP[i][j] = DP[i+1][j-1] && (s[i] === s[j])
+        边界：
+                DP[i][i] = true;
+                DP[i][i+1] = true; if(s[i] === s[i+1])
+
+        ！！！参考资料 https://leetcode-cn.com/problems/longest-palindromic-substring/solution/zui-chang-hui-wen-zi-chuan-by-leetcode-solution/
+            6:30s 开始
  */
 // @lc code=end
 
@@ -1257,45 +1272,53 @@ var isPalindrome = function(x) {
     
     参考资料：[五分钟学算法 - 深度解析「正则表达式匹配」：从暴力解法到动态规划](https://mp.weixin.qq.com/s/ZoytuPt5dfP5pMODbuKnCQ)
 
-    要证明 DP[i][j] 是 true 的，分为以下两条回返路径（这就是为什么先递归，再递推）
+    这道题只返回 true，相当于最值
 
-            j
-        p abc
-        s c.a
+    要证明 DP[i][j] 是 true 的，分为以下两条回返路径（这就是为什么先递归，再递推，因为递归更符合思维，也是规律的直接体现方式）
+
+        DP[i][j] 表示走到字符串 s 的第 i 位和模板串 p 的第 j 位，是否能匹配上
+            其中 s = '#' + s;
+                p = '#' + p;
+
             i
+        s c.a
+        p abc
+            j
+
+    分成以下 3 种情况（选择）：
 
     1. j 等于 i, DP[i][j] = DP[i-1][j-1]
 
-              j
-        p xxba*
-        s xx_
             i
+        s xx_
+        p xxba*
+              j
 
     2. j === '*'
-        2.1 ( a* 中 a 出现 0 次的情况， 即 a* 都被消耗了)            DP[i][j] = DP[i][j-2]
-        2.2 ( a* 中 a 出现 1 次的情况， 即 a* 的 * 被消耗了)         DP[i][j] = DP[i][j-1]
-        2.3 ( a* 中 a 出现 多 次的情况，即 a* 不会被消耗, a 被消耗了) DP[i][j] = DP[i-1][j]
+        2.1 ( a* 中 a 用了 0 次的情况， 即 a* 都被消耗了)            DP[i][j] = DP[i][j-2]
+        2.2 ( a* 中 a 用了 1 次的情况， 即 a* 的 * 被消耗了)         DP[i][j] = DP[i][j-1]
+        2.3 ( a* 中 a 用了 多 次的情况，即 a* 不会被消耗, a 被消耗了) DP[i][j] = DP[i-1][j]
 
-        2.1 例子
+        2.1 例子 (s 表示 string, p 表示 pattern)
 
-                  j
-            p ccba*
-            s ccb
                 i
+            s ccb
+            p ccba*
+                  j
 
         2.2 例子
 
-                  j
-            p ccba*
+                i  
             s cca
-                i
+            p ccba*
+                  j
 
         2.3 例子
-
-                   j
-            p ccbaa*
+    
+                i
             s cca
-                i                            
+            p ccbaa*
+                   j
 
     3. 其他, return false
  */
@@ -1321,11 +1344,13 @@ var isMatch = function(s, p) {
     // 3. 递推公式
     for (let i = 1; i < s.length; i++) {
         for (let j = 1; j < p.length; j++) {
-            if (p[j] !== '*') {
+            if (p[j] !== '*') {                              // p[j] 不为 '*' 的情况
                 DP[i][j] = equal(s[i], p[j]) && DP[i-1][j-1];
-            } else {
-                DP[i][j] = DP[i][j-2] || DP[i][j-1] || (DP[i-1][j] && equal(s[i], p[j-1]));
-                        // 对应上面3种情形
+            } else {                                         // p[j] 为 '*' 的情况
+                DP[i][j] =
+                    DP[i][j-2] ||                               // a* 中 a 用了 0 次的情况，消耗掉 'a*'
+                    DP[i][j-1] ||                               // a* 中 a 用了 1 次的情况，消耗掉 '*'，a 已经消耗过了
+                    (DP[i-1][j] && equal(s[i], p[j-1]));        // a* 中 a 用了 多 次的情况，保留 '*'，j 不往前挪；前提是 equal(s[i], p[j-1])
             }
         }
     }
@@ -1333,9 +1358,8 @@ var isMatch = function(s, p) {
 };
 
 const equal = (sChar, pChar) => (
-    (sChar === pChar) || (
-        pChar === '.' && sChar != null
-    )
+    (sChar === pChar) ||
+    (pChar === '.' && sChar != null)
 );
 
 // console.assert(!isMatch('aa', 'a'), 'aa, a');
@@ -2355,8 +2379,6 @@ var isValid = function(s) {
 题解
     > 题解：[官方题解-合并两个有序链表](https://leetcode-cn.com/problems/merge-two-sorted-lists/solution/he-bing-liang-ge-you-xu-lian-biao-by-leetcode/)
 
-    > 题解: [画解算法：21. 合并两个有序链表](https://leetcode-cn.com/problems/merge-two-sorted-lists/solution/hua-jie-suan-fa-21-he-bing-liang-ge-you-xu-lian-bi/) 理解递归的动画
-
     T(n) = O(n+m)
     S(n) = O(1)
     
@@ -2371,28 +2393,30 @@ var isValid = function(s) {
  */
 var mergeTwoLists = function(l1, l2) {
     const dummyHead = new ListNode(null);
-    let prev = dummyHead;
+    let prev = dummyHead;                   // 比较节点的上一个
     while (l1 && l2) {
         if (l1.val < l2.val) {
             prev.next = l1;
-            l1 = l1.next;
+            l1 = l1.next;                   // 移位
         } else {
             prev.next = l2;
-            l2 = l2.next;
+            l2 = l2.next;                   // 移位
         }
         prev = prev.next;
     }
-    prev.next = l1 || l2;
+    prev.next = l1 || l2;                   // 还有剩的就接上
     return dummyHead.next;
 };
 /**
     解二：递归
+        
+        > 题解: [画解算法：21. 合并两个有序链表](https://leetcode-cn.com/problems/merge-two-sorted-lists/solution/hua-jie-suan-fa-21-he-bing-liang-ge-you-xu-lian-bi/) 理解递归的动画
+
         该递归解法执行顺序： 
         1. 先一个个节点连结（递归调用） 
         2. 直接遇到 null 
         3. return 再把指针从从里往外（一个个递归函数里冒出来）
 
-        图解 http://note.youdao.com/yws/res/19112/532E18174E504C9F98CF6295822A1669
 */
 /**
  * @param {ListNode} l1
@@ -2623,7 +2647,7 @@ var generateParenthesis = function(n) {
 
         > JS 实现最小、最大堆
 
-        T(n) = O(Nlogk)
+        T(n) = O(Nlogk) k = N
 
         S(n) = O(N)
 
@@ -2637,6 +2661,7 @@ var generateParenthesis = function(n) {
 
     #### 解五：分治算法
 
+        T(n) = O(NlogN)
  */
 /**
  * Definition for singly-linked list.
@@ -2782,15 +2807,23 @@ var mergeTwoLists = function(l1, l2) {
  * }
  */
 /**
+    参考资料：
+        [画解算法：24. 两两交换链表中的节点](https://leetcode-cn.com/problems/swap-nodes-in-pairs/solution/hua-jie-suan-fa-24-liang-liang-jiao-huan-lian-biao/)
+
+        ../assets/24.两两交换链表中的节点.png
+
+        图绘 https://img.mukewang.com/user/6057508200013fd114401080.jpg
+ */
+/**
  * @param {ListNode} head
  * @return {ListNode}
  */
 var swapPairs = function(head) {
-    if (!head || !head.next) return head;
-    let p = swapPairs(head.next.next);
-    head.next.next = head;
-    let cur = head.next;
-    head.next = p;
+    if (!head || !head.next) return head;   // 边界处理
+    let p = swapPairs(head.next.next);      // 0. swapPairs 把 head.next.next 看成一个整体，同时存储了 head.next.next
+    head.next.next = head;                  // 1. 如图所示
+    let cur = head.next;                    // 1.5 记录 head.next
+    head.next = p;                          // 2. head.next = p (整体)
     return cur;
 };
 // @lc code=end
@@ -4127,13 +4160,13 @@ var trap = function (height) {
         rightMax = [];
     //记录左边数组的最大值
     leftMax[0] = height[0];
-    for (let i = 1; i < n; i++) {
+    for (let i = 1; i < n; i++) {           // 从前往后
         leftMax[i] = Math.max(leftMax[i - 1], height[i]);
     }
     console.log('leftMax: ', leftMax);    
     //记录右边数组的最大值
     rightMax[n - 1] = height[n - 1];
-    for (let i = n - 2; i >= 0; i--) {
+    for (let i = n - 2; i >= 0; i--) {      // 从后往前
         rightMax[i] = Math.max(rightMax[i + 1], height[i]);
     }
     console.log('rightMax: ', rightMax);
@@ -4464,6 +4497,38 @@ var myPow = function(x, n) {
 /**
     学习资料：
         [推导 Kadane算法（JavaScript）](https://juejin.cn/post/6844904066032599053)
+
+        总结：😃最大连续子数组 https://juejin.cn/pin/6937242866276270094
+
+        这里叫最大子串或子数组，比较好，子序列，是可以不连续的，如 300.最长递增子序列
+
+        分析角度：
+        1. 暴力法 T(n)=O(n^3)
+        2. DP T(n)=O(n) S(n)=O(n)
+            关键在递推方程
+            DP[i] 表示含 nums[i] ，且以 nums[i] 结尾的，从 0~i 的最大连续子数组和，它跟 DP[i-1] 的关系为
+                ！！！含 nums[i] ，且以 nums[i] 结尾的，从 0~i 的最大连续子数组和 
+            DP[i] = Math.max(nums[i], DP[i-1] + nums[i])
+            解释：DP[i-1] 表示过去的经历，如果过去的经历总和，没有比加上现在的机会的更好，那就舍弃过去的，重新开始（选择 num[i]）
+
+            var maxSubArray = function(nums) {
+                if (nums.length === 0) { return 0; }
+                const DP = Array(nums.length).fill(-Infinity);
+                DP[0] = nums[0];                                    // 哨兵优化
+                let maxSum = DP[0];
+                for (let i = 1; i < nums.length; i++) {
+                    DP[i] = Math.max(nums[i], DP[i-1] + nums[i]);
+                    maxSum = Math.max(maxSum, DP[i]);
+                }
+                return maxSum;
+                // console.log(DP);
+            };
+
+        3. Kadane（卡登）算法
+            S(n)=O(n) 可以优化为 O(1) 即 Kadane（卡登）算法
+
+        拓展：
+            求最长升序子串的长度     `DP[i] = nums[i] > nums[i-1] ? DP[i-1] + 1 : 1`
  */
 // @lc code=start
 /**
@@ -4472,9 +4537,9 @@ var myPow = function(x, n) {
  */
 var maxSubArray = function(nums) {
     let maxSum = -Infinity;
-    let DP_i;
+    let DP_i;                                       // 滚动数组优化
     for (let i = 0; i < nums.length; i++) {
-        if (i === 0) {
+        if (i === 0) {                              // 这个地方可以往外挪，即哨兵优化
             DP_i = maxSum = nums[0];
             continue;
         }
@@ -4932,11 +4997,11 @@ var generateMatrix = function(n) {
 
        可以得出：
 
-       新起点索引为：newHeadIndexLength-(k%Length) +1
+       新起点索引为：newHeadIndex = Length-(k%Length) +1
 
    二、切与连
        连：将尾节点连上原始首节点
-       切：找到新头结点（新起点索引对应的节点）的上一个节点，断开它对心头结点的指向
+       切：找到新头结点（新起点索引对应的节点）的上一个节点，断开它对新头结点的指向
 
    三、边界考虑
        1. k=1, newHeadIndex=1，直接返回
@@ -4962,9 +5027,9 @@ var rotateRight = function(head, k) {
     let cursor = head;
     let lastNode;
     while (cursor) {
-        Length++;
+        Length++;                                   // 一边找 Length 长度
         if (cursor.next == null) {
-            lastNode = cursor;
+            lastNode = cursor;                      // 一边找 lastNode.next = head; 接上
         }
         cursor = cursor.next;
     }
@@ -4973,7 +5038,7 @@ var rotateRight = function(head, k) {
     // console.log('Length: ', Length)
     // Length - (k%Length) +1
     let newHeadIndex = Length - (k%Length) +1;
-    if (newHeadIndex === 0 || newHeadIndex === 1) {
+    if (newHeadIndex === 0 || newHeadIndex === 1) { // 边界条件处理
         return head;
     }
     cursor = head;
@@ -5153,7 +5218,6 @@ var uniquePaths = function(m, n) {
 /**
     题解：
         这道题与 62.不同路径，是非常相似的题目
-        https://github.com/NeoYo/leetcode-top-javascript/blob/master/62.%E4%B8%8D%E5%90%8C%E8%B7%AF%E5%BE%84.js
 
     举例：
         输入:
@@ -5516,9 +5580,13 @@ mySqrt(2);
             4. ros 最后一位 s 刚好命中，已有值是 ros, 上一步走到 ro 时，这一步比对了下已有值最后一位，刚好命中~~~！！！
     三、递归与动态规划
         这里直接跳过递归推导到动态规划的过程
-        根据上面分析，状态的定义是
+        根据上面分析，状态的定义是 DP[i][j] 表示 word1 走到第 i-1 位，经过了 [0, i-1], word2 走到第 j-1 位，经过了 [0, j-1]，处于该状态最少操作数
 
         该题理解资料里的，状态转移表很重要
+
+        ../assets/edit-distance.jpeg
+
+        这图还揭示了 DP[i][j] 初始值的设置
 
         最后，代码如下哈
 
@@ -5544,7 +5612,8 @@ var minDistance = function(word1, word2) {
     // 一、初始化 DP 数组
     const DP = Array(word1L + 1).fill(null).map(_ => Array(word2L + 1).fill(Infinity));
 
-    // 二、初始化临界值
+    // 状态的定义是 DP[i][j] 表示 word1 走到第 i-1 位，经过了 [0, i-1], word2 走到第 j-1 位，经过了 [0, j-1]，处于该状态最少操作数
+    // 二、初始化临界值 （也叫哨兵优化）
     for (let i = 0; i < word1L + 1; i++) {
         DP[i][0] = i;
     }
@@ -5555,13 +5624,13 @@ var minDistance = function(word1, word2) {
     // 三、状态转移
     for (let i = 1; i < word1L + 1; i++) {
         for (let j = 1; j < word2L + 1; j++) {
-            let left = DP[i - 1][j] + 1;    // <- 新增
-            let down = DP[i][j - 1] + 1;    // 删除
-            let left_down = DP[i - 1][j - 1];   // 替换 || 跳过
-            if (word1[i - 1] != word2[j - 1]) {
-                left_down += 1; // 替换
+            const increase = DP[i - 1][j] + 1;      // 新增 DP[i - 1][j] -> DP[i][j]，word1 新增前进了一位，word2[j-1] 是模板不需要更改
+            const del = DP[i][j - 1] + 1;           // 删除 DP[i][j - 1] -> DP[i][j]，比如上面例子的，rosX，发现了 X，又删掉 X，不会改变 word1 走到第几步，但 word2 会前进了一位，所以 j-1 -> j
+            const replace = DP[i - 1][j - 1];       // 替换 || 跳过; word1 和 word2 都往前挪了一位
+            if (word1[i - 1] != word2[j - 1]) {         // 这里DP[i][j] 对应的是 word1[i-1] 与 word2[j-1]
+                replace += 1;                       // 替换
             }
-            DP[i][j] = Math.min(left, Math.min(down, left_down));
+            DP[i][j] = Math.min(increase, Math.min(del, replace));
         }
     }
     return DP[word1L][word2L];
@@ -6229,7 +6298,7 @@ var reverseBetween = function(head, m, n) {
 
             比如 n = 2，求 numTrees(2)
                 2
-            /    \
+             /    \
             G(0)   G(1)
             f(2) = G(0) * G(1)
             
@@ -6855,6 +6924,82 @@ var connect = function(root) {
 ```
 </details>
 
+### 118.杨辉三角<a href="./src/118.杨辉三角.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=118 lang=javascript
+ *
+ * [118] 杨辉三角
+ *
+ * https://leetcode-cn.com/problems/pascals-triangle/description/
+ *
+ * algorithms
+ * Easy (66.09%)
+ * Likes:    317
+ * Dislikes: 0
+ * Total Accepted:    86.4K
+ * Total Submissions: 129.6K
+ * Testcase Example:  '5'
+ *
+ * 给定一个非负整数 numRows，生成杨辉三角的前 numRows 行。
+ * 
+ * 
+ * 
+ * 在杨辉三角中，每个数是它左上方和右上方的数的和。
+ * 
+ * 示例:
+ * 
+ * 输入: 5
+ * 输出:
+ * [
+ * ⁠    [1],
+ * ⁠   [1,1],           
+ * ⁠  [1,2,1],          
+ * ⁠ [1,3,3,1],         
+ * ⁠[1,4,6,4,1]         
+ * ]
+ * 
+ */
+/**
+    [
+        ⁠    [1],                0
+        ⁠   [1,1],              0 1
+        ⁠  [1,2,1],            0 1 2
+        ⁠ [1,3,3,1],          0 1 2 3
+        ⁠[1,4,6,4,1]         0 1 2 3 4
+    ]
+
+    下一行 i 的值 = 上一行 (i - 1) 的值 + (i - 2) 的值
+ */
+// @lc code=start
+/**
+ * @param {number} numRows
+ * @return {number[][]}
+ */
+ var generate = function (numRows) {
+    const res = [];
+    for (let rowIdx = 0; rowIdx < numRows; rowIdx++) {
+        res[rowIdx] = [];
+        res[rowIdx][0] = 1;
+        for (let i = 1; i < rowIdx; i++) {
+            // debugger;
+            res[rowIdx][i] =
+                res[rowIdx - 1][i - 1] + res[rowIdx - 1][i];
+        }
+        res[rowIdx][rowIdx] = 1;
+    }
+    return res;
+};
+// @lc code=end
+
+
+```
+</details>
+
 ### 121.买卖股票的最佳时机<a href="./src/121.买卖股票的最佳时机.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details open>
@@ -6912,13 +7057,21 @@ var connect = function(root) {
 
         从最后一天到第一天使用的是递归，从第一天得到最后一天使用的是动态规划
 
-        > `注意: 你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。` 这句话，简化了难度，递推公式中，0 到 1 表示买入，1 到 0 卖出， 如果不止 1和0，那就多一个 k 作为一个维度， 如买卖股票的最佳时机 III
+        > `注意: 你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。` 这句话，简化了难度，递推公式中，0 到 1 表示买入，1 到 0 卖出， 如果不止 1和0，那就多一个 k 作为一个维度， 如买卖股票的最佳时机 III   2021.03.28 这句话可能理解有误，因为 III 也有，更好的理解，应该是限定了只在 0 和 1 之间转换
 
     递推公式
 
+        i 表示第 i 天，所以 i - 1 表示 i 的前一天， k 表示可以买卖的次数
+
         ```js
-        dp[i][k][0] = max(dp[i-1][k][0], dp[i-1][k][1] + prices[i])
-        dp[i][k][1] = max(dp[i-1][k][1], dp[i-1][k+1][0] - prices[i]) 
+        dp[i][k][0] = Math.max(
+            dp[i-1][k][0],                  //  今天不操作  0 -> 0
+            dp[i-1][k][1] + prices[i]       //  今天卖出了  1 -> 0，同时拿到了第 i 天的股票 + prices[i]
+        )
+        dp[i][k][1] = Math.max(
+            dp[i-1][k][1],                  //  今天不操作  1 -> 1
+            dp[i-1][k+1][0] - prices[i]     //  今天买入    0 -> 1，花 prices[i] 买的，注意这里 k + 1 变成 k 了，减少了一次交易次数
+        )
         ```
 
         > 注意 k+1 买了一次后变成 k
@@ -6961,6 +7114,8 @@ var connect = function(root) {
 /**
  
 解一：暴力法
+    注意只买卖一次
+
     T(n) = S(n^2)
     S(n) = O(1)
 
@@ -6968,8 +7123,8 @@ var connect = function(root) {
 var maxProfit = function(prices) {
     // 解一：暴力法 T(n) = O(n^2)
     let max = 0;
-    for (let buy = 0; buy < prices.length; buy++) {
-        for (let sell = buy; sell < prices.length; sell++) {
+    for (let buy = 0; buy < prices.length; buy++) {             // 确定买入，prices[buy]
+        for (let sell = buy; sell < prices.length; sell++) {    // 确定卖出，prices[sell]
             const profit = prices[sell] - prices[buy];
             if (max < profit) {
                 max = profit;
@@ -6986,13 +7141,15 @@ var maxProfit = function(prices) {
     S(n) = O(n)
 
     ```js
+    // i  k  0/1
     dp[i][1][0] = max(dp[i-1][1][0], dp[i-1][1][1] + prices[i])
     dp[i][1][1] = max(dp[i-1][1][1], dp[i-1][0][0] - prices[i]) 
                 = max(dp[i-1][1][1], -prices[i])
     解释：k = 0 的 base case，所以 dp[i-1][0][0] = 0。
     ```
 
-    现在发现 k 都是 1，不会改变，即 k 对状态转移已经没有影响了。
+    现在发现 k 都是 1，不会改变，即 k 对状态转移已经没有影响了。        //  2021.03.28 左边说法不够完善，暴力法是上面的两个 for 循环，限制了 一次买入和一次卖出
+                                                               //  把左右两边 k-1
     可以进行进一步化简去掉所有 k：
 
     ```js
@@ -7040,8 +7197,8 @@ var maxProfit = function(prices) {
     }
     // 2. 预处理
     DP[0][0] = 0;
-    DP[0][1] = -prices[0];
-    for (let i = 1; i < DP.length; i++) {        
+    DP[0][1] = -prices[0];                                  // 第一天就买入，prices[0] 
+    for (let i = 1; i < DP.length; i++) {
         DP[i][0] = Math.max(
             DP[i - 1][1] + prices[i],
             DP[i - 1][0]
@@ -7149,13 +7306,20 @@ var maxProfit = function(prices) {
  * 
  */
 /**
+    ```js
+    dp[i][Infinity][0] = max(dp[i-1][Infinity][0], dp[i-1][Infinity][1] + prices[i])
+    dp[i][Infinity][1] = max(dp[i-1][Infinity][1], dp[i-1][Infinity+1][0] - prices[i]) 
+
+    ∵ Infinity = Infinity + 1                           k = Infinity，省略对左右等式不影响
+    ∴
+    dp[i][0] = max(dp[i-1][0], dp[i-1][1] + prices[i])
+    dp[i][1] = max(dp[i-1][1], dp[i-1][0] - prices[i])
+    ```
+ */
+/**
     解一：DP
  */
 // @lc code=start
-/**
- * @param {number[]} prices
- * @return {number}
- */
 /**
  * @param {number[]} prices
  * @return {number}
@@ -7176,12 +7340,12 @@ var maxProfit = function(prices) {
     // 3. 递推
     for (let i = 1; i < DP.length; i++) {
         DP[i][0] = Math.max(
-            DP[i-1][0],
-            DP[i-1][1] + prices[i]
+            DP[i - 1][0],
+            DP[i - 1][1] + prices[i]
         );
         DP[i][1] = Math.max(
-            DP[i-1][1],
-            DP[i-1][0] - prices[i]
+            DP[i - 1][1],
+            DP[i - 1][0] - prices[i]
         );
     }
     return DP[DP.length - 1][0];
@@ -7220,11 +7384,11 @@ var maxProfit = function(prices) {
                 return calculate(prices, 0);
             }
 
-            public int calculate(int prices[], int s) {
-                if (s >= prices.length)
+            public int calculate(int prices[], int curDay) {
+                if (curDay >= prices.length)
                     return 0;
                 int max = 0;
-                for (int start = s; start < prices.length; start++) {
+                for (int start = curDay; start < prices.length; start++) {
                     int maxprofit = 0;
                     for (int i = start + 1; i < prices.length; i++) {
                         if (prices[start] < prices[i]) {
@@ -7302,9 +7466,10 @@ var maxProfit = function(prices) {
     题解：DP
 
     递推公式
+        i 表示 第 i 天、 k 表示已进行的买卖次数、0->1 表示买入、1->0 表示卖出;  dp[i][k][0/1] 表示某个状态的利润
         dp[i][k][0] = max(dp[i-1][k][0], dp[i-1][k][1] + prices[i])
-        dp[i][k][1] = max(dp[i-1][k][1], dp[i-1][k-1][0] - prices[i]) 
-        // 买入股票，k 就加 1
+        dp[i][k][1] = max(dp[i-1][k][1], dp[i-1][k-1][0] - prices[i])   // 买入，k 会 -1
+        // 买入股票，k 就 -1
  */
 // @lc code=start
 /**
@@ -7327,12 +7492,13 @@ var maxProfit = function(prices) {
     }
     // 2. DP 初始化临界值
     // 2.1 当 i = 0 时，列举所有情况
+    // 0 表示第 1 天，k 表示已进行的买卖次数、0->1 表示买入、1->0 表示卖出;
     DP[0][0][0] = 0;
-    DP[0][1][0] = -Infinity; // Math.max(-Infinity, num) = num
-    DP[0][2][0] = -Infinity;
-    DP[0][0][1] = -Infinity;
-    DP[0][1][1] = -prices[0];
-    DP[0][2][1] = -prices[0] * 2;
+    DP[0][1][0] = -Infinity;    // 没有交易，就 k = 1，表示交易了一笔，不存在这种可能，所以是 -Infinity
+    DP[0][2][0] = -Infinity;    // 没有交易，就 k = 2，表示交易了两笔，不存在这种可能，所以是 -Infinity
+    DP[0][0][1] = -Infinity;    // k 没有自加，1 又表示购买了第一天的，所以是 -Infinity
+    DP[0][1][1] = -prices[0];   // 购买了第一天的，就 k = 1 也自减了
+    DP[0][2][1] = -Infinity;    // k = 2 表示交易了两笔了，1 又表示购买了第一天的，所以是 -Infinity
     // 2.1 当 k = 0 时，列举所有情况
     for (let i = 1; i < DP.length; i++) {
         DP[i][0][0] = 0;
@@ -7344,7 +7510,7 @@ var maxProfit = function(prices) {
         DP[i][0][0]=0;
         for (let k = 1; k <= K; k++) {
             DP[i][k][0] = Math.max(DP[i-1][k][0], DP[i-1][k][1] + prices[i]);
-            DP[i][k][1] = Math.max(DP[i-1][k][1], DP[i-1][k-1][0] - prices[i]);
+            DP[i][k][1] = Math.max(DP[i-1][k][1], DP[i-1][k-1][0] - prices[i]); // 这里是从 k-1 到 k，与前面几道的理解相反，这里的 k 表示已进行的买卖次数
         }
     }
     console.log(DP);
@@ -7752,6 +7918,12 @@ solve([["X","O","X","O","X","O"],["O","X","O","X","O","X"],["X","O","X","O","X",
         关于选择，在进行分割过程中，每一次分割都会面临两个选择，一个是分割，一个是不分割
         关于取值，从第一步分析可知，想得到的是图中在底层的数据（对应到树中，就是叶子节点）
 
+                  aab                    (splitIdx, path, start) = (1, [], 0)
+                /     \                             /                 \
+            a|ab      aab              (2, [a], 1) 剩 ab           (2, [], 0)
+            /  \     /   \
+        a|a|b  a|ab aa|b  aab    
+
         var partition = function (s) {
             const paths = [];
             const traceback = (splitIdx, path, start) => {
@@ -7780,7 +7952,7 @@ solve([["X","O","X","O","X","O"],["O","X","O","X","O","X"],["X","O","X","O","X",
  */
 // @lc code=start
 var partition = function (s) {
-    var isPalindrome = function (s) {
+    var isPalindrome = function (s) {   // 这里应该不需要转换
         const arr = s.toLowerCase().match(/\w|\d/g);
         for (let i = 0; i < (arr.length >> 1); i++) {
             if (arr[i] !== arr[arr.length - 1 - i]) {
@@ -7808,6 +7980,7 @@ var partition = function (s) {
         const subStr = s.slice(start, splitIdx);
         if (isPalindrome(subStr)) {
             traceback(splitIdx + 1, [...path, subStr], splitIdx);
+                // 分割的话，因为 s[start, splitIdx) 已经没了，所以下一个 start 从 splitIdx
         } else {
             // 不处理（剪枝）
         }
@@ -7818,7 +7991,7 @@ var partition = function (s) {
     traceback(1, [], 0);
     return paths;
 };
-// partition("aab");
+partition("aab");
 // @lc code=end
 
 
@@ -8099,6 +8272,8 @@ var singleNumber = function(nums) {
  */
 
 /**
+        dp["applepenapple"] = dp["applepen"这一段] && 判断一下"apple"
+                        j     i
                 applepenapple(13) (长度也是13)
                 0       8   12
                       |
@@ -8134,6 +8309,9 @@ var singleNumber = function(nums) {
     边界用例：
         Case: "" []     Expect: true
         Case: "a" []    Expect: false
+
+延伸：
+    可以使用 Set， 但是性能下降了，可能跟 Set 实现有关，性能占用 116ms， 原来只要 90ms
  */
 
 // @lc code=start
@@ -8143,23 +8321,32 @@ var singleNumber = function(nums) {
  * @return {boolean}
  */
 var wordBreak = function(s, wordDict) {
-    if (s.length === 0) {
+    if (s.length === 0) {               // s.length = 0, 不选 wordDict, 就肯定 true
         return true;
     }
-    if (wordDict.length === 0) {
+    if (wordDict.length === 0) {        // s.length > 0, wordDict 又没有, 肯定 false
         return false;
     }
     const DP = Array(s.length + 1).fill(false);
     DP[0] = true;
 
+    /*
+                j     i
+        applepenapple(13) (长度也是13)
+        0       8   12
+        
+                                    DP[j]                    s.slice(j, i)
+        dp["applepenapple"] = dp["applepen"这一段] && 判断一下 "apple"
+
+        这里的 DP[i] 是表示 s[0, i) 满足单词拆分，注意是左闭右开
+        这里的 DP[j] 是表示 s[0, j) 满足单词拆分，注意是左闭右开
+     */
     for (let i = 0; i < s.length + 1; i++) {
-        for (let j = 0; i - j >= 0; j++) {
-            if (wordDict.indexOf(s.slice(i - j, i)) !== -1) {
-                if (DP[i-j] === true) {
-                    // 只要找到 true, 就跳出计算下一个 DP[i], 避免被 false 覆盖掉
-                    DP[i] = true;
-                    continue;
-                }
+        for (let j = 0; j <= i; j++) {
+            if (wordDict.indexOf(s.slice(j, i)) !== -1 && DP[j] === true) {
+                // 只要找到 true, 就跳出计算下一个 DP[i], 避免被 false 覆盖掉
+                DP[i] = true;
+                continue;
             }
         }
     }
@@ -8284,6 +8471,7 @@ var hasCycle = function (head) {
     解二：快慢指针
         快慢指针加起来，相当于每个循环内多走一步
         直到快指针的距离 = 慢指针的距离*2
+        为什么一定会相遇，因为每次差值是 1，当差值 = 慢指针的距离，这时 刚好快指针的距离 = 慢指针的距离*2，就相遇了
  */
 var hasCycle = function(head) {
     const p1 = head
@@ -8401,6 +8589,7 @@ var detectCycle = function (head) {
         阶段一：快慢指针
             快慢指针加起来，相当于每个 while 内多走一步
             直到快指针的距离 = 慢指针的距离*2
+            为什么一定会相遇，因为每次差值是 1，当差值 = 慢指针的距离，这时 刚好快指针的距离 = 慢指针的距离*2，就相遇了
 
             快 -------------------
             慢 ---------
@@ -9422,6 +9611,17 @@ MinStack.prototype.getMin = function() {
  * @param {ListNode} headB
  * @return {ListNode}
  */
+/**
+ * 
+    思路:
+        相交节点，不是指 val 相同，是指 指针 相同
+
+    解法:
+        0. 暴力法 T(n) = O(nm)   S(n) = 1
+        1. 类Map的数据结构 T(n) = O(n+m)  S(n) = O(n) 或 O(m)
+        2. 拼接两个链表 https://leetcode-cn.com/problems/intersection-of-two-linked-lists/solution/intersection-of-two-linked-lists-shuang-zhi-zhen-l/
+ * 
+ */
 // var getIntersectionNode = function(headA, headB) {
 //     const aMap = new Map(); // <val, true|null>
 //                     // Object 的 key 只能是 string/symbol https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Map
@@ -9439,7 +9639,15 @@ MinStack.prototype.getMin = function() {
 // };
 /**
  * 
- * 解法2. 拼接两个链表 https://leetcode-cn.com/problems/intersection-of-two-linked-lists/solution/intersection-of-two-linked-lists-shuang-zhi-zhen-l/
+ * 解法2. [160. 相交链表（双指针，清晰图解）](https://leetcode-cn.com/problems/intersection-of-two-linked-lists/solution/intersection-of-two-linked-lists-shuang-zhi-zhen-l/)
+ * 
+ *           a             b
+ * l1      ------     c    --
+ *               . -------
+ * l2          --          ------
+ *             b             a
+ * 
+ * a + c + b = b + c + a
  */
 var getIntersectionNode = function(headA, headB) {
     let cursorA = headA;
@@ -10277,7 +10485,10 @@ var hammingWeight = function(n) {
  * 
  * 
  */
-
+/**
+    每次选和不选，选完后，房屋金额，就跳过了，可以看成是 0 - 1 背包问题
+    每次都可以进去和不进去，进去与不进的选择，取之不尽，可以看成是 完全背包问题
+ */
 // @lc code=start
 /**
  * @param {number[]} nums
@@ -10299,7 +10510,14 @@ function rob(nums) {
 */
 // 解一: 递归+备忘录 T(n) = O(n) S(n) = O(n)
 // 解二: 动态规划  T(n) = O(n) S(n) = O(n)
-//      递推公式  DP[i] = Math.max(DP[i - 2] + nums[i], DP[i - 1]);            
+/**
+        递推公式
+            DP[i] = Math.max(
+                DP[i - 2] + nums[i],    // 选择相隔两家的进去
+                DP[i - 1]               // 当前不进去
+            );
+ */
+//      
 /*    
 function rob(nums) {
     if (nums.length === 0) return 0;
@@ -10716,8 +10934,8 @@ function reverseList(head) {
     while (head != null) {
         pre = head.next;        // pre 起到了缓存的作用
         head.next = next;       // 反转链表的核心逻辑：反转单个节点，切断指向该节点的 next；连接指向原来的上一个
-        next = head;
-        head = pre;
+        next = head;            // 向前挪
+        head = pre;             // 向前挪
     }
     return next;
 };
@@ -11238,7 +11456,7 @@ var containsDuplicate = function(nums) {
                     1 1 1
                     1 2 2
                     0 1 ？
-                ？号的左边、上边、左上边的每个值，另一层含义是多远会遇到 0
+                ？号的左边、上边、左上边的每个值，另一层含义是多远会遇到 0，所以才有下面的 Math.min
                     上边的 2，表示距离上边 2 一定有 0
                        （有0）
                         1 1 1
@@ -12307,17 +12525,20 @@ var lowestCommonAncestor = function (root, p, q) {
  * @return {void} Do not return anything, modify node in-place instead.
  */
 /**
- * Demo:
- * 4->5->1->9
- * 4->1->1->9
- * 4->5->9  1->9
- * 4->5->9  1->null
+    Demo:
+        4->5->1->9      node = 5
+        4->1->1->9   
+           |         // node.val = node.next.val;
+
+        4->1->9
+           |         // node.next = node.next.next;
  */
 var deleteNode = function(node) {
     // if (node == null) { return; }
     // if (node.next == null) { delete node.val; return; }
-    // 与下一个节点交换
+    // 复制下一个节点的值，同时相当于删了当前节点值
     node.val = node.next.val;
+    // 删除下一个节点
     node.next = node.next.next;
 }
 // @lc code=end
@@ -12941,9 +13162,10 @@ var missingNumber = function(nums) {
  * @return {number}
  */
 var numSquares = function(n) {
-    const DP = Array(n+1).fill(null).map((val, index) => index);
-    for (let i = 0; i < DP.length; i++) {
-        for (let j = 1; j*j <= i; j++) {
+    const DP = Array(n+1).fill(null)
+                        .map((val, index) => index);    // 存 [0, n]
+    for (let i = 0; i < DP.length; i++) {               // i 表示 num
+        for (let j = 1; j*j <= i; j++) {                // j 平方数，j*j 完全平方数
             DP[i] = Math.min(DP[i], 1 + DP[i-j*j]);
         }
     }
@@ -13494,26 +13716,51 @@ MedianFinder.prototype.findMedian = function() {
 
 2. 动态规划：以 i 结尾的最长上升子序列作为状态 T(n) = O(n * n)
 
-    原理：比如 [2, 5, 3, 7]，知道 [2, 5, 3] 并记录起来，就可以推出 [2, 5, 3, 7] 不需要每次都重新计算
-         自顶向下，即递归+备忘录
-         自底向上，即动态规划
-        1) 使用动态规划，可以把前面 O(2^n) 优化为 O(n)
-        2) 以 i 结尾的最长上升子序列，还要和前面每个数比较大小 O(n)
-           for (let i = 0; i < )
+    dp[i] = max(dp[j]) + 1, if (0≤j<i && num[j]<num[i])
 
-    转移方程：
-        let max = -Infinity;
-        for (let j = 0; j < i; j++) {
-            if (nums[i] > nums[j]) {
-                max = Math.max(max, DP[i]);
+    以 i 结尾，这个很重要，它不保证连续，但保证以 i 结尾的，这样才能使转移公式成立
+
+    参考思路：
+        [动态规划（动图辅助理解，如有帮助请点个赞）](https://leetcode-cn.com/problems/number-of-longest-increasing-subsequence/solution/dong-tai-gui-hua-dong-tu-fu-zhu-li-jie-ru-you-bang/)
+            动图很好理解
+
+        在草稿纸书写了下：
+            index       0   1   2   3   4   5   6   7   8
+            array       1   3   6   7   9   4   10  5   6
+            DP init     1   1   1   1   1   1   1   1   1
+            DP          1   2   3   4   5   3   6   3   3
+
+    ----2021.04.03 这段理解不透彻，写得不好，实际上是发现了 以 i 结尾的最长上升子序列 的规律，再用 DP，跟下面说的那不同
+        原理：比如 [2, 5, 3, 7]，知道 [2, 5, 3] 并记录起来，就可以推出 [2, 5, 3, 7] 不需要每次都重新计算
+            自顶向下，即递归+备忘录
+            自底向上，即动态规划
+            1) 使用动态规划，可以把前面 O(2^n) 优化为 O(n^2)
+            2) 以 i 结尾的最长上升子序列，还要和前面每个数比较大小 O(n)
+            for (let i = 0; i < )
+    ----
+
+    代码：
+        var lengthOfLIS = function(nums) {
+            if (nums.length === 0) { return 1; }            // 边界条件
+            const DP = Array(nums.length).fill(1);          // 以每个数结尾的最长子序列，至少包含自己，即长度 1
+            let max = 1;                                    // 不一定以最后一个结尾就最大
+            for (let i = 0; i < nums.length; i++) {         
+                for (let j = 0; j <= i; j++) {
+                    if (nums[i] > nums[j]) {
+                        DP[i] = Math.max(DP[i], DP[j] + 1); // 满足这种情况时，更新 DP[i]
+                        max = Math.max(max, DP[i]);
+                    }
+                }
             }
-        }
-        DP[i] = max;
+            return max;
+        };
 
 3. 维护长度为 l 的有序子序列，且序列中每个值最小 T(n) = O(n * logn)
     算法： 贪心算法 + 二分查找
-    原理： 1）不断维护每个值最小的上升子序列，一边遍历，一边维护，当遍历完的时候，这个上升子序列就是最长上升子序列（贪心算法）
-          2）一边遍历，一边维护，维护是指判断 nums[i] 能不能加进 维护的序列里， 如果可以，加在哪个位置
+    原理： 
+            0）跟上面 T(n) = O(n^2) 的关联？上面的 for (let j = 0; j <= i; j++) 占了 O(n)，实际上是在找合适的位置，如果前面都是已排序的，那么就可以用二分查找法，降低为 O(logn)
+            1）不断维护每个值最小的上升子序列，一边遍历，一边维护，当遍历完的时候，这个上升子序列就是最长上升子序列（贪心算法）
+            2）一边遍历，一边维护，维护是指判断 nums[i] 能不能加进 维护的序列里， 如果可以，加在哪个位置
             如果可以加，把 nums[i] 放进有序子序列。有序、数组、静态，这3个前提条件，查找某个元素位置，或者某个元素放在哪个位置，
             可以使用二分查找法
 
@@ -13522,8 +13769,22 @@ MedianFinder.prototype.findMedian = function() {
                 1)判断是否可以插入有序数组
                 2)使用二分查找，找到 nums[i]，应该插入有序数组的位置
             }
-*/
-
+    
+    > 关于二分查找，很重要的一个细节: [动态规划 （包含O (N log N) 解法的状态定义以及解释）](https://leetcode-cn.com/problems/longest-increasing-subsequence/solution/dong-tai-gui-hua-er-fen-cha-zhao-tan-xin-suan-fa-p/)
+        sortedNums 每一位彼此之间，并没有成为真实最长子序列的意义，sortedNums 索引上的每一位，对应的是当前长度（index+1）结尾的子序列，尾数最小的值
+        为什么能 [2, 3, 7, 8] -> 替换为 [2, 3, 4, 8]?
+        两个原因：
+        1. sortedNums 并不表示真实的真实最长子序列，sortedNums[i] 表示的是 对应的是长度为（index+1）的子序列，尾数最小的值
+        2. 既然 7 前面的 3，可以表示 以 3 结尾的最长子序列，长度是 2 （index1+1）
+            那么新出现的 4，完全可以取代 7，成为 以 4 结尾的最长子序列，长度是 3
+            
+            我的评论 https://leetcode-cn.com/problems/longest-increasing-subsequence/solution/dong-tai-gui-hua-er-fen-cha-zhao-tan-xin-suan-fa-p/871091
+细节：
+    /**
+     * 输入：nums = [7,7,7,7,7,7,7]
+     * 输出：1
+     *  不重复
+     */
 // @lc code=start
 /**
  * @param {number[]} nums
@@ -13552,7 +13813,7 @@ var lengthOfLIS = function (nums) {
                     break;
                 }
             }
-            if (mid === target) {
+            if (mid === target) {                       // 如果相等就不操作
                 // Case: [4,10,4,3,8,9]
             } else if (target > sortedNums[mid]) {
                 sortedNums[mid + 1] = target;
@@ -13674,7 +13935,7 @@ var maxProfit = function(prices) {
 };
 
 /**
-    冷冻期 用 3 表示
+    冷冻期 用 2 表示
  */
 var maxProfit = function(prices) {
     // dp[i][0] 持有
@@ -13795,11 +14056,11 @@ var coinChange = function(coins, amount) {
     DP[0] = 0; // case: [1] 0
     DP = DP.map(coin => coin == null ? Infinity : coin);
     // console.log('before DP', DP);
-    for (let i = 0; i <= amount; i++) {
+    for (let leftAmount = 0; leftAmount <= amount; leftAmount++) {
         for (let j = 0; j < coins.length; j++) {
             const coin = coins[j];
-            DP[i-coin] = DP[i-coin] == null ? Infinity : DP[i-coin];
-            DP[i] = Math.min(DP[i], DP[i-coin]+1);
+            DP[leftAmount-coin] = DP[leftAmount-coin] == null ? Infinity : DP[leftAmount-coin];
+            DP[leftAmount] = Math.min(DP[leftAmount], DP[leftAmount-coin]+1);
         }
     }
     // console.log('DP: ', DP);
@@ -14009,6 +14270,9 @@ console.assert('isPowerOfThree: ', isPowerOfThree(45));
                                                  索引0不选    索引1选
         代码如下
     解三：动态规划
+        > 2021.04.08 DP 看不懂就算了，看递归的吧，学点别的不好ლ(′◉❥◉｀ლ)吗，比如 React 源码、深度学习~
+        > 2021.04.08 结合官方题解 https://leetcode-cn.com/problems/house-robber-iii/solution/da-jia-jie-she-iii-by-leetcode-solution/， 看懂了
+                    它是用后序遍历，把值从子节点向父节点传，Em... 确实跟递归（从上到下），DP（从下到上）有类型的思想！
         这道题特别的地方在于，它是树形的DP，是以前我没见过的
 
         DP关键点
@@ -14044,9 +14308,9 @@ console.assert('isPowerOfThree: ', isPowerOfThree(45));
  *     this.left = this.right = null;
  * }
  */
-var rob = function(root) {
+ var rob = function(root) {
     const memory = new Map(); // <treeNode, [notChoose, choose]>
-    const dfs = (root, memory) => {
+    const dfs = (root) => {
         if (root == null) { return 0; }
         let [ notChoose, choose ] = memory.get(root) || [];
         if (choose == null) {
@@ -14062,7 +14326,7 @@ var rob = function(root) {
         memory.set(root, [ notChoose, choose ]);
         return Math.max(choose, notChoose);
     }
-    return dfs(root, memory);
+    return dfs(root);
 };
 // @lc code=end
 
@@ -15480,7 +15744,33 @@ var addStrings = function(num1, num2) {
 
     这道题可以理解为 0-1 背包问题
 
+    2021.4.8
+        > 这就是一道 0-1 背包，i 表示走到第几个，j 表示总和为多少，下面的思路想复杂了
+        > 参考 [liweiwei1419 动态规划（转换为 0-1 背包问题）](https://leetcode-cn.com/problems/partition-equal-subset-sum/solution/0-1-bei-bao-wen-ti-xiang-jie-zhen-dui-ben-ti-de-yo/) 
+            https://pic.leetcode-cn.com/1602418903-UcdsWL-image.png
+            比较好理解，而且代码更精简
+
 以下解题步骤，以 64.最小路径和 为模板 https://github.com/NeoYo/leetcode-top-javascript/blob/master/64.%E6%9C%80%E5%B0%8F%E8%B7%AF%E5%BE%84%E5%92%8C.js
+
+递归树：
+    举例：[1, 5, 11, 5]
+        i: 表示状态
+        sum: 表示和
+
+        ↙ 左下表示状态 i
+        ↘ 右下表示 sum
+                                    i sum
+                                    f(0, 0)
+                                  /选       \不选
+    1                         f(1, 1)        f(1, 0)
+                            /选       \       /选    \
+    5                   f(2, 6)    f(2, 1)  f(2, 5)  f(2, 0)
+
+    11                 ...
+
+    5                  ...
+
+    把它逆时针旋转 45°，就是状态转移表
 
 解题关键：
     推导转移方程，那么有两个问题：
@@ -15528,58 +15818,40 @@ var addStrings = function(num1, num2) {
  * @param {number[]} nums
  * @return {boolean}
  */
-var canPartition = function(nums) {
-    let sum = 0;
-    for (let i = 0; i < nums.length; i++) {
-        sum += nums[i];
-    }
-    if (sum % 2 === 1) {
+/**
+ * @param {number[]} nums
+ * @return {boolean}
+ */
+ var canPartition = function(nums) {    
+    const DP = Array(nums.length).fill(null).map(_ => Array());
+    const sum = (nums.reduce((acc, cur) => (acc + cur), 0));
+    if (sum & 1) {  // 奇数
         return false;
     }
     const halfSum = sum >> 1;
-    const ROW_CNT = halfSum + 1;
-    const COL_CNT = nums.length + 1;
-    const DP = Array(ROW_CNT).fill(null).map(_ => Array());
-    DP[0][0] = true;
-    // 初始第一行
-    for (let j = 1; j < COL_CNT; j++) {
-        DP[0][j] = true;
+    for (let i = 0; i < nums.length; i++) {     // i 表示走到 nums 的第几个
+        DP[i][0] = true;
     }
-    // 初始第一列
-    for (let i = 1; i < ROW_CNT; i++) {
-        DP[i][0] = false;
-    }
-    // 初始 nums[j] 在 i 上的映射
-    for (let j = 0; j < nums.length; j++) {
-        if (nums[j] > halfSum) { break; }
-        const value = nums[j];
-        DP[value][j+1] = true;
-    }
-
-    for (let i = 1; i < ROW_CNT; i++) {
-        for (let j = 1; j < COL_CNT; j++) {
-            // 1. DP[i][j] 由向右得到，表示什么都不做，不选 nums[j] 的值，那 DP[i][j-1] 需要为 true
-            if (DP[i][j-1] === true) {
+    DP[0][nums[0]] = true;
+    for (let i = 1; i < nums.length; i++) {     
+        for (let j = 1; j <= halfSum; j++) {    // j 表示装了多少重量
+            if (nums[i] === j) {    // 不包含前面的情形 且 只包含nums[i] 的值
                 DP[i][j] = true;
-                continue;
-            }
-            // 2. DP[i][j] 由向下得到，那刚好等于 j
-            // if (i === nums[j-1]) {
-            //     DP[i][j] = true;
-            //     continue;
-            // }
-            // 3. DP[i][j] 由向斜下得到
-            if (
-                i-nums[j-1] > 0 &&
-                DP[i-nums[j-1]][j-1] === true
-            ) {
-                DP[i][j] = true;
-                continue;
-            }
+            } else {  // 包含前面的情形
+                DP[i][j] = DP[i-1][j] || DP[i-1][j-nums[i]]  
+                        // 且不包含 nums[i]   // 且包含 nums[i]
+            } 
         }
     }
-    // console.log('DP: ', DP);
-    return DP[ROW_CNT - 1][COL_CNT - 1] || false;
+    // console.log('DP: ', DP)
+    // 最后一列是否存在 = halfSum
+    let canPart = false;
+    for (let i = 0; i < nums.length; i++) {
+        if (DP[i][halfSum] === true) {
+            return true;
+        }
+    }
+    return false;
 };
 // @lc code=end
 
@@ -16686,7 +16958,7 @@ var countSubstrings = function(s) {
               ！！！感觉比较好理解了~ 下次继续看
  */
 /**
-    官方题解，有 JavaScript 代码，但是还没理解
+    JavaScript 代码：官方题解，有 JavaScript 代码，但是还没理解
     作者：LeetCode-Solution
     链接：https://leetcode-cn.com/problems/palindromic-substrings/solution/hui-wen-zi-chuan-by-leetcode-solution/
     来源：力扣（LeetCode）
@@ -16726,6 +16998,20 @@ var countSubstrings = function(s) {
     Write directly
     调试用例：""aaa""
  */
+
+/**
+     解三：动态规划
+        状态：   
+                DP[i][j] 表示 子串 s[i..j] 是否为回文子串
+        递推公式：
+                DP[i][j] = DP[i+1][j-1] && (s[i] === s[j])
+        边界：
+                DP[i][i] = true;
+                DP[i][i+1] = true; if(s[i] === s[i+1])
+
+        ！！！参考资料 https://leetcode-cn.com/problems/longest-palindromic-substring/solution/zui-chang-hui-wen-zi-chuan-by-leetcode-solution/
+            6:30s 开始
+*/
 
 
 ```
@@ -16949,7 +17235,7 @@ var superEggDrop = function(K, N) {
  */
 var superEggDrop = function(K, N) {
     // 0. 初始化dp容器
-    const DP = Array(K+1).fill(null).map(_ => Array(N+1).fill(Infinity));
+    const DP = Array(K+1).fill(null).map(_ => Array(N+1).fill(Infinity));           // K+1 N+1 使得范围为 [0, K] 和 [0, N]
     // 1. 初始化边界值
     DP[0][0] = 0;
     for (let k = 1; k <= K; k++) {

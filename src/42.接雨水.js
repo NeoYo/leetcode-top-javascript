@@ -101,13 +101,13 @@ var trap = function (height) {
         rightMax = [];
     //记录左边数组的最大值
     leftMax[0] = height[0];
-    for (let i = 1; i < n; i++) {
+    for (let i = 1; i < n; i++) {           // 从前往后
         leftMax[i] = Math.max(leftMax[i - 1], height[i]);
     }
     console.log('leftMax: ', leftMax);    
     //记录右边数组的最大值
     rightMax[n - 1] = height[n - 1];
-    for (let i = n - 2; i >= 0; i--) {
+    for (let i = n - 2; i >= 0; i--) {      // 从后往前
         rightMax[i] = Math.max(rightMax[i + 1], height[i]);
     }
     console.log('rightMax: ', rightMax);

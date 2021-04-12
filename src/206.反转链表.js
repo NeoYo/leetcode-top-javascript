@@ -105,8 +105,8 @@ function reverseList(head) {
     while (head != null) {
         pre = head.next;        // pre 起到了缓存的作用
         head.next = next;       // 反转链表的核心逻辑：反转单个节点，切断指向该节点的 next；连接指向原来的上一个
-        next = head;
-        head = pre;
+        next = head;            // 向前挪
+        head = pre;             // 向前挪
     }
     return next;
 };

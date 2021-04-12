@@ -104,6 +104,7 @@ var hasCycle = function (head) {
     解二：快慢指针
         快慢指针加起来，相当于每个循环内多走一步
         直到快指针的距离 = 慢指针的距离*2
+        为什么一定会相遇，因为每次差值是 1，当差值 = 慢指针的距离，这时 刚好快指针的距离 = 慢指针的距离*2，就相遇了
  */
 var hasCycle = function(head) {
     const p1 = head

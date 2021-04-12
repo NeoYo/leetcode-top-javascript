@@ -210,7 +210,7 @@ var superEggDrop = function(K, N) {
  */
 var superEggDrop = function(K, N) {
     // 0. 初始化dp容器
-    const DP = Array(K+1).fill(null).map(_ => Array(N+1).fill(Infinity));
+    const DP = Array(K+1).fill(null).map(_ => Array(N+1).fill(Infinity));           // K+1 N+1 使得范围为 [0, K] 和 [0, N]
     // 1. 初始化边界值
     DP[0][0] = 0;
     for (let k = 1; k <= K; k++) {

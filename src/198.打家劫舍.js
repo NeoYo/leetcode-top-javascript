@@ -45,7 +45,10 @@
  * 
  * 
  */
-
+/**
+    每次选和不选，选完后，房屋金额，就跳过了，可以看成是 0 - 1 背包问题
+    每次都可以进去和不进去，进去与不进的选择，取之不尽，可以看成是 完全背包问题
+ */
 // @lc code=start
 /**
  * @param {number[]} nums
@@ -67,7 +70,14 @@ function rob(nums) {
 */
 // 解一: 递归+备忘录 T(n) = O(n) S(n) = O(n)
 // 解二: 动态规划  T(n) = O(n) S(n) = O(n)
-//      递推公式  DP[i] = Math.max(DP[i - 2] + nums[i], DP[i - 1]);            
+/**
+        递推公式
+            DP[i] = Math.max(
+                DP[i - 2] + nums[i],    // 选择相隔两家的进去
+                DP[i - 1]               // 当前不进去
+            );
+ */
+//      
 /*    
 function rob(nums) {
     if (nums.length === 0) return 0;

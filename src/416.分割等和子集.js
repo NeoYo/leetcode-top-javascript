@@ -55,7 +55,33 @@
 
     这道题可以理解为 0-1 背包问题
 
+    2021.4.8
+        > 这就是一道 0-1 背包，i 表示走到第几个，j 表示总和为多少，下面的思路想复杂了
+        > 参考 [liweiwei1419 动态规划（转换为 0-1 背包问题）](https://leetcode-cn.com/problems/partition-equal-subset-sum/solution/0-1-bei-bao-wen-ti-xiang-jie-zhen-dui-ben-ti-de-yo/) 
+            https://pic.leetcode-cn.com/1602418903-UcdsWL-image.png
+            比较好理解，而且代码更精简
+
 以下解题步骤，以 64.最小路径和 为模板 https://github.com/NeoYo/leetcode-top-javascript/blob/master/64.%E6%9C%80%E5%B0%8F%E8%B7%AF%E5%BE%84%E5%92%8C.js
+
+递归树：
+    举例：[1, 5, 11, 5]
+        i: 表示状态
+        sum: 表示和
+
+        ↙ 左下表示状态 i
+        ↘ 右下表示 sum
+                                    i sum
+                                    f(0, 0)
+                                  /选       \不选
+    1                         f(1, 1)        f(1, 0)
+                            /选       \       /选    \
+    5                   f(2, 6)    f(2, 1)  f(2, 5)  f(2, 0)
+
+    11                 ...
+
+    5                  ...
+
+    把它逆时针旋转 45°，就是状态转移表
 
 解题关键：
     推导转移方程，那么有两个问题：
@@ -103,58 +129,40 @@
  * @param {number[]} nums
  * @return {boolean}
  */
-var canPartition = function(nums) {
-    let sum = 0;
-    for (let i = 0; i < nums.length; i++) {
-        sum += nums[i];
-    }
-    if (sum % 2 === 1) {
+/**
+ * @param {number[]} nums
+ * @return {boolean}
+ */
+ var canPartition = function(nums) {    
+    const DP = Array(nums.length).fill(null).map(_ => Array());
+    const sum = (nums.reduce((acc, cur) => (acc + cur), 0));
+    if (sum & 1) {  // 奇数
         return false;
     }
     const halfSum = sum >> 1;
-    const ROW_CNT = halfSum + 1;
-    const COL_CNT = nums.length + 1;
-    const DP = Array(ROW_CNT).fill(null).map(_ => Array());
-    DP[0][0] = true;
-    // 初始第一行
-    for (let j = 1; j < COL_CNT; j++) {
-        DP[0][j] = true;
+    for (let i = 0; i < nums.length; i++) {     // i 表示走到 nums 的第几个
+        DP[i][0] = true;
     }
-    // 初始第一列
-    for (let i = 1; i < ROW_CNT; i++) {
-        DP[i][0] = false;
-    }
-    // 初始 nums[j] 在 i 上的映射
-    for (let j = 0; j < nums.length; j++) {
-        if (nums[j] > halfSum) { break; }
-        const value = nums[j];
-        DP[value][j+1] = true;
-    }
-
-    for (let i = 1; i < ROW_CNT; i++) {
-        for (let j = 1; j < COL_CNT; j++) {
-            // 1. DP[i][j] 由向右得到，表示什么都不做，不选 nums[j] 的值，那 DP[i][j-1] 需要为 true
-            if (DP[i][j-1] === true) {
+    DP[0][nums[0]] = true;
+    for (let i = 1; i < nums.length; i++) {     
+        for (let j = 1; j <= halfSum; j++) {    // j 表示装了多少重量
+            if (nums[i] === j) {    // 不包含前面的情形 且 只包含nums[i] 的值
                 DP[i][j] = true;
-                continue;
-            }
-            // 2. DP[i][j] 由向下得到，那刚好等于 j
-            // if (i === nums[j-1]) {
-            //     DP[i][j] = true;
-            //     continue;
-            // }
-            // 3. DP[i][j] 由向斜下得到
-            if (
-                i-nums[j-1] > 0 &&
-                DP[i-nums[j-1]][j-1] === true
-            ) {
-                DP[i][j] = true;
-                continue;
-            }
+            } else {  // 包含前面的情形
+                DP[i][j] = DP[i-1][j] || DP[i-1][j-nums[i]]  
+                        // 且不包含 nums[i]   // 且包含 nums[i]
+            } 
         }
     }
-    // console.log('DP: ', DP);
-    return DP[ROW_CNT - 1][COL_CNT - 1] || false;
+    // console.log('DP: ', DP)
+    // 最后一列是否存在 = halfSum
+    let canPart = false;
+    for (let i = 0; i < nums.length; i++) {
+        if (DP[i][halfSum] === true) {
+            return true;
+        }
+    }
+    return false;
 };
 // @lc code=end
 

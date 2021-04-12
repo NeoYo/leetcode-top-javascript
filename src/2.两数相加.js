@@ -62,16 +62,16 @@
  */
 var addTwoNumbers = function (l1, l2) {
     const sum = l1.val + l2.val;
-    let res = cur = new ListNode(sum % 10);
+    let res = cur = new ListNode(sum % 10);         // 起始
     let append = Math.floor(sum / 10);
 
     while ((l1 && l1.next) || (l2 && l2.next)) {
         l1 = l1 && l1.next || { val: 0 };
         l2 = l2 && l2.next || { val: 0 };
-        const sum = l1.val + l2.val + append;
-        cur.next = new ListNode(sum % 10);
-        cur = cur.next;
-        append = Math.floor(sum / 10);
+        const sum = l1.val + l2.val + append;       // 两位的和
+        cur.next = new ListNode(sum % 10);          // 赋值个位
+        cur = cur.next;                             // 移到下一位
+        append = Math.floor(sum / 10);              // 整除10进位
     }
 
     if (append !== 0) {

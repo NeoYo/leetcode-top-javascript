@@ -47,9 +47,10 @@
     题解：DP
 
     递推公式
+        i 表示 第 i 天、 k 表示已进行的买卖次数、0->1 表示买入、1->0 表示卖出;  dp[i][k][0/1] 表示某个状态的利润
         dp[i][k][0] = max(dp[i-1][k][0], dp[i-1][k][1] + prices[i])
-        dp[i][k][1] = max(dp[i-1][k][1], dp[i-1][k-1][0] - prices[i]) 
-        // 买入股票，k 就加 1
+        dp[i][k][1] = max(dp[i-1][k][1], dp[i-1][k-1][0] - prices[i])   // 买入，k 会 -1
+        // 买入股票，k 就 -1
  */
 // @lc code=start
 /**
@@ -72,12 +73,13 @@ var maxProfit = function(prices) {
     }
     // 2. DP 初始化临界值
     // 2.1 当 i = 0 时，列举所有情况
+    // 0 表示第 1 天，k 表示已进行的买卖次数、0->1 表示买入、1->0 表示卖出;
     DP[0][0][0] = 0;
-    DP[0][1][0] = -Infinity; // Math.max(-Infinity, num) = num
-    DP[0][2][0] = -Infinity;
-    DP[0][0][1] = -Infinity;
-    DP[0][1][1] = -prices[0];
-    DP[0][2][1] = -prices[0] * 2;
+    DP[0][1][0] = -Infinity;    // 没有交易，就 k = 1，表示交易了一笔，不存在这种可能，所以是 -Infinity
+    DP[0][2][0] = -Infinity;    // 没有交易，就 k = 2，表示交易了两笔，不存在这种可能，所以是 -Infinity
+    DP[0][0][1] = -Infinity;    // k 没有自加，1 又表示购买了第一天的，所以是 -Infinity
+    DP[0][1][1] = -prices[0];   // 购买了第一天的，就 k = 1 也自减了
+    DP[0][2][1] = -Infinity;    // k = 2 表示交易了两笔了，1 又表示购买了第一天的，所以是 -Infinity
     // 2.1 当 k = 0 时，列举所有情况
     for (let i = 1; i < DP.length; i++) {
         DP[i][0][0] = 0;
@@ -89,7 +91,7 @@ var maxProfit = function(prices) {
         DP[i][0][0]=0;
         for (let k = 1; k <= K; k++) {
             DP[i][k][0] = Math.max(DP[i-1][k][0], DP[i-1][k][1] + prices[i]);
-            DP[i][k][1] = Math.max(DP[i-1][k][1], DP[i-1][k-1][0] - prices[i]);
+            DP[i][k][1] = Math.max(DP[i-1][k][1], DP[i-1][k-1][0] - prices[i]); // 这里是从 k-1 到 k，与前面几道的理解相反，这里的 k 表示已进行的买卖次数
         }
     }
     console.log(DP);

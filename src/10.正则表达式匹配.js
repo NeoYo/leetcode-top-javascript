@@ -77,45 +77,53 @@
     
     参考资料：[五分钟学算法 - 深度解析「正则表达式匹配」：从暴力解法到动态规划](https://mp.weixin.qq.com/s/ZoytuPt5dfP5pMODbuKnCQ)
 
-    要证明 DP[i][j] 是 true 的，分为以下两条回返路径（这就是为什么先递归，再递推）
+    这道题只返回 true，相当于最值
 
-            j
-        p abc
-        s c.a
+    要证明 DP[i][j] 是 true 的，分为以下两条回返路径（这就是为什么先递归，再递推，因为递归更符合思维，也是规律的直接体现方式）
+
+        DP[i][j] 表示走到字符串 s 的第 i 位和模板串 p 的第 j 位，是否能匹配上
+            其中 s = '#' + s;
+                p = '#' + p;
+
             i
+        s c.a
+        p abc
+            j
+
+    分成以下 3 种情况（选择）：
 
     1. j 等于 i, DP[i][j] = DP[i-1][j-1]
 
-              j
-        p xxba*
-        s xx_
             i
+        s xx_
+        p xxba*
+              j
 
     2. j === '*'
-        2.1 ( a* 中 a 出现 0 次的情况， 即 a* 都被消耗了)            DP[i][j] = DP[i][j-2]
-        2.2 ( a* 中 a 出现 1 次的情况， 即 a* 的 * 被消耗了)         DP[i][j] = DP[i][j-1]
-        2.3 ( a* 中 a 出现 多 次的情况，即 a* 不会被消耗, a 被消耗了) DP[i][j] = DP[i-1][j]
+        2.1 ( a* 中 a 用了 0 次的情况， 即 a* 都被消耗了)            DP[i][j] = DP[i][j-2]
+        2.2 ( a* 中 a 用了 1 次的情况， 即 a* 的 * 被消耗了)         DP[i][j] = DP[i][j-1]
+        2.3 ( a* 中 a 用了 多 次的情况，即 a* 不会被消耗, a 被消耗了) DP[i][j] = DP[i-1][j]
 
-        2.1 例子
+        2.1 例子 (s 表示 string, p 表示 pattern)
 
-                  j
-            p ccba*
-            s ccb
                 i
+            s ccb
+            p ccba*
+                  j
 
         2.2 例子
 
-                  j
-            p ccba*
+                i  
             s cca
-                i
+            p ccba*
+                  j
 
         2.3 例子
-
-                   j
-            p ccbaa*
+    
+                i
             s cca
-                i                            
+            p ccbaa*
+                   j
 
     3. 其他, return false
  */
@@ -141,11 +149,13 @@ var isMatch = function(s, p) {
     // 3. 递推公式
     for (let i = 1; i < s.length; i++) {
         for (let j = 1; j < p.length; j++) {
-            if (p[j] !== '*') {
+            if (p[j] !== '*') {                              // p[j] 不为 '*' 的情况
                 DP[i][j] = equal(s[i], p[j]) && DP[i-1][j-1];
-            } else {
-                DP[i][j] = DP[i][j-2] || DP[i][j-1] || (DP[i-1][j] && equal(s[i], p[j-1]));
-                        // 对应上面3种情形
+            } else {                                         // p[j] 为 '*' 的情况
+                DP[i][j] =
+                    DP[i][j-2] ||                               // a* 中 a 用了 0 次的情况，消耗掉 'a*'
+                    DP[i][j-1] ||                               // a* 中 a 用了 1 次的情况，消耗掉 '*'，a 已经消耗过了
+                    (DP[i-1][j] && equal(s[i], p[j-1]));        // a* 中 a 用了 多 次的情况，保留 '*'，j 不往前挪；前提是 equal(s[i], p[j-1])
             }
         }
     }
@@ -153,9 +163,8 @@ var isMatch = function(s, p) {
 };
 
 const equal = (sChar, pChar) => (
-    (sChar === pChar) || (
-        pChar === '.' && sChar != null
-    )
+    (sChar === pChar) ||
+    (pChar === '.' && sChar != null)
 );
 
 // console.assert(!isMatch('aa', 'a'), 'aa, a');

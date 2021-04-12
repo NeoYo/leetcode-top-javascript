@@ -33,7 +33,6 @@
 /**
     题解：
         这道题与 62.不同路径，是非常相似的题目
-        https://github.com/NeoYo/leetcode-top-javascript/blob/master/62.%E4%B8%8D%E5%90%8C%E8%B7%AF%E5%BE%84.js
 
     举例：
         输入:

@@ -72,11 +72,11 @@
 
        可以得出：
 
-       新起点索引为：newHeadIndexLength-(k%Length) +1
+       新起点索引为：newHeadIndex = Length-(k%Length) +1
 
    二、切与连
        连：将尾节点连上原始首节点
-       切：找到新头结点（新起点索引对应的节点）的上一个节点，断开它对心头结点的指向
+       切：找到新头结点（新起点索引对应的节点）的上一个节点，断开它对新头结点的指向
 
    三、边界考虑
        1. k=1, newHeadIndex=1，直接返回
@@ -102,9 +102,9 @@ var rotateRight = function(head, k) {
     let cursor = head;
     let lastNode;
     while (cursor) {
-        Length++;
+        Length++;                                   // 一边找 Length 长度
         if (cursor.next == null) {
-            lastNode = cursor;
+            lastNode = cursor;                      // 一边找 lastNode.next = head; 接上
         }
         cursor = cursor.next;
     }
@@ -113,7 +113,7 @@ var rotateRight = function(head, k) {
     // console.log('Length: ', Length)
     // Length - (k%Length) +1
     let newHeadIndex = Length - (k%Length) +1;
-    if (newHeadIndex === 0 || newHeadIndex === 1) {
+    if (newHeadIndex === 0 || newHeadIndex === 1) { // 边界条件处理
         return head;
     }
     cursor = head;

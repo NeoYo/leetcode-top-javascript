@@ -85,6 +85,17 @@
  * @param {ListNode} headB
  * @return {ListNode}
  */
+/**
+ * 
+    思路:
+        相交节点，不是指 val 相同，是指 指针 相同
+
+    解法:
+        0. 暴力法 T(n) = O(nm)   S(n) = 1
+        1. 类Map的数据结构 T(n) = O(n+m)  S(n) = O(n) 或 O(m)
+        2. 拼接两个链表 https://leetcode-cn.com/problems/intersection-of-two-linked-lists/solution/intersection-of-two-linked-lists-shuang-zhi-zhen-l/
+ * 
+ */
 // var getIntersectionNode = function(headA, headB) {
 //     const aMap = new Map(); // <val, true|null>
 //                     // Object 的 key 只能是 string/symbol https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Map
@@ -102,7 +113,15 @@
 // };
 /**
  * 
- * 解法2. 拼接两个链表 https://leetcode-cn.com/problems/intersection-of-two-linked-lists/solution/intersection-of-two-linked-lists-shuang-zhi-zhen-l/
+ * 解法2. [160. 相交链表（双指针，清晰图解）](https://leetcode-cn.com/problems/intersection-of-two-linked-lists/solution/intersection-of-two-linked-lists-shuang-zhi-zhen-l/)
+ * 
+ *           a             b
+ * l1      ------     c    --
+ *               . -------
+ * l2          --          ------
+ *             b             a
+ * 
+ * a + c + b = b + c + a
  */
 var getIntersectionNode = function(headA, headB) {
     let cursorA = headA;

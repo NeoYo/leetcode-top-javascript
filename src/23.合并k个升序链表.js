@@ -99,7 +99,7 @@
 
         > JS 实现最小、最大堆
 
-        T(n) = O(Nlogk)
+        T(n) = O(Nlogk) k = N
 
         S(n) = O(N)
 
@@ -113,6 +113,7 @@
 
     #### 解五：分治算法
 
+        T(n) = O(NlogN)
  */
 /**
  * Definition for singly-linked list.

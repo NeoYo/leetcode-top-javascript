@@ -62,8 +62,6 @@
 题解
     > 题解：[官方题解-合并两个有序链表](https://leetcode-cn.com/problems/merge-two-sorted-lists/solution/he-bing-liang-ge-you-xu-lian-biao-by-leetcode/)
 
-    > 题解: [画解算法：21. 合并两个有序链表](https://leetcode-cn.com/problems/merge-two-sorted-lists/solution/hua-jie-suan-fa-21-he-bing-liang-ge-you-xu-lian-bi/) 理解递归的动画
-
     T(n) = O(n+m)
     S(n) = O(1)
     
@@ -78,28 +76,30 @@
  */
 var mergeTwoLists = function(l1, l2) {
     const dummyHead = new ListNode(null);
-    let prev = dummyHead;
+    let prev = dummyHead;                   // 比较节点的上一个
     while (l1 && l2) {
         if (l1.val < l2.val) {
             prev.next = l1;
-            l1 = l1.next;
+            l1 = l1.next;                   // 移位
         } else {
             prev.next = l2;
-            l2 = l2.next;
+            l2 = l2.next;                   // 移位
         }
         prev = prev.next;
     }
-    prev.next = l1 || l2;
+    prev.next = l1 || l2;                   // 还有剩的就接上
     return dummyHead.next;
 };
 /**
     解二：递归
+        
+        > 题解: [画解算法：21. 合并两个有序链表](https://leetcode-cn.com/problems/merge-two-sorted-lists/solution/hua-jie-suan-fa-21-he-bing-liang-ge-you-xu-lian-bi/) 理解递归的动画
+
         该递归解法执行顺序： 
         1. 先一个个节点连结（递归调用） 
         2. 直接遇到 null 
         3. return 再把指针从从里往外（一个个递归函数里冒出来）
 
-        图解 http://note.youdao.com/yws/res/19112/532E18174E504C9F98CF6295822A1669
 */
 /**
  * @param {ListNode} l1

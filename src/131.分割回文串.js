@@ -57,6 +57,12 @@
         关于选择，在进行分割过程中，每一次分割都会面临两个选择，一个是分割，一个是不分割
         关于取值，从第一步分析可知，想得到的是图中在底层的数据（对应到树中，就是叶子节点）
 
+                  aab                    (splitIdx, path, start) = (1, [], 0)
+                /     \                             /                 \
+            a|ab      aab              (2, [a], 1) 剩 ab           (2, [], 0)
+            /  \     /   \
+        a|a|b  a|ab aa|b  aab    
+
         var partition = function (s) {
             const paths = [];
             const traceback = (splitIdx, path, start) => {
@@ -85,7 +91,7 @@
  */
 // @lc code=start
 var partition = function (s) {
-    var isPalindrome = function (s) {
+    var isPalindrome = function (s) {   // 这里应该不需要转换
         const arr = s.toLowerCase().match(/\w|\d/g);
         for (let i = 0; i < (arr.length >> 1); i++) {
             if (arr[i] !== arr[arr.length - 1 - i]) {
@@ -113,6 +119,7 @@ var partition = function (s) {
         const subStr = s.slice(start, splitIdx);
         if (isPalindrome(subStr)) {
             traceback(splitIdx + 1, [...path, subStr], splitIdx);
+                // 分割的话，因为 s[start, splitIdx) 已经没了，所以下一个 start 从 splitIdx
         } else {
             // 不处理（剪枝）
         }
@@ -123,6 +130,6 @@ var partition = function (s) {
     traceback(1, [], 0);
     return paths;
 };
-// partition("aab");
+partition("aab");
 // @lc code=end
 

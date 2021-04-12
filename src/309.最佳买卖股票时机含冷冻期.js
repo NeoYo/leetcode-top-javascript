@@ -92,7 +92,7 @@ var maxProfit = function(prices) {
 };
 
 /**
-    冷冻期 用 3 表示
+    冷冻期 用 2 表示
  */
 var maxProfit = function(prices) {
     // dp[i][0] 持有

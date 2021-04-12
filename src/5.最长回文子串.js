@@ -129,6 +129,21 @@ var longestPalindrome = function(s) {
 
         中心扩散法的升级，每个扩散都有意义
 
+        在本项目搜索马拉车算法
+ */
+
+/**
+    解三：动态规划
+        状态：   
+                DP[i][j] 表示 子串 s[i..j] 是否为回文子串
+        递推公式：
+                DP[i][j] = DP[i+1][j-1] && (s[i] === s[j])
+        边界：
+                DP[i][i] = true;
+                DP[i][i+1] = true; if(s[i] === s[i+1])
+
+        ！！！参考资料 https://leetcode-cn.com/problems/longest-palindromic-substring/solution/zui-chang-hui-wen-zi-chuan-by-leetcode-solution/
+            6:30s 开始
  */
 // @lc code=end
 

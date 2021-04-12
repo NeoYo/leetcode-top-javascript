@@ -82,11 +82,11 @@ var coinChange = function(coins, amount) {
     DP[0] = 0; // case: [1] 0
     DP = DP.map(coin => coin == null ? Infinity : coin);
     // console.log('before DP', DP);
-    for (let i = 0; i <= amount; i++) {
+    for (let leftAmount = 0; leftAmount <= amount; leftAmount++) {
         for (let j = 0; j < coins.length; j++) {
             const coin = coins[j];
-            DP[i-coin] = DP[i-coin] == null ? Infinity : DP[i-coin];
-            DP[i] = Math.min(DP[i], DP[i-coin]+1);
+            DP[leftAmount-coin] = DP[leftAmount-coin] == null ? Infinity : DP[leftAmount-coin];
+            DP[leftAmount] = Math.min(DP[leftAmount], DP[leftAmount-coin]+1);
         }
     }
     // console.log('DP: ', DP);

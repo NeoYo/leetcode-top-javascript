@@ -46,6 +46,8 @@
  */
 
 /**
+        dp["applepenapple"] = dp["applepen"这一段] && 判断一下"apple"
+                        j     i
                 applepenapple(13) (长度也是13)
                 0       8   12
                       |
@@ -81,6 +83,9 @@
     边界用例：
         Case: "" []     Expect: true
         Case: "a" []    Expect: false
+
+延伸：
+    可以使用 Set， 但是性能下降了，可能跟 Set 实现有关，性能占用 116ms， 原来只要 90ms
  */
 
 // @lc code=start
@@ -90,23 +95,32 @@
  * @return {boolean}
  */
 var wordBreak = function(s, wordDict) {
-    if (s.length === 0) {
+    if (s.length === 0) {               // s.length = 0, 不选 wordDict, 就肯定 true
         return true;
     }
-    if (wordDict.length === 0) {
+    if (wordDict.length === 0) {        // s.length > 0, wordDict 又没有, 肯定 false
         return false;
     }
     const DP = Array(s.length + 1).fill(false);
     DP[0] = true;
 
+    /*
+                j     i
+        applepenapple(13) (长度也是13)
+        0       8   12
+        
+                                    DP[j]                    s.slice(j, i)
+        dp["applepenapple"] = dp["applepen"这一段] && 判断一下 "apple"
+
+        这里的 DP[i] 是表示 s[0, i) 满足单词拆分，注意是左闭右开
+        这里的 DP[j] 是表示 s[0, j) 满足单词拆分，注意是左闭右开
+     */
     for (let i = 0; i < s.length + 1; i++) {
-        for (let j = 0; i - j >= 0; j++) {
-            if (wordDict.indexOf(s.slice(i - j, i)) !== -1) {
-                if (DP[i-j] === true) {
-                    // 只要找到 true, 就跳出计算下一个 DP[i], 避免被 false 覆盖掉
-                    DP[i] = true;
-                    continue;
-                }
+        for (let j = 0; j <= i; j++) {
+            if (wordDict.indexOf(s.slice(j, i)) !== -1 && DP[j] === true) {
+                // 只要找到 true, 就跳出计算下一个 DP[i], 避免被 false 覆盖掉
+                DP[i] = true;
+                continue;
             }
         }
     }

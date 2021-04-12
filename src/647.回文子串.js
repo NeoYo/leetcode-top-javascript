@@ -265,7 +265,7 @@ var countSubstrings = function(s) {
               ！！！感觉比较好理解了~ 下次继续看
  */
 /**
-    官方题解，有 JavaScript 代码，但是还没理解
+    JavaScript 代码：官方题解，有 JavaScript 代码，但是还没理解
     作者：LeetCode-Solution
     链接：https://leetcode-cn.com/problems/palindromic-substrings/solution/hui-wen-zi-chuan-by-leetcode-solution/
     来源：力扣（LeetCode）
@@ -305,4 +305,18 @@ var countSubstrings = function(s) {
     Write directly
     调试用例：""aaa""
  */
+
+/**
+     解三：动态规划
+        状态：   
+                DP[i][j] 表示 子串 s[i..j] 是否为回文子串
+        递推公式：
+                DP[i][j] = DP[i+1][j-1] && (s[i] === s[j])
+        边界：
+                DP[i][i] = true;
+                DP[i][i+1] = true; if(s[i] === s[i+1])
+
+        ！！！参考资料 https://leetcode-cn.com/problems/longest-palindromic-substring/solution/zui-chang-hui-wen-zi-chuan-by-leetcode-solution/
+            6:30s 开始
+*/
 

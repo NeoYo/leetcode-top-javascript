@@ -49,13 +49,21 @@
 
         从最后一天到第一天使用的是递归，从第一天得到最后一天使用的是动态规划
 
-        > `注意: 你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。` 这句话，简化了难度，递推公式中，0 到 1 表示买入，1 到 0 卖出， 如果不止 1和0，那就多一个 k 作为一个维度， 如买卖股票的最佳时机 III
+        > `注意: 你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。` 这句话，简化了难度，递推公式中，0 到 1 表示买入，1 到 0 卖出， 如果不止 1和0，那就多一个 k 作为一个维度， 如买卖股票的最佳时机 III   2021.03.28 这句话可能理解有误，因为 III 也有，更好的理解，应该是限定了只在 0 和 1 之间转换
 
     递推公式
 
+        i 表示第 i 天，所以 i - 1 表示 i 的前一天， k 表示可以买卖的次数
+
         ```js
-        dp[i][k][0] = max(dp[i-1][k][0], dp[i-1][k][1] + prices[i])
-        dp[i][k][1] = max(dp[i-1][k][1], dp[i-1][k+1][0] - prices[i]) 
+        dp[i][k][0] = Math.max(
+            dp[i-1][k][0],                  //  今天不操作  0 -> 0
+            dp[i-1][k][1] + prices[i]       //  今天卖出了  1 -> 0，同时拿到了第 i 天的股票 + prices[i]
+        )
+        dp[i][k][1] = Math.max(
+            dp[i-1][k][1],                  //  今天不操作  1 -> 1
+            dp[i-1][k+1][0] - prices[i]     //  今天买入    0 -> 1，花 prices[i] 买的，注意这里 k + 1 变成 k 了，减少了一次交易次数
+        )
         ```
 
         > 注意 k+1 买了一次后变成 k
@@ -98,6 +106,8 @@
 /**
  
 解一：暴力法
+    注意只买卖一次
+
     T(n) = S(n^2)
     S(n) = O(1)
 
@@ -105,8 +115,8 @@
 var maxProfit = function(prices) {
     // 解一：暴力法 T(n) = O(n^2)
     let max = 0;
-    for (let buy = 0; buy < prices.length; buy++) {
-        for (let sell = buy; sell < prices.length; sell++) {
+    for (let buy = 0; buy < prices.length; buy++) {             // 确定买入，prices[buy]
+        for (let sell = buy; sell < prices.length; sell++) {    // 确定卖出，prices[sell]
             const profit = prices[sell] - prices[buy];
             if (max < profit) {
                 max = profit;
@@ -123,13 +133,15 @@ var maxProfit = function(prices) {
     S(n) = O(n)
 
     ```js
+    // i  k  0/1
     dp[i][1][0] = max(dp[i-1][1][0], dp[i-1][1][1] + prices[i])
     dp[i][1][1] = max(dp[i-1][1][1], dp[i-1][0][0] - prices[i]) 
                 = max(dp[i-1][1][1], -prices[i])
     解释：k = 0 的 base case，所以 dp[i-1][0][0] = 0。
     ```
 
-    现在发现 k 都是 1，不会改变，即 k 对状态转移已经没有影响了。
+    现在发现 k 都是 1，不会改变，即 k 对状态转移已经没有影响了。        //  2021.03.28 左边说法不够完善，暴力法是上面的两个 for 循环，限制了 一次买入和一次卖出
+                                                               //  把左右两边 k-1
     可以进行进一步化简去掉所有 k：
 
     ```js
@@ -177,8 +189,8 @@ var maxProfit = function(prices) {
     }
     // 2. 预处理
     DP[0][0] = 0;
-    DP[0][1] = -prices[0];
-    for (let i = 1; i < DP.length; i++) {        
+    DP[0][1] = -prices[0];                                  // 第一天就买入，prices[0] 
+    for (let i = 1; i < DP.length; i++) {
         DP[i][0] = Math.max(
             DP[i - 1][1] + prices[i],
             DP[i - 1][0]

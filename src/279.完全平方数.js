@@ -99,9 +99,10 @@
  * @return {number}
  */
 var numSquares = function(n) {
-    const DP = Array(n+1).fill(null).map((val, index) => index);
-    for (let i = 0; i < DP.length; i++) {
-        for (let j = 1; j*j <= i; j++) {
+    const DP = Array(n+1).fill(null)
+                        .map((val, index) => index);    // 存 [0, n]
+    for (let i = 0; i < DP.length; i++) {               // i 表示 num
+        for (let j = 1; j*j <= i; j++) {                // j 平方数，j*j 完全平方数
             DP[i] = Math.min(DP[i], 1 + DP[i-j*j]);
         }
     }

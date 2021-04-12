@@ -61,17 +61,20 @@
  * @return {void} Do not return anything, modify node in-place instead.
  */
 /**
- * Demo:
- * 4->5->1->9
- * 4->1->1->9
- * 4->5->9  1->9
- * 4->5->9  1->null
+    Demo:
+        4->5->1->9      node = 5
+        4->1->1->9   
+           |         // node.val = node.next.val;
+
+        4->1->9
+           |         // node.next = node.next.next;
  */
 var deleteNode = function(node) {
     // if (node == null) { return; }
     // if (node.next == null) { delete node.val; return; }
-    // 与下一个节点交换
+    // 复制下一个节点的值，同时相当于删了当前节点值
     node.val = node.next.val;
+    // 删除下一个节点
     node.next = node.next.next;
 }
 // @lc code=end

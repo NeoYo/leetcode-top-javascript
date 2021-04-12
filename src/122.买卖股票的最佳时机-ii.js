@@ -56,13 +56,20 @@
  * 
  */
 /**
+    ```js
+    dp[i][Infinity][0] = max(dp[i-1][Infinity][0], dp[i-1][Infinity][1] + prices[i])
+    dp[i][Infinity][1] = max(dp[i-1][Infinity][1], dp[i-1][Infinity+1][0] - prices[i]) 
+
+    ∵ Infinity = Infinity + 1                           k = Infinity，省略对左右等式不影响
+    ∴
+    dp[i][0] = max(dp[i-1][0], dp[i-1][1] + prices[i])
+    dp[i][1] = max(dp[i-1][1], dp[i-1][0] - prices[i])
+    ```
+ */
+/**
     解一：DP
  */
 // @lc code=start
-/**
- * @param {number[]} prices
- * @return {number}
- */
 /**
  * @param {number[]} prices
  * @return {number}
@@ -83,12 +90,12 @@ var maxProfit = function(prices) {
     // 3. 递推
     for (let i = 1; i < DP.length; i++) {
         DP[i][0] = Math.max(
-            DP[i-1][0],
-            DP[i-1][1] + prices[i]
+            DP[i - 1][0],
+            DP[i - 1][1] + prices[i]
         );
         DP[i][1] = Math.max(
-            DP[i-1][1],
-            DP[i-1][0] - prices[i]
+            DP[i - 1][1],
+            DP[i - 1][0] - prices[i]
         );
     }
     return DP[DP.length - 1][0];
@@ -127,11 +134,11 @@ var maxProfit = function(prices) {
                 return calculate(prices, 0);
             }
 
-            public int calculate(int prices[], int s) {
-                if (s >= prices.length)
+            public int calculate(int prices[], int curDay) {
+                if (curDay >= prices.length)
                     return 0;
                 int max = 0;
-                for (int start = s; start < prices.length; start++) {
+                for (int start = curDay; start < prices.length; start++) {
                     int maxprofit = 0;
                     for (int i = start + 1; i < prices.length; i++) {
                         if (prices[start] < prices[i]) {

@@ -97,6 +97,9 @@
                                                  索引0不选    索引1选
         代码如下
     解三：动态规划
+        > 2021.04.08 DP 看不懂就算了，看递归的吧，学点别的不好ლ(′◉❥◉｀ლ)吗，比如 React 源码、深度学习~
+        > 2021.04.08 结合官方题解 https://leetcode-cn.com/problems/house-robber-iii/solution/da-jia-jie-she-iii-by-leetcode-solution/， 看懂了
+                    它是用后序遍历，把值从子节点向父节点传，Em... 确实跟递归（从上到下），DP（从下到上）有类型的思想！
         这道题特别的地方在于，它是树形的DP，是以前我没见过的
 
         DP关键点
@@ -132,9 +135,9 @@
  *     this.left = this.right = null;
  * }
  */
-var rob = function(root) {
+ var rob = function(root) {
     const memory = new Map(); // <treeNode, [notChoose, choose]>
-    const dfs = (root, memory) => {
+    const dfs = (root) => {
         if (root == null) { return 0; }
         let [ notChoose, choose ] = memory.get(root) || [];
         if (choose == null) {
@@ -150,7 +153,7 @@ var rob = function(root) {
         memory.set(root, [ notChoose, choose ]);
         return Math.max(choose, notChoose);
     }
-    return dfs(root, memory);
+    return dfs(root);
 };
 // @lc code=end
 

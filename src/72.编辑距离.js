@@ -76,9 +76,13 @@
             4. ros 最后一位 s 刚好命中，已有值是 ros, 上一步走到 ro 时，这一步比对了下已有值最后一位，刚好命中~~~！！！
     三、递归与动态规划
         这里直接跳过递归推导到动态规划的过程
-        根据上面分析，状态的定义是
+        根据上面分析，状态的定义是 DP[i][j] 表示 word1 走到第 i-1 位，经过了 [0, i-1], word2 走到第 j-1 位，经过了 [0, j-1]，处于该状态最少操作数
 
         该题理解资料里的，状态转移表很重要
+
+        ../assets/edit-distance.jpeg
+
+        这图还揭示了 DP[i][j] 初始值的设置
 
         最后，代码如下哈
 
@@ -104,7 +108,8 @@ var minDistance = function(word1, word2) {
     // 一、初始化 DP 数组
     const DP = Array(word1L + 1).fill(null).map(_ => Array(word2L + 1).fill(Infinity));
 
-    // 二、初始化临界值
+    // 状态的定义是 DP[i][j] 表示 word1 走到第 i-1 位，经过了 [0, i-1], word2 走到第 j-1 位，经过了 [0, j-1]，处于该状态最少操作数
+    // 二、初始化临界值 （也叫哨兵优化）
     for (let i = 0; i < word1L + 1; i++) {
         DP[i][0] = i;
     }
@@ -115,13 +120,13 @@ var minDistance = function(word1, word2) {
     // 三、状态转移
     for (let i = 1; i < word1L + 1; i++) {
         for (let j = 1; j < word2L + 1; j++) {
-            let left = DP[i - 1][j] + 1;    // <- 新增
-            let down = DP[i][j - 1] + 1;    // 删除
-            let left_down = DP[i - 1][j - 1];   // 替换 || 跳过
-            if (word1[i - 1] != word2[j - 1]) {
-                left_down += 1; // 替换
+            const increase = DP[i - 1][j] + 1;      // 新增 DP[i - 1][j] -> DP[i][j]，word1 新增前进了一位，word2[j-1] 是模板不需要更改
+            const del = DP[i][j - 1] + 1;           // 删除 DP[i][j - 1] -> DP[i][j]，比如上面例子的，rosX，发现了 X，又删掉 X，不会改变 word1 走到第几步，但 word2 会前进了一位，所以 j-1 -> j
+            const replace = DP[i - 1][j - 1];       // 替换 || 跳过; word1 和 word2 都往前挪了一位
+            if (word1[i - 1] != word2[j - 1]) {         // 这里DP[i][j] 对应的是 word1[i-1] 与 word2[j-1]
+                replace += 1;                       // 替换
             }
-            DP[i][j] = Math.min(left, Math.min(down, left_down));
+            DP[i][j] = Math.min(increase, Math.min(del, replace));
         }
     }
     return DP[word1L][word2L];
