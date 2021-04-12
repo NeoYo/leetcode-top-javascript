@@ -21,4 +21,29 @@
 
 > License: 自由转载-非商用-非衍生-保持署名
 
+<details >
+<summary>收起全部~</summary>
+
+```js
+// 控制台操作全局~~~ 
+// 展开全部 
+function allOpen() { 
+    document
+        .querySelectorAll('h3+details')
+        .forEach((node) => { 
+            node.setAttribute('open', true);
+        }); 
+} 
+// 收起全部
+function allClose() { 
+    document
+        .querySelectorAll('h3+details')
+        .forEach((node) => {
+            node.removeAttribute('open'); });
+}
+
+allClose();
+```
+</details>
+
 ## 题目

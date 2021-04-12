@@ -21,11 +21,8 @@
 
 > License: 自由转载-非商用-非衍生-保持署名
 
-## 题目
-### 0.收起全部<a href="./src/0.收起全部.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
-
-<details open>
-<summary>展开代码、题解</summary>
+<details >
+<summary>收起全部~</summary>
 
 ```js
 // 控制台操作全局~~~ 
@@ -49,6 +46,7 @@ allClose();
 ```
 </details>
 
+## 题目
 ### 1.两数之和<a href="./src/1.两数之和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details open>
