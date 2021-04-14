@@ -53,7 +53,9 @@
 
     递推公式
 
+        DP[i] 中
         i 表示第 i 天，所以 i - 1 表示 i 的前一天， k 表示可以买卖的次数
+            0 表示没持有，1 表示持有
 
         ```js
         dp[i][k][0] = Math.max(
@@ -142,6 +144,7 @@ var maxProfit = function(prices) {
 
     现在发现 k 都是 1，不会改变，即 k 对状态转移已经没有影响了。        //  2021.03.28 左边说法不够完善，暴力法是上面的两个 for 循环，限制了 一次买入和一次卖出
                                                                //  把左右两边 k-1
+                                                               //  2021.04.13 下面代码直接用 if (k > 0) {}
     可以进行进一步化简去掉所有 k：
 
     ```js
@@ -160,7 +163,7 @@ var maxProfit = function(prices) {
     /* 
     一、DP定义
         DP[i][type]
-        表示从 0 ~ i 获得的利润， ，type 0 表示不持有，type 1 表示持有
+        表示从 0 ~ i 获得的利润，type 0 表示不持有，type 1 表示持有
         i >= O; i < prices.length
         PS: i = 0 表示第 1 天
 
@@ -183,23 +186,26 @@ var maxProfit = function(prices) {
         return 0;
     }
     // 1. 初始化
-    let DP = new Array(prices.length);
-    for (let i = 0; i < DP.length; i++) {
-        DP[i] = [];
-    }
+    const DP = new Array(prices.length).fill(null).map(_ => []);
     // 2. 预处理
     DP[0][0] = 0;
     DP[0][1] = -prices[0];                                  // 第一天就买入，prices[0] 
+    let k = 1;                                              // 表示剩余交易次数，这里限制买入
     for (let i = 1; i < DP.length; i++) {
         DP[i][0] = Math.max(
             DP[i - 1][1] + prices[i],
             DP[i - 1][0]
         );
-        DP[i][1] = Math.max(
-            DP[i - 1][1],
-            - prices[i]
-        );
-    }    
+        if (k > 0) {
+            DP[i][1] = Math.max(
+                DP[i - 1][1],
+                -prices[i]
+            );
+        } else {
+            DP[i][1] = DP[i - 1][1];
+        }
+    }
+    console.log('DP: ', DP);
     return DP[DP.length - 1][0];
 };
 // @lc code=end

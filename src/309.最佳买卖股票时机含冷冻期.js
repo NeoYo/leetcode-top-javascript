@@ -44,7 +44,7 @@ var maxProfit = function(prices) {
         return 0;
     }
     // 1. 初始化 DP
-    const DP = Array(prices.length);
+    const DP = Array(prices.length).fill(null).map(_ => []);
     for (let i = 0; i < DP.length; i++) {
         DP[i] = [];
     }
@@ -61,7 +61,7 @@ var maxProfit = function(prices) {
         );
         DP[i][1] = Math.max(
             DP[i-1][1],            // 在 -1 天持有
-            DP[i-2][0] - prices[i] // 在 -2 天卖出，今天买入
+            DP[i-2][0] - prices[i] // 在 -2 天卖出，今天买入，要买入至少等 1 天
         );
     }
     return DP[DP.length - 1][0];

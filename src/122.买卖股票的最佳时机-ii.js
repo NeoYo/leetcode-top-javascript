@@ -56,6 +56,8 @@
  * 
  */
 /**
+    dp[i][k][0/1] 表示走到 prices[i] 时, k 表示交易次数, 1 表示持有, 0 表示不持有
+
     ```js
     dp[i][Infinity][0] = max(dp[i-1][Infinity][0], dp[i-1][Infinity][1] + prices[i])
     dp[i][Infinity][1] = max(dp[i-1][Infinity][1], dp[i-1][Infinity+1][0] - prices[i]) 
@@ -80,10 +82,7 @@ var maxProfit = function(prices) {
         return 0;
     }
     // 1. 初始化 DP
-    const DP = Array(prices.length);
-    for (let i = 0; i < DP.length; i++) {
-        DP[i] = [];
-    }
+    const DP = new Array(prices.length).fill(null).map(_ => []);
     // 2. 预处理
     DP[0][1] = -prices[0];
     DP[0][0] = 0;

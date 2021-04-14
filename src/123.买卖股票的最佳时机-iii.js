@@ -89,9 +89,9 @@ var maxProfit = function(prices) {
     // 3. DP 递推
     for (let i = 1; i < DP.length; i++) {
         DP[i][0][0]=0;
-        for (let k = 1; k <= K; k++) {
-            DP[i][k][0] = Math.max(DP[i-1][k][0], DP[i-1][k][1] + prices[i]);
-            DP[i][k][1] = Math.max(DP[i-1][k][1], DP[i-1][k-1][0] - prices[i]); // 这里是从 k-1 到 k，与前面几道的理解相反，这里的 k 表示已进行的买卖次数
+        for (let k = 1; k <= K; k++) {                                          // 这里 K = 2, 表示最多交易 2 次
+            DP[i][k][0] = Math.max(DP[i-1][k][0], DP[i-1][k][1] + prices[i]);   // 在 i 时卖出，卖出 +prices[i]
+            DP[i][k][1] = Math.max(DP[i-1][k][1], DP[i-1][k-1][0] - prices[i]); // 这里是 k-1 -> k，这里的 k 表示已进行的买卖次数，买入 -prices[i]
         }
     }
     console.log(DP);
