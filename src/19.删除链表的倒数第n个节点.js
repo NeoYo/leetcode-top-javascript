@@ -148,3 +148,23 @@ var removeNthFromEnd = function(head, n) {
 };
 // @lc code=end
 
+/**
+ * 优化2：前后指针 + dummyHead n题解
+ */
+var removeNthFromEnd = function(head, n) {
+    const dummyHead = new ListNode(0, head);
+    let fast = dummyHead;
+    let slow = dummyHead; // fast - slow = n; // slow 表示要删除节点的上一个
+    for (let i = 1; i <= n; i++) {
+        fast = fast.next;
+    }
+    while (fast.next) {
+        fast = fast.next;
+        slow = slow.next;
+    }
+    const next = slow.next;
+    slow.next = slow.next.next;
+    next.next = null;
+    return dummyHead.next;
+};
+
