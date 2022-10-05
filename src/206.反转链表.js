@@ -61,6 +61,11 @@
            head  pre
 
                                                     // 第五步：递归终止条件（边界处理）
+
+           配合 LeetCode 动画演示+多种解法 206. 反转链表 更好理解。
+           链接：https://leetcode.cn/problems/reverse-linked-list/solution/dong-hua-yan-shi-206-fan-zhuan-lian-biao-by-user74/
+             
+
         代码如下
  */
 var reverseList = function(head) {
