@@ -58,7 +58,7 @@ var searchRange = function(nums, target) {
             high = mid - 1;
         } else {
             // nums[mid] === target
-            if (mid === 0 || nums[mid - 1] < target) {
+            if (mid === 0 || nums[mid - 1] < target) { // mid > 0 && nums[mid - 1] === target 说明左边还有相等的；high = mid - 1;
                 res[0] = mid;
                 break;
             } else {
@@ -77,7 +77,7 @@ var searchRange = function(nums, target) {
             high = mid - 1;
         } else {
             // nums[mid] === target
-            if (mid === nums.length - 1 || nums[mid + 1] > target) {
+            if (mid === nums.length - 1 || nums[mid + 1] > target) { // (mid < nums.length - 1) && nums[mid + 1] === target 说明右边还有相等的；
                 res[1] = mid;
                 break;
             } else {

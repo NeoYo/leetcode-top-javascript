@@ -580,16 +580,16 @@ var longestPalindrome = function(s) {
     for (let i = 0; i < s.length; i++) {
         for (let j = i; j < s.length; j++) {
             const cur = s.slice(i, j + 1);
-            if (cur.split().reverse().join() !== cur) {
-                break;
-            }            
-            if (cur.length > maxS.length) {
+            if (cur.split('').reverse().join('') === cur &&
+                cur.length > maxS.length
+            ) {
                 maxS = cur;
             }
         }
     }
     return maxS;
 };
+
 /**
     解二：中心扩展算法  O(n^2)
         
@@ -2209,6 +2209,26 @@ var removeNthFromEnd = function(head, n) {
 };
 // @lc code=end
 
+/**
+ * 优化2：前后指针 + dummyHead n题解
+ */
+var removeNthFromEnd = function(head, n) {
+    const dummyHead = new ListNode(0, head);
+    let fast = dummyHead;
+    let slow = dummyHead; // fast - slow = n; // slow 表示要删除节点的上一个
+    for (let i = 1; i <= n; i++) {
+        fast = fast.next;
+    }
+    while (fast.next) {
+        fast = fast.next;
+        slow = slow.next;
+    }
+    const next = slow.next;
+    slow.next = slow.next.next;
+    next.next = null;
+    return dummyHead.next;
+};
+
 
 ```
 </details>
@@ -3469,7 +3489,7 @@ var searchRange = function(nums, target) {
             high = mid - 1;
         } else {
             // nums[mid] === target
-            if (mid === 0 || nums[mid - 1] < target) {
+            if (mid === 0 || nums[mid - 1] < target) { // mid > 0 && nums[mid - 1] === target 说明左边还有相等的；high = mid - 1;
                 res[0] = mid;
                 break;
             } else {
@@ -3488,7 +3508,7 @@ var searchRange = function(nums, target) {
             high = mid - 1;
         } else {
             // nums[mid] === target
-            if (mid === nums.length - 1 || nums[mid + 1] > target) {
+            if (mid === nums.length - 1 || nums[mid + 1] > target) { // (mid < nums.length - 1) && nums[mid + 1] === target 说明右边还有相等的；
                 res[1] = mid;
                 break;
             } else {
@@ -10922,6 +10942,11 @@ var countPrimes = function(n) {
            head  pre
 
                                                     // 第五步：递归终止条件（边界处理）
+
+           配合 LeetCode 动画演示+多种解法 206. 反转链表 - 递归解法 - 幻灯片演示 更好理解。
+           链接：https://leetcode.cn/problems/reverse-linked-list/solution/dong-hua-yan-shi-206-fan-zhuan-lian-biao-by-user74/
+             
+
         代码如下
  */
 var reverseList = function(head) {
@@ -16555,6 +16580,21 @@ var fib = function(n) {
     return fib(n - 1) + fib(n - 2);
 };
 // @lc code=end
+
+/**
+ * @param {number} n
+ * @return {number}
+ */
+var fib = function(n) {
+    const F = [];
+    F[0] = 0;
+    F[1] = 1;
+    for (let i = 2; i <= n; i++) {
+        F[i] = F[i - 1] + F[i - 2];
+    }    
+    return F[n];
+};
+
 
 
 ```

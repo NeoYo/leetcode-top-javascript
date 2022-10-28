@@ -66,16 +66,16 @@ var longestPalindrome = function(s) {
     for (let i = 0; i < s.length; i++) {
         for (let j = i; j < s.length; j++) {
             const cur = s.slice(i, j + 1);
-            if (cur.split().reverse().join() !== cur) {
-                break;
-            }            
-            if (cur.length > maxS.length) {
+            if (cur.split('').reverse().join('') === cur &&
+                cur.length > maxS.length
+            ) {
                 maxS = cur;
             }
         }
     }
     return maxS;
 };
+
 /**
     解二：中心扩展算法  O(n^2)
         
