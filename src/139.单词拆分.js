@@ -46,6 +46,17 @@
  */
 
 /**
+    1. 理解完全背包问题
+        s 上的每一位 index，s[index] 可以选属于到左边单词，也可以选属于作为新单词的起始
+
+        所以是完全背包问题，时间复杂度 2^(s.length)
+
+    2. 递归规律
+        从后往前，recusion["applepenapple"] = recusion["applepen"这一段] && 判断一下"apple"
+        下面DP 是从前往后
+
+    3. DP
+
         dp["applepenapple"] = dp["applepen"这一段] && 判断一下"apple"
                         j     i
                 applepenapple(13) (长度也是13)
@@ -84,8 +95,11 @@
         Case: "" []     Expect: true
         Case: "a" []    Expect: false
 
+时间复杂度：O(n^2)
+空间复杂度：O(n)
+
 延伸：
-    可以使用 Set， 但是性能下降了，可能跟 Set 实现有关，性能占用 116ms， 原来只要 90ms
+    忽略...可以使用 Set， 但是性能下降了，可能跟 Set 实现有关，性能占用 116ms， 原来只要 90ms
  */
 
 // @lc code=start
@@ -117,10 +131,10 @@ var wordBreak = function(s, wordDict) {
      */
     for (let i = 0; i < s.length + 1; i++) {
         for (let j = 0; j <= i; j++) {
-            if (wordDict.indexOf(s.slice(j, i)) !== -1 && DP[j] === true) {
-                // 只要找到 true, 就跳出计算下一个 DP[i], 避免被 false 覆盖掉
+            if (DP[j] === true && wordDict.indexOf(s.slice(j, i)) !== -1) {
                 DP[i] = true;
-                continue;
+                // 只要找到 true, 就跳出计算下一个 DP[i], 相当于剪枝
+                break;
             }
         }
     }

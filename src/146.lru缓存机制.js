@@ -46,6 +46,10 @@
 参考资料
     https://leetcode-cn.com/problems/lru-cache/solution/bu-yong-yu-yan-nei-jian-de-map-gua-dang-feng-zhuan/
 
+数据结构选取：
+    1. 删除尾部最旧元素，移动某元素到头部用 O(1)，双向链表
+    2. 根据 key 查、在头部新增、移动到头部、在尾部删都是 O(1) 用哈希
+
 零、笔记
     LRU Least Recently Used   最近最少使用
         解释
@@ -55,12 +59,6 @@
 
 一、LRUCache.prototype.get => 哈希容器
     题目要求 LRUCache.prototype.get 时间复杂度是 O(1)， 那么哈希容器就是这样的数据结构
-    由于考虑到移动端的兼容性，低端机型需要对 ES6 Map 做 polyfill 处理，会影响到 js 体积大小，从而影响到 js 加载速度    
-    这里直接使用对象 模拟 ES6 Map，有没有更好的数据结构呢？
-    我们看下这里 LRUCache.prototype.put 的 @param {number} key 是 number，这里我们可以直接使用数组作为 hash 容器
-    但是数组不确定 V8 内核，是不是连续空间，是的话，内存碎片会比较多。
-    （戏怎么这么多hhh~~~）
-    综合考虑，这里我们使用 Object
 
 二、LRUCache.prototype.put => 双向链表
     题目要求 LRUCache.prototype.put 的第一个参数 key 是任意的，时间复杂是 O(1)
@@ -69,7 +67,8 @@
 
 三、LRU
     LRU 意思是 最近最少使用的先删掉
-    调用 put 时，会有以下步骤
+    （建议直接看代码）
+    调用 put 时，会有以下步骤 （1.2一起是移动，单独2是新增）
         1. 判断新插入元素的 key 是否在 Map 已存在，存在就从链表里删掉 (Map 不用管） —— 删
         2. 将新元素放在链表的头部（表示最近一次刚使用），同时存进 Map —— 存
         3. 检查 space，将链表的尾元素删掉 （尾元素表示最近最少使用的元素）—— 净化
@@ -78,6 +77,8 @@
         1. 判断 get 的 key 是否在 Map 已存在，存在就从链表里删掉 (Map 不用管）—— 删
         2. 将 key 放在链表的头部（表示最近一次刚使用）(Map 不用管）—— 存
 
+以下可跳过:
+
 四、准备数据结构
     实现双向链表
         虽然我之前也实现过 TypeScirpt 版的 单向链表 https://github.com/NeoYo/typescript-datastructure/blob/master/src/linked-list/LinkedList.ts
@@ -85,6 +86,13 @@
 
 五、相关资料
     Vue 的 LRU https://mp.weixin.qq.com/s?__biz=MzUzNjk5MTE1OQ==&mid=2247484265&idx=1&sn=7feafe63a80ce6371a1b6834884a6d05&chksm=faec87b1cd9b0ea7ea773e24341918cefa1df7ccbc2c12c0fee679fcf62d2603f86351f732d1&mpshare=1&scene=1&srcid=&sharer_sharetime=1586220604247&sharer_shareid=a2053bbb60dae640b6c9a685b4de3728#rd
+
+    由于考虑到移动端的兼容性，低端机型需要对 ES6 Map 做 polyfill 处理，会影响到 js 体积大小，从而影响到 js 加载速度    
+    这里直接使用对象 模拟 ES6 Map，有没有更好的数据结构呢？
+    我们看下这里 LRUCache.prototype.put 的 @param {number} key 是 number，这里我们可以直接使用数组作为 hash 容器
+    但是数组不确定 V8 内核，是不是连续空间，是的话，内存碎片会比较多。
+    （戏怎么这么多hhh~~~）
+    综合考虑，这里我们使用 Object
  */
 // @lc code=start
 /**
@@ -95,7 +103,7 @@
  */
 /**
  * LRU  淘汰最长时间未被使用的页面（Map+双向链表）
- * LFU  淘汰一定时期内被访问次数最少的页 
+ * LFU  淘汰一定时期内被访问次数最少的页 （堆）
  */
 class ListNode {
     constructor(key, value) {
@@ -151,10 +159,9 @@ class LRUCache {
 
     removeFromList(node) {
         // 想实现的是 node.prev -> node.next 的双向
-        const tempForPrev = node.prev
-        const tempForNext = node.next
         node.prev.next = node.next
-        tempForNext.prev = tempForPrev
+        node.next.prev = node.prev
+        // 这里没有清除 node.prev 和 node.next
     }
 
     /**
@@ -168,7 +175,7 @@ class LRUCache {
     }
 
     removeLRUItem() {
-        let tail = this.popTail()
+        const tail = this.popTail()
         delete this.hashTable[tail.key]
         this.count--
     }
@@ -177,7 +184,7 @@ class LRUCache {
        移除尾部
     */
     popTail() {
-        let tailItem = this.dummyTail.prev
+        const tailItem = this.dummyTail.prev
         this.removeFromList(tailItem)
         return tailItem
     }

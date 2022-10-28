@@ -101,6 +101,9 @@ allClose();
 
     空间复杂度：O(n)， 所需的额外空间取决于哈希表中存储的元素数量，该表最多需要存储 n 个元素。
 
+    原理与暴力法比较：暴力法相当于固定 i 在剩余空间（j）找，这里 Map 相当于固定 j 在已经过空间（i）找。
+
+    如果要索引值，用 Map；如果只要 boolean，用 Set
 
  */
 // @lc code=start
@@ -323,6 +326,13 @@ var lengthOfLongestSubstring = function(s) {
             2. 包含第二个 c 的，即 从 d 开始
 
         3. 举例2：在最糟糕的情况下，每个字符将被访问接近两次， 如abab, 6次
+
+    上面是解释，如何写出代码？
+        abcda
+        i  j
+        1. 正常情形如何处理 abcd
+        2. 特殊情形如何处理 abcda
+
  */
 /**  
  * @param {string} s
@@ -1976,9 +1986,9 @@ var threeSumClosest = function(nums, target) {
     解一：树的 DFS 代码如下
         dfs([2, 3, 4], str) {
             // 由 2 得到 'abc'
-           dfs([3, 4], 'a' + str)
-           dfs([3, 4], 'b' + str)
-           dfs([3, 4], 'c' + str)
+           dfs([3, 4], str + 'a')
+           dfs([3, 4], str + 'b')
+           dfs([3, 4], str + 'c')
         }
 
         2           a               b           c
@@ -1988,14 +1998,12 @@ var threeSumClosest = function(nums, target) {
         4   g(adg)
 
         代码优化：
-        1. 用数组代替对象。数组也是一种 Map <index, elem>
-        2. dfs(str, index) 使用 index 获取 letters，slice() 太耗内存
-
-    
+        1. dfs(str, index) 使用 index 获取 leftDigits slice() 太耗内存
+        2. 没必要，用数组代替对象。数组也是一种 Map <index, elem>
 
     解二：队列循环遍历
 
-        其实就是铺平。一行一行地迭代
+        其实就是铺平。一行一行地迭代，跳过吧 =.= 
         > 参考：[通俗易懂+动画演示 17. 电话号码的字母组合](https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/solution/tong-su-yi-dong-dong-hua-yan-shi-17-dian-hua-hao-m/)
 
  */
@@ -7059,7 +7067,9 @@ var connect = function(root) {
 
     递推公式
 
+        DP[i] 中
         i 表示第 i 天，所以 i - 1 表示 i 的前一天， k 表示可以买卖的次数
+            0 表示没持有，1 表示持有
 
         ```js
         dp[i][k][0] = Math.max(
@@ -7148,6 +7158,7 @@ var maxProfit = function(prices) {
 
     现在发现 k 都是 1，不会改变，即 k 对状态转移已经没有影响了。        //  2021.03.28 左边说法不够完善，暴力法是上面的两个 for 循环，限制了 一次买入和一次卖出
                                                                //  把左右两边 k-1
+                                                               //  2021.04.13 下面代码直接用 if (k > 0) {}
     可以进行进一步化简去掉所有 k：
 
     ```js
@@ -7166,7 +7177,7 @@ var maxProfit = function(prices) {
     /* 
     一、DP定义
         DP[i][type]
-        表示从 0 ~ i 获得的利润， ，type 0 表示不持有，type 1 表示持有
+        表示从 0 ~ i 获得的利润，type 0 表示不持有，type 1 表示持有
         i >= O; i < prices.length
         PS: i = 0 表示第 1 天
 
@@ -7189,23 +7200,26 @@ var maxProfit = function(prices) {
         return 0;
     }
     // 1. 初始化
-    let DP = new Array(prices.length);
-    for (let i = 0; i < DP.length; i++) {
-        DP[i] = [];
-    }
+    const DP = new Array(prices.length).fill(null).map(_ => []);
     // 2. 预处理
     DP[0][0] = 0;
     DP[0][1] = -prices[0];                                  // 第一天就买入，prices[0] 
+    let k = 1;                                              // 表示剩余交易次数，这里限制买入
     for (let i = 1; i < DP.length; i++) {
         DP[i][0] = Math.max(
             DP[i - 1][1] + prices[i],
             DP[i - 1][0]
         );
-        DP[i][1] = Math.max(
-            DP[i - 1][1],
-            - prices[i]
-        );
-    }    
+        if (k > 0) {
+            DP[i][1] = Math.max(
+                DP[i - 1][1],
+                -prices[i]
+            );
+        } else {
+            DP[i][1] = DP[i - 1][1];
+        }
+    }
+    console.log('DP: ', DP);
     return DP[DP.length - 1][0];
 };
 // @lc code=end
@@ -7304,6 +7318,8 @@ var maxProfit = function(prices) {
  * 
  */
 /**
+    dp[i][k][0/1] 表示走到 prices[i] 时, k 表示交易次数, 1 表示持有, 0 表示不持有
+
     ```js
     dp[i][Infinity][0] = max(dp[i-1][Infinity][0], dp[i-1][Infinity][1] + prices[i])
     dp[i][Infinity][1] = max(dp[i-1][Infinity][1], dp[i-1][Infinity+1][0] - prices[i]) 
@@ -7328,10 +7344,7 @@ var maxProfit = function(prices) {
         return 0;
     }
     // 1. 初始化 DP
-    const DP = Array(prices.length);
-    for (let i = 0; i < DP.length; i++) {
-        DP[i] = [];
-    }
+    const DP = new Array(prices.length).fill(null).map(_ => []);
     // 2. 预处理
     DP[0][1] = -prices[0];
     DP[0][0] = 0;
@@ -7506,9 +7519,9 @@ var maxProfit = function(prices) {
     // 3. DP 递推
     for (let i = 1; i < DP.length; i++) {
         DP[i][0][0]=0;
-        for (let k = 1; k <= K; k++) {
-            DP[i][k][0] = Math.max(DP[i-1][k][0], DP[i-1][k][1] + prices[i]);
-            DP[i][k][1] = Math.max(DP[i-1][k][1], DP[i-1][k-1][0] - prices[i]); // 这里是从 k-1 到 k，与前面几道的理解相反，这里的 k 表示已进行的买卖次数
+        for (let k = 1; k <= K; k++) {                                          // 这里 K = 2, 表示最多交易 2 次
+            DP[i][k][0] = Math.max(DP[i-1][k][0], DP[i-1][k][1] + prices[i]);   // 在 i 时卖出，卖出 +prices[i]
+            DP[i][k][1] = Math.max(DP[i-1][k][1], DP[i-1][k-1][0] - prices[i]); // 这里是 k-1 -> k，这里的 k 表示已进行的买卖次数，买入 -prices[i]
         }
     }
     console.log(DP);
@@ -8270,6 +8283,17 @@ var singleNumber = function(nums) {
  */
 
 /**
+    1. 理解完全背包问题
+        s 上的每一位 index，s[index] 可以选属于到左边单词，也可以选属于作为新单词的起始
+
+        所以是完全背包问题，时间复杂度 2^(s.length)
+
+    2. 递归规律
+        从后往前，recusion["applepenapple"] = recusion["applepen"这一段] && 判断一下"apple"
+        下面DP 是从前往后
+
+    3. DP
+
         dp["applepenapple"] = dp["applepen"这一段] && 判断一下"apple"
                         j     i
                 applepenapple(13) (长度也是13)
@@ -8308,8 +8332,11 @@ var singleNumber = function(nums) {
         Case: "" []     Expect: true
         Case: "a" []    Expect: false
 
+时间复杂度：O(n^2)
+空间复杂度：O(n)
+
 延伸：
-    可以使用 Set， 但是性能下降了，可能跟 Set 实现有关，性能占用 116ms， 原来只要 90ms
+    忽略...可以使用 Set， 但是性能下降了，可能跟 Set 实现有关，性能占用 116ms， 原来只要 90ms
  */
 
 // @lc code=start
@@ -8341,10 +8368,10 @@ var wordBreak = function(s, wordDict) {
      */
     for (let i = 0; i < s.length + 1; i++) {
         for (let j = 0; j <= i; j++) {
-            if (wordDict.indexOf(s.slice(j, i)) !== -1 && DP[j] === true) {
-                // 只要找到 true, 就跳出计算下一个 DP[i], 避免被 false 覆盖掉
+            if (DP[j] === true && wordDict.indexOf(s.slice(j, i)) !== -1) {
                 DP[i] = true;
-                continue;
+                // 只要找到 true, 就跳出计算下一个 DP[i], 相当于剪枝
+                break;
             }
         }
     }
@@ -8687,6 +8714,10 @@ var detectCycle = function (head) {
 参考资料
     https://leetcode-cn.com/problems/lru-cache/solution/bu-yong-yu-yan-nei-jian-de-map-gua-dang-feng-zhuan/
 
+数据结构选取：
+    1. 删除尾部最旧元素，移动某元素到头部用 O(1)，双向链表
+    2. 根据 key 查、在头部新增、移动到头部、在尾部删都是 O(1) 用哈希
+
 零、笔记
     LRU Least Recently Used   最近最少使用
         解释
@@ -8696,12 +8727,6 @@ var detectCycle = function (head) {
 
 一、LRUCache.prototype.get => 哈希容器
     题目要求 LRUCache.prototype.get 时间复杂度是 O(1)， 那么哈希容器就是这样的数据结构
-    由于考虑到移动端的兼容性，低端机型需要对 ES6 Map 做 polyfill 处理，会影响到 js 体积大小，从而影响到 js 加载速度    
-    这里直接使用对象 模拟 ES6 Map，有没有更好的数据结构呢？
-    我们看下这里 LRUCache.prototype.put 的 @param {number} key 是 number，这里我们可以直接使用数组作为 hash 容器
-    但是数组不确定 V8 内核，是不是连续空间，是的话，内存碎片会比较多。
-    （戏怎么这么多hhh~~~）
-    综合考虑，这里我们使用 Object
 
 二、LRUCache.prototype.put => 双向链表
     题目要求 LRUCache.prototype.put 的第一个参数 key 是任意的，时间复杂是 O(1)
@@ -8710,7 +8735,8 @@ var detectCycle = function (head) {
 
 三、LRU
     LRU 意思是 最近最少使用的先删掉
-    调用 put 时，会有以下步骤
+    （建议直接看代码）
+    调用 put 时，会有以下步骤 （1.2一起是移动，单独2是新增）
         1. 判断新插入元素的 key 是否在 Map 已存在，存在就从链表里删掉 (Map 不用管） —— 删
         2. 将新元素放在链表的头部（表示最近一次刚使用），同时存进 Map —— 存
         3. 检查 space，将链表的尾元素删掉 （尾元素表示最近最少使用的元素）—— 净化
@@ -8719,6 +8745,8 @@ var detectCycle = function (head) {
         1. 判断 get 的 key 是否在 Map 已存在，存在就从链表里删掉 (Map 不用管）—— 删
         2. 将 key 放在链表的头部（表示最近一次刚使用）(Map 不用管）—— 存
 
+以下可跳过:
+
 四、准备数据结构
     实现双向链表
         虽然我之前也实现过 TypeScirpt 版的 单向链表 https://github.com/NeoYo/typescript-datastructure/blob/master/src/linked-list/LinkedList.ts
@@ -8726,6 +8754,13 @@ var detectCycle = function (head) {
 
 五、相关资料
     Vue 的 LRU https://mp.weixin.qq.com/s?__biz=MzUzNjk5MTE1OQ==&mid=2247484265&idx=1&sn=7feafe63a80ce6371a1b6834884a6d05&chksm=faec87b1cd9b0ea7ea773e24341918cefa1df7ccbc2c12c0fee679fcf62d2603f86351f732d1&mpshare=1&scene=1&srcid=&sharer_sharetime=1586220604247&sharer_shareid=a2053bbb60dae640b6c9a685b4de3728#rd
+
+    由于考虑到移动端的兼容性，低端机型需要对 ES6 Map 做 polyfill 处理，会影响到 js 体积大小，从而影响到 js 加载速度    
+    这里直接使用对象 模拟 ES6 Map，有没有更好的数据结构呢？
+    我们看下这里 LRUCache.prototype.put 的 @param {number} key 是 number，这里我们可以直接使用数组作为 hash 容器
+    但是数组不确定 V8 内核，是不是连续空间，是的话，内存碎片会比较多。
+    （戏怎么这么多hhh~~~）
+    综合考虑，这里我们使用 Object
  */
 // @lc code=start
 /**
@@ -8736,7 +8771,7 @@ var detectCycle = function (head) {
  */
 /**
  * LRU  淘汰最长时间未被使用的页面（Map+双向链表）
- * LFU  淘汰一定时期内被访问次数最少的页 
+ * LFU  淘汰一定时期内被访问次数最少的页 （堆）
  */
 class ListNode {
     constructor(key, value) {
@@ -8792,10 +8827,9 @@ class LRUCache {
 
     removeFromList(node) {
         // 想实现的是 node.prev -> node.next 的双向
-        const tempForPrev = node.prev
-        const tempForNext = node.next
         node.prev.next = node.next
-        tempForNext.prev = tempForPrev
+        node.next.prev = node.prev
+        // 这里没有清除 node.prev 和 node.next
     }
 
     /**
@@ -8809,7 +8843,7 @@ class LRUCache {
     }
 
     removeLRUItem() {
-        let tail = this.popTail()
+        const tail = this.popTail()
         delete this.hashTable[tail.key]
         this.count--
     }
@@ -8818,7 +8852,7 @@ class LRUCache {
        移除尾部
     */
     popTail() {
-        let tailItem = this.dummyTail.prev
+        const tailItem = this.dummyTail.prev
         this.removeFromList(tailItem)
         return tailItem
     }
@@ -9850,7 +9884,38 @@ var findPeakElement = function(nums) {
  * 
  * 
  */
+/*
+   解法：
+       零、跳过 o.o 暴力法 T(n) = O(n^2) 
+           选取每个元素遍历一遍，出现的次数最大的，就是众数，也就是 “多数元素”
 
+       一、排序法 T(n) = O(nlogn)
+           由于题目假设存在 “多数元素”，且“多数元素”指出现次数大于 n/2，所以排序后，中间元素就肯定是 “多数元素”
+
+       二、类 Map 容器 T(n) = O(n) S(n) = O(n)
+           一个 Map 容器，用于叠加每个元素出现的次数
+           一个记录最大次数的变量
+           一个记录最大数的变量
+
+       三、摩尔投票法
+           维护候选人的次数（抵消或叠加或替换）
+
+           “多数元素” 大于 n/2，准备一个候选人，极端情况下，其他元素都用来抵消 “多数元素” ，也至少剩 1 个 “多数元素”
+           “多数元素” 大于 n/3，准备两个候选人，候选人A > n/3, 候选人B > n/3, 其他 < n/3
+
+   资料
+       https://leetcode-cn.com/problems/majority-element/solution/du-le-le-bu-ru-zhong-le-le-ru-he-zhuang-bi-de-qiu-/
+       https://leetcode-cn.com/problems/majority-element/solution/duo-shu-yuan-su-by-leetcode-solution/
+       摩尔投票法 https://leetcode-cn.com/problems/majority-element-ii/solution/liang-fu-dong-hua-yan-shi-mo-er-tou-piao-fa-zui-zh/
+
+   疑问
+       在做题的时候遇到的问题，自问自答^_^
+       1. “多数元素” 等同于众数？
+           有的文章直接说求众数，其实不是等价的，众数是指次数出现最多的元素，题目多数元素是指出现大于 [n/2]的元素
+           有众数不一定存在 “多数元素”; 存在 “多数元素”，那这个数，则一定是众数
+           所以本题的有的解法，是通过求众数来得到 “多数元素”， 是题目假设 “多数元素” 一定存在
+
+*/
 // @lc code=start
 /**
  * @param {number[]} nums
@@ -9890,7 +9955,7 @@ var majorityElement = function(nums) {
         const num = nums[i];
         if (candidate.num === num) {
             candidate.times += 1;
-            continue;
+            continue;   // 跳过下面代码
         }
         if (candidate.times > 0) {
             candidate.times -= 1;
@@ -9902,39 +9967,6 @@ var majorityElement = function(nums) {
     return candidate.num;
 };
 // @lc code=end
-/*
-    解法：
-        零、暴力法 T(n) = O(n^2)
-            遍历每个元素，再统计每个元素，出现的次数，次数最大的，就是众数，也就是 “多数元素”，T(n) = O(n^2)
-            
-        一、排序法 T(n) = O(nlogn)
-            由于题目假设存在 “多数元素”，且“多数元素”指出现次数大于 n/2，所以排序后，中间元素就肯定是 “多数元素”
-            
-        二、类 Map 容器 T(n) = O(n) S(n) = O(n)
-            一个 Map 容器，用于叠加每个元素出现的次数
-            一个记录最大次数的变量
-            一个记录最大数的变量
-
-        三、摩尔投票法
-            维护候选人的次数（抵消或叠加或替换）
-
-            “多数元素” 大于 n/2，准备一个候选人，极端情况下，其他元素都用来抵消 “多数元素” ，也至少剩 1 个 “多数元素”
-            “多数元素” 大于 n/3，准备两个候选人，候选人A > n/3, 候选人B > n/3, 其他 < n/3
-
-    资料
-        https://leetcode-cn.com/problems/majority-element/solution/du-le-le-bu-ru-zhong-le-le-ru-he-zhuang-bi-de-qiu-/
-        https://leetcode-cn.com/problems/majority-element/solution/duo-shu-yuan-su-by-leetcode-solution/
-        摩尔投票法 https://leetcode-cn.com/problems/majority-element-ii/solution/liang-fu-dong-hua-yan-shi-mo-er-tou-piao-fa-zui-zh/
-        
-    疑问
-        在做题的时候遇到的问题，自问自答^_^
-        1. “多数元素” 等同于众数？
-            有的文章直接说求众数，其实不是等价的，众数是指次数出现最多的元素，题目多数元素是指出现大于 [n/2]的元素
-            有众数不一定存在 “多数元素”; 存在 “多数元素”，那这个数，也一定是众数
-            所以本题的有的解法，是通过求众数来得到 “多数元素”， 是题目假设 “多数元素” 一定存在        
-
-
- */
 
 majorityElement([3, 2, 3])
 
@@ -10486,6 +10518,8 @@ var hammingWeight = function(n) {
 /**
     每次选和不选，选完后，房屋金额，就跳过了，可以看成是 0 - 1 背包问题
     每次都可以进去和不进去，进去与不进的选择，取之不尽，可以看成是 完全背包问题
+
+    DP[i] 表示走到第 nums[i] 时，偷窃到的最高金额
  */
 // @lc code=start
 /**
@@ -13885,7 +13919,7 @@ var maxProfit = function(prices) {
         return 0;
     }
     // 1. 初始化 DP
-    const DP = Array(prices.length);
+    const DP = Array(prices.length).fill(null).map(_ => []);
     for (let i = 0; i < DP.length; i++) {
         DP[i] = [];
     }
@@ -13902,7 +13936,7 @@ var maxProfit = function(prices) {
         );
         DP[i][1] = Math.max(
             DP[i-1][1],            // 在 -1 天持有
-            DP[i-2][0] - prices[i] // 在 -2 天卖出，今天买入
+            DP[i-2][0] - prices[i] // 在 -2 天卖出，今天买入，要买入至少等 1 天
         );
     }
     return DP[DP.length - 1][0];
@@ -14505,7 +14539,7 @@ var reverseString = function(s) {
 ```
 </details>
 
-### 347.前k<a href="./src/347.前k.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+### 347.前-k-个高频元素<a href="./src/347.前-k-个高频元素.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details open>
 <summary>展开代码、题解</summary>
@@ -14515,7 +14549,50 @@ var reverseString = function(s) {
  * @lc app=leetcode.cn id=347 lang=javascript
  *
  * [347] 前 K 个高频元素
+ *
+ * https://leetcode-cn.com/problems/top-k-frequent-elements/description/
+ *
+ * algorithms
+ * Medium (62.42%)
+ * Likes:    981
+ * Dislikes: 0
+ * Total Accepted:    231.5K
+ * Total Submissions: 370.9K
+ * Testcase Example:  '[1,1,1,2,2,3]\n2'
+ *
+ * 给你一个整数数组 nums 和一个整数 k ，请你返回其中出现频率前 k 高的元素。你可以按 任意顺序 返回答案。
+ * 
+ * 
+ * 
+ * 示例 1:
+ * 
+ * 
+ * 输入: nums = [1,1,1,2,2,3], k = 2
+ * 输出: [1,2]
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 
+ * 输入: nums = [1], k = 1
+ * 输出: [1]
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 1 
+ * k 的取值范围是 [1, 数组中不相同的元素的个数]
+ * 题目数据保证答案唯一，换句话说，数组中前 k 个高频元素的集合是唯一的
+ * 
+ * 
+ * 
+ * 
+ * 进阶：你所设计算法的时间复杂度 必须 优于 O(n log n) ，其中 n 是数组大小。
+ * 
  */
+
 // @lc code=start
 class MinHeap {    
     constructor(objs, k, compareFn) {
@@ -14608,11 +14685,13 @@ var topKFrequent = function(nums, k) {
     }));
     const minHeap = new MinHeap(objs, k, (a, b) => { if (!a || !b) {debugger} return (a.cnt < b.cnt);});
     return minHeap.getSortedDesc().map(obj => obj.num);
+    // return minHeap.heap;
 };
 // @lc code=end
 // console.assert(topKFrequent([1], 1));
 // console.assert(topKFrequent([1,1,1,2,2,3], 2));
 // console.assert(topKFrequent([4,1,-1,2,-1,2,3], 2), [-1,2]) // Fix: Add code, this.heap[j + 1] && this.compareFn
+
 
 
 ```
@@ -16676,6 +16755,131 @@ var mergeTrees = function(t1, t2) {
     currentNode.left = mergeTrees(t1 && t1.left, t2 && t2.left);
     currentNode.right = mergeTrees(t1 && t1.right, t2 && t2.right);
     return currentNode;
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 621.任务调度器<a href="./src/621.任务调度器.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details open>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=621 lang=javascript
+ *
+ * [621] 任务调度器
+ *
+ * https://leetcode-cn.com/problems/task-scheduler/description/
+ *
+ * algorithms
+ * Medium (57.51%)
+ * Likes:    805
+ * Dislikes: 0
+ * Total Accepted:    85K
+ * Total Submissions: 147.8K
+ * Testcase Example:  '["A","A","A","B","B","B"]\n2'
+ *
+ * 给你一个用字符数组 tasks 表示的 CPU 需要执行的任务列表。其中每个字母表示一种不同种类的任务。任务可以以任意顺序执行，并且每个任务都可以在 1
+ * 个单位时间内执行完。在任何一个单位时间，CPU 可以完成一个任务，或者处于待命状态。
+ * 
+ * 然而，两个 相同种类 的任务之间必须有长度为整数 n 的冷却时间，因此至少有连续 n 个单位时间内 CPU 在执行不同的任务，或者在待命状态。
+ * 
+ * 你需要计算完成所有任务所需要的 最短时间 。
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 
+ * 输入：tasks = ["A","A","A","B","B","B"], n = 2
+ * 输出：8
+ * 解释：A -> B -> (待命) -> A -> B -> (待命) -> A -> B
+ * ⁠    在本示例中，两个相同类型任务之间必须间隔长度为 n = 2 的冷却时间，而执行一个任务只需要一个单位时间，所以中间出现了（待命）状态。 
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 输入：tasks = ["A","A","A","B","B","B"], n = 0
+ * 输出：6
+ * 解释：在这种情况下，任何大小为 6 的排列都可以满足要求，因为 n = 0
+ * ["A","A","A","B","B","B"]
+ * ["A","B","A","B","A","B"]
+ * ["B","B","B","A","A","A"]
+ * ...
+ * 诸如此类
+ * 
+ * 
+ * 示例 3：
+ * 
+ * 
+ * 输入：tasks = ["A","A","A","A","A","A","B","C","D","E","F","G"], n = 2
+ * 输出：16
+ * 解释：一种可能的解决方案是：
+ * ⁠    A -> B -> C -> A -> D -> E -> A -> F -> G -> A -> (待命) -> (待命) -> A ->
+ * (待命) -> (待命) -> A
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 1 
+ * tasks[i] 是大写英文字母
+ * n 的取值范围为 [0, 100]
+ * 
+ * 
+ */
+/**
+   解释一下这个公式怎么来的 (count[25] - 1) * (n + 1) + maxCount
+       假设数组 ["A","A","A","B","B","C"]，n = 2，
+       A的频率最高，记为count = 3，所以两个A之间必须间隔2个任务，才能满足题意并且是最短时间（两个A的间隔大于2的总时间必然不是最短），
+       因此执行顺序为： A->X->X->A->X->X->A，这里的X表示除了A以外其他字母，或者是待命，不用关心具体是什么，反正用来填充两个A的间隔的。
+       上面执行顺序的规律是： 有count - 1个A，其中每个A需要搭配n个X，再加上最后一个A，所以总时间为 (count - 1) * (n + 1) + 1
+                                                                                                    X个n 1个A  1个最后一行的 A
+       要注意可能会出现多个频率相同且都是最高的任务，比如 ["A","A","A","B","B","B","C","C"]
+       所以最后会剩下一个A和一个B，因此最后要加上频率最高的不同任务的个数 maxCount
+       
+        const res = (maxTimes - 1) * (n + 1) + maxCount;
+        return Math.max(res, tasks.length);
+        解释：当 (n + 1) < 那一行的数目时，那一行算出来偏少了
+                这种思路，每一行只可能算少了，因为 X个n 是冷却时间，是必须的，最后兜底用 tasks.length
+        举例：公式算出的值可能会比数组的长度小，如["A","A","B","B"]，n = 0，此时要取数组的长度
+
+        参考链接：https://leetcode-cn.com/problems/task-scheduler/comments/44965
+        参考链接：https://leetcode-cn.com/problems/task-scheduler/solution/jian-ming-yi-dong-de-javajie-da-by-lan-s-jfl9/
+
+    // 用不上的： workTasks = tasks.slice(); 每遍历 workTasks，新建容器 Set<task, boolean> 判断，删除 workTasks 元素，更新 count，结束一个循环，count+n；
+*/
+// @lc code=start
+/**
+ * @param {character[]} tasks
+ * @param {number} n
+ * @return {number}
+ */
+var leastInterval = function(tasks, n) {
+    const buckets = [];
+    for(let i = 0; i < tasks.length; i++) { // 遍历所有 tasks，统计出现次数
+        const index = tasks[i].charCodeAt() - 'A'.charCodeAt();
+        buckets[index] = (buckets[index] ?? 0) + 1;
+    }
+    buckets.sort((a, b) => b - a);
+    const maxTimes = buckets[0];
+    let maxCount = 1;   // maxCount 计算，默认是 1，相同则++
+    for (let i = 0; i <= 25; i++){   // 26个字母，25种比较
+        if (!buckets[i] || !buckets[i + 1]) break;  // 排除掉 undefined 和 0
+        if (buckets[i] === buckets[i + 1]) {
+            maxCount++;
+        } else {
+            break;
+        }
+    }
+    const res = (maxTimes - 1) * (n + 1) + maxCount;
+    return Math.max(res, tasks.length);
 };
 // @lc code=end
 

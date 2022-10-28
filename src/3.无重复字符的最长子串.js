@@ -94,6 +94,13 @@ var lengthOfLongestSubstring = function(s) {
             2. 包含第二个 c 的，即 从 d 开始
 
         3. 举例2：在最糟糕的情况下，每个字符将被访问接近两次， 如abab, 6次
+
+    上面是解释，如何写出代码？
+        abcda
+        i  j
+        1. 正常情形如何处理 abcd
+        2. 特殊情形如何处理 abcda
+
  */
 /**  
  * @param {string} s

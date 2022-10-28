@@ -33,9 +33,9 @@
     解一：树的 DFS 代码如下
         dfs([2, 3, 4], str) {
             // 由 2 得到 'abc'
-           dfs([3, 4], 'a' + str)
-           dfs([3, 4], 'b' + str)
-           dfs([3, 4], 'c' + str)
+           dfs([3, 4], str + 'a')
+           dfs([3, 4], str + 'b')
+           dfs([3, 4], str + 'c')
         }
 
         2           a               b           c
@@ -45,14 +45,12 @@
         4   g(adg)
 
         代码优化：
-        1. 用数组代替对象。数组也是一种 Map <index, elem>
-        2. dfs(str, index) 使用 index 获取 letters，slice() 太耗内存
-
-    
+        1. dfs(str, index) 使用 index 获取 leftDigits slice() 太耗内存
+        2. 没必要，用数组代替对象。数组也是一种 Map <index, elem>
 
     解二：队列循环遍历
 
-        其实就是铺平。一行一行地迭代
+        其实就是铺平。一行一行地迭代，跳过吧 =.= 
         > 参考：[通俗易懂+动画演示 17. 电话号码的字母组合](https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/solution/tong-su-yi-dong-dong-hua-yan-shi-17-dian-hua-hao-m/)
 
  */
