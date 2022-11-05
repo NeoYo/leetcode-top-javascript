@@ -67,7 +67,7 @@
     参考资料：
         [画解算法：24. 两两交换链表中的节点](https://leetcode-cn.com/problems/swap-nodes-in-pairs/solution/hua-jie-suan-fa-24-liang-liang-jiao-huan-lian-biao/)
 
-        ../assets/24.两两交换链表中的节点.png
+        ../assets/24.两两交换链表中的节点.jpeg
 
         图绘 https://img.mukewang.com/user/6057508200013fd114401080.jpg
  */

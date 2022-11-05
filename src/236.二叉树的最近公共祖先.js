@@ -91,33 +91,26 @@
  * }
  */
 /**
+ * !! 视频资料：https://time.geekbang.org/course/detail/100019701-42708
+ */
+/**
  * @param {TreeNode} root
  * @param {TreeNode} p
  * @param {TreeNode} q
  * @return {TreeNode}
  */
-var lowestCommonAncestor = function (root, p, q) {
-    let res;
-    const dfs = (node) => {
-        if (!node) { return false; }
-        const leftSubTree = dfs(node.left);     // true 表示左子树中含有指定节点
-        const rightSubTree = dfs(node.right);   // true 表示右子树中含有指定节点
+ var lowestCommonAncestor = function(root, p, q) {
+    const foundPorQ = (root) => {   // dfs
+        if (!root) return root;
+        if (root === p || root === q) return root;  // 情形一 p 或 q 自身就为最近公共祖先
 
-        if (node === p || node === q || leftSubTree || rightSubTree) {
-            if (
-                (leftSubTree && rightSubTree)                                   // 情形一
-                ||
-                ((node === p || node === q) && (leftSubTree || rightSubTree))   // 情形二
-            ) {
-                res = node;
-            }
-            return true;
-        } else {
-            return false;
-        }
+        const leftChildTree = foundPorQ(root.left);
+        const rightChildTree = foundPorQ(root.right);
+        if (leftChildTree && rightChildTree) return root; // 情形二 p、q 分别在左右子树
+        if (leftChildTree) return leftChildTree;    // 情形三 p 和 q 都在左子树
+        if (rightChildTree) return rightChildTree;  // 情形四 p 和 q 都在右子树
     }
-    dfs(root);
-    return res;
+    return foundPorQ(root);
 };
 // @lc code=end
 

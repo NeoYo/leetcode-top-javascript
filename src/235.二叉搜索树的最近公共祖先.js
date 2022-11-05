@@ -89,7 +89,7 @@
     注意点
         在递归过程中，还需要判断当前节点，是否刚好就是 p 或 q
 */
-
+// 注意题目：p、q 为不同节点且均存在于给定的二叉搜索树中。
 /**
  * @param {TreeNode} root
  * @param {TreeNode} p
@@ -97,38 +97,10 @@
  * @return {TreeNode}
  */
 var lowestCommonAncestor = function(root, p, q) {
-    if (root == null) {
-        return;
-    }
-    // 0. 使用后序遍历
-    const leftChildTree = lowestCommonAncestor(root.left, p, q);
-    // console.log('leftChildTree: ', leftChildTree);
-    const rightChildTree = lowestCommonAncestor(root.right, p, q);
-    // console.log('rightChildTree: ', rightChildTree);
-
-    // 1. 已找到了最近公共祖先，在左子树或右子树中
-    if (leftChildTree && leftChildTree.val != null) {
-        return leftChildTree;
-    } else if (rightChildTree && rightChildTree.val != null) {
-        return rightChildTree;
-    }
-    // 2. 已找到至少一个目标节点，在左子树或右子树中
-    if (leftChildTree === true || rightChildTree === true) { 
-        // 2.1 另一个目标节点，就是当前节点
-        if (root === p || root === q) {
-            return root;
-        }
-        // 2.2 左子树和右子树都含有目标节点，当前即为所求
-        if (leftChildTree && rightChildTree) {
-            return root;
-        }
-        // 2.3 告诉上一层函数，找到了一个目标节点
-        return true;
-    }
-    // 3. 找到当前节点就是目标节点
-    if (root === p || root === q) {
-        return true;
-    }
-    return;
+    if (!root) return root;
+    if (root === p || root === q) return root;  // 情形一 p 或 q 自身就为最近公共祖先
+    if (root.val > p && root.val < q) return root;  // 情形二 p、q 分别在左右子树； BST 可以快速判断
+    if (root.val < p && root.val < q) return lowestCommonAncestor(root.right, p, q); // 情形三 p 和 q 都在左子树
+    if (root.val > p && root.val > q) return lowestCommonAncestor(root.right, p, q); // 情形四 p 和 q 都在右子树
 };
 // @lc code=end

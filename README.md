@@ -2836,7 +2836,7 @@ var mergeTwoLists = function(l1, l2) {
     参考资料：
         [画解算法：24. 两两交换链表中的节点](https://leetcode-cn.com/problems/swap-nodes-in-pairs/solution/hua-jie-suan-fa-24-liang-liang-jiao-huan-lian-biao/)
 
-        ../assets/24.两两交换链表中的节点.png
+        ../assets/24.两两交换链表中的节点.jpeg
 
         图绘 https://img.mukewang.com/user/6057508200013fd114401080.jpg
  */
@@ -4461,7 +4461,7 @@ permute([1, 2, 3])
 
     普通幂是 n
     快速幂是 log2n
-    使用的是二分法
+    使用的是二分分治法
  */
 // @lc code=start
 /**
@@ -4469,15 +4469,23 @@ permute([1, 2, 3])
  * @param {number} n
  * @return {number}
  */
+/**
+    n 为负的处理
+    2^-4 = 2^(-2+-2) = 2^(-2) * 2^(-2) = 2^-1 * 2^-1 + 2^-1 * 2^-1
+    2^-3 = 2^(1-4) = 2 * 2^-4 = ...(同上)
+    
+    其中 -3%2 === -1 会正常进入 else
+ */
 var myPow = function(x, n) {
     if(0 === n) {return 1;}
     if(-1 === n) {return 1/x;} // 兼容 n 为负值
     
-    if(n&1) {                // 负值 -3 % 2 === -1， 所以不用 if (n % 2 === 1)
-      return x * myPow(x, n - 1);   
+    if(n % 2 === 0) {
+        const half = myPow(x,n/2);
+        return half*half;
+    } else {
+        return x * myPow(x, n - 1);
     }
-    let half = myPow(x,n/2);
-    return half*half;
 };
 // @lc code=end
 
@@ -4485,7 +4493,7 @@ var myPow = function(x, n) {
 ```
 </details>
 
-### 53.最大子序和<a href="./src/53.最大子序和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+### 53.最大子数组和<a href="./src/53.最大子数组和.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
 <summary>展开代码、题解</summary>
@@ -4494,30 +4502,58 @@ var myPow = function(x, n) {
 /*
  * @lc app=leetcode.cn id=53 lang=javascript
  *
- * [53] 最大子序和
+ * [53] 最大子数组和
  *
- * https://leetcode-cn.com/problems/maximum-subarray/description/
+ * https://leetcode.cn/problems/maximum-subarray/description/
  *
  * algorithms
- * Easy (52.69%)
- * Likes:    2680
+ * Medium (54.85%)
+ * Likes:    5411
  * Dislikes: 0
- * Total Accepted:    374.2K
- * Total Submissions: 708.8K
+ * Total Accepted:    1.2M
+ * Total Submissions: 2.2M
  * Testcase Example:  '[-2,1,-3,4,-1,2,1,-5,4]'
  *
- * 给定一个整数数组 nums ，找到一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。
+ * 给你一个整数数组 nums ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。
  * 
- * 示例:
- * 
- * 输入: [-2,1,-3,4,-1,2,1,-5,4]
- * 输出: 6
- * 解释: 连续子数组 [4,-1,2,1] 的和最大，为 6。
+ * 子数组 是数组中的一个连续部分。
  * 
  * 
- * 进阶:
  * 
- * 如果你已经实现复杂度为 O(n) 的解法，尝试使用更为精妙的分治法求解。
+ * 示例 1：
+ * 
+ * 
+ * 输入：nums = [-2,1,-3,4,-1,2,1,-5,4]
+ * 输出：6
+ * 解释：连续子数组 [4,-1,2,1] 的和最大，为 6 。
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 输入：nums = [1]
+ * 输出：1
+ * 
+ * 
+ * 示例 3：
+ * 
+ * 
+ * 输入：nums = [5,4,-1,7,8]
+ * 输出：23
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 1 <= nums.length <= 10^5
+ * -10^4 <= nums[i] <= 10^4
+ * 
+ * 
+ * 
+ * 
+ * 进阶：如果你已经实现复杂度为 O(n) 的解法，尝试使用更为精妙的 分治法 求解。
  * 
  */
 /**
@@ -6346,6 +6382,195 @@ var numTrees = function(n) {
         }
     }
     return G[n];
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 98.验证二叉搜索树<a href="./src/98.验证二叉搜索树.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=98 lang=javascript
+ *
+ * [98] 验证二叉搜索树
+ *
+ * https://leetcode.cn/problems/validate-binary-search-tree/description/
+ *
+ * algorithms
+ * Medium (36.61%)
+ * Likes:    1796
+ * Dislikes: 0
+ * Total Accepted:    621.2K
+ * Total Submissions: 1.7M
+ * Testcase Example:  '[2,1,3]'
+ *
+ * 给你一个二叉树的根节点 root ，判断其是否是一个有效的二叉搜索树。
+ * 
+ * 有效 二叉搜索树定义如下：
+ * 
+ * 
+ * 节点的左子树只包含 小于 当前节点的数。
+ * 节点的右子树只包含 大于 当前节点的数。
+ * 所有左子树和右子树自身必须也是二叉搜索树。
+ * 
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 
+ * 输入：root = [2,1,3]
+ * 输出：true
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 输入：root = [5,1,4,null,null,3,6]
+ * 输出：false
+ * 解释：根节点的值是 5 ，但是右子节点的值是 4 。
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 树中节点数目范围在[1, 10^4] 内
+ * -2^31 <= Node.val <= 2^31 - 1
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {boolean}
+ */
+ var isValidBST = function(root) {    
+    const dfs = (node, min, max) => 
+        (
+            !node || 
+            (
+                node.val > min &&
+                node.val < max &&
+                dfs(node.left, min, node.val) &&
+                dfs(node.right, node.val, max)
+            )
+            
+        )
+    return dfs(root, -Infinity, +Infinity);
+};
+// @lc code=end
+
+
+```
+</details>
+
+### 102.二叉树的层序遍历<a href="./src/102.二叉树的层序遍历.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=102 lang=javascript
+ *
+ * [102] 二叉树的层序遍历
+ *
+ * https://leetcode.cn/problems/binary-tree-level-order-traversal/description/
+ *
+ * algorithms
+ * Medium (65.14%)
+ * Likes:    1498
+ * Dislikes: 0
+ * Total Accepted:    701.5K
+ * Total Submissions: 1.1M
+ * Testcase Example:  '[3,9,20,null,null,15,7]'
+ *
+ * 给你二叉树的根节点 root ，返回其节点值的 层序遍历 。 （即逐层地，从左到右访问所有节点）。
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 
+ * 输入：root = [3,9,20,null,null,15,7]
+ * 输出：[[3],[9,20],[15,7]]
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 输入：root = [1]
+ * 输出：[[1]]
+ * 
+ * 
+ * 示例 3：
+ * 
+ * 
+ * 输入：root = []
+ * 输出：[]
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 树中节点数目在范围 [0, 2000] 内
+ * -1000 <= Node.val <= 1000
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number[][]}
+ */
+ var levelOrder = function(root) {
+    const res = [];
+    if (!root) return res;
+    let level = 0;
+    let queue = [root];
+    while (queue.length > 0) {
+        let size = queue.length;
+        while (size) {
+            const node = queue.shift();
+            if (!res[level]) {
+                res[level] = [];                
+            }
+            res[level].push(node.val);         
+            node.left && queue.push(node.left);
+            node.right && queue.push(node.right);
+            size--;
+        }
+        level++;
+    }
+    return res;
 };
 // @lc code=end
 
@@ -8497,18 +8722,15 @@ var wordBreak = function(s, wordDict) {
  * @param {ListNode} head
  * @return {boolean}
  */
-var hasCycle = function (head) {
-    if (!head) return false;
-    let set = new Set();
-    let size = 0;
-    let cur = head;
-    while (cur.next) {
-        set.add(cur.next);
-        size = size + 1;
-        if (set.size !== size) {
-            return true
+var hasCycle = function(head) {
+    const set = new Set();
+    while (head) {
+        if (set.has(head)) {
+            return true;
+        } else {
+            set.add(head);
         }
-        cur = cur.next;
+        head = head.next;
     }
     return false;
 };
@@ -12333,7 +12555,7 @@ var isPalindrome = function(head) {
     注意点
         在递归过程中，还需要判断当前节点，是否刚好就是 p 或 q
 */
-
+// 注意题目：p、q 为不同节点且均存在于给定的二叉搜索树中。
 /**
  * @param {TreeNode} root
  * @param {TreeNode} p
@@ -12341,39 +12563,11 @@ var isPalindrome = function(head) {
  * @return {TreeNode}
  */
 var lowestCommonAncestor = function(root, p, q) {
-    if (root == null) {
-        return;
-    }
-    // 0. 使用后序遍历
-    const leftChildTree = lowestCommonAncestor(root.left, p, q);
-    // console.log('leftChildTree: ', leftChildTree);
-    const rightChildTree = lowestCommonAncestor(root.right, p, q);
-    // console.log('rightChildTree: ', rightChildTree);
-
-    // 1. 已找到了最近公共祖先，在左子树或右子树中
-    if (leftChildTree && leftChildTree.val != null) {
-        return leftChildTree;
-    } else if (rightChildTree && rightChildTree.val != null) {
-        return rightChildTree;
-    }
-    // 2. 已找到至少一个目标节点，在左子树或右子树中
-    if (leftChildTree === true || rightChildTree === true) { 
-        // 2.1 另一个目标节点，就是当前节点
-        if (root === p || root === q) {
-            return root;
-        }
-        // 2.2 左子树和右子树都含有目标节点，当前即为所求
-        if (leftChildTree && rightChildTree) {
-            return root;
-        }
-        // 2.3 告诉上一层函数，找到了一个目标节点
-        return true;
-    }
-    // 3. 找到当前节点就是目标节点
-    if (root === p || root === q) {
-        return true;
-    }
-    return;
+    if (!root) return root;
+    if (root === p || root === q) return root;  // 情形一 p 或 q 自身就为最近公共祖先
+    if (root.val > p && root.val < q) return root;  // 情形二 p、q 分别在左右子树； BST 可以快速判断
+    if (root.val < p && root.val < q) return lowestCommonAncestor(root.right, p, q); // 情形三 p 和 q 都在左子树
+    if (root.val > p && root.val > q) return lowestCommonAncestor(root.right, p, q); // 情形四 p 和 q 都在右子树
 };
 // @lc code=end
 
@@ -12479,33 +12673,26 @@ var lowestCommonAncestor = function(root, p, q) {
  * }
  */
 /**
+ * !! 视频资料：https://time.geekbang.org/course/detail/100019701-42708
+ */
+/**
  * @param {TreeNode} root
  * @param {TreeNode} p
  * @param {TreeNode} q
  * @return {TreeNode}
  */
-var lowestCommonAncestor = function (root, p, q) {
-    let res;
-    const dfs = (node) => {
-        if (!node) { return false; }
-        const leftSubTree = dfs(node.left);     // true 表示左子树中含有指定节点
-        const rightSubTree = dfs(node.right);   // true 表示右子树中含有指定节点
+ var lowestCommonAncestor = function(root, p, q) {
+    const foundPorQ = (root) => {   // dfs
+        if (!root) return root;
+        if (root === p || root === q) return root;  // 情形一 p 或 q 自身就为最近公共祖先
 
-        if (node === p || node === q || leftSubTree || rightSubTree) {
-            if (
-                (leftSubTree && rightSubTree)                                   // 情形一
-                ||
-                ((node === p || node === q) && (leftSubTree || rightSubTree))   // 情形二
-            ) {
-                res = node;
-            }
-            return true;
-        } else {
-            return false;
-        }
+        const leftChildTree = foundPorQ(root.left);
+        const rightChildTree = foundPorQ(root.right);
+        if (leftChildTree && rightChildTree) return root; // 情形二 p、q 分别在左右子树
+        if (leftChildTree) return leftChildTree;    // 情形三 p 和 q 都在左子树
+        if (rightChildTree) return rightChildTree;  // 情形四 p 和 q 都在右子树
     }
-    dfs(root);
-    return res;
+    return foundPorQ(root);
 };
 // @lc code=end
 
@@ -16319,6 +16506,97 @@ var fourSumCount = function(A, B, C, D) {
 ```
 </details>
 
+### 455.分发饼干<a href="./src/455.分发饼干.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=455 lang=javascript
+ *
+ * [455] 分发饼干
+ *
+ * https://leetcode.cn/problems/assign-cookies/description/
+ *
+ * algorithms
+ * Easy (56.92%)
+ * Likes:    589
+ * Dislikes: 0
+ * Total Accepted:    266.2K
+ * Total Submissions: 467.8K
+ * Testcase Example:  '[1,2,3]\n[1,1]'
+ *
+ * 假设你是一位很棒的家长，想要给你的孩子们一些小饼干。但是，每个孩子最多只能给一块饼干。
+ * 
+ * 对每个孩子 i，都有一个胃口值 g[i]，这是能让孩子们满足胃口的饼干的最小尺寸；并且每块饼干 j，都有一个尺寸 s[j] 。如果 s[j] >=
+ * g[i]，我们可以将这个饼干 j 分配给孩子 i ，这个孩子会得到满足。你的目标是尽可能满足越多数量的孩子，并输出这个最大数值。
+ * 
+ * 
+ * 示例 1:
+ * 
+ * 
+ * 输入: g = [1,2,3], s = [1,1]
+ * 输出: 1
+ * 解释: 
+ * 你有三个孩子和两块小饼干，3个孩子的胃口值分别是：1,2,3。
+ * 虽然你有两块小饼干，由于他们的尺寸都是1，你只能让胃口值是1的孩子满足。
+ * 所以你应该输出1。
+ * 
+ * 
+ * 示例 2:
+ * 
+ * 
+ * 输入: g = [1,2], s = [1,2,3]
+ * 输出: 2
+ * 解释: 
+ * 你有两个孩子和三块小饼干，2个孩子的胃口值分别是1,2。
+ * 你拥有的饼干数量和尺寸都足以让所有孩子满足。
+ * 所以你应该输出2.
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 1 
+ * 0 
+ * 1 
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * @param {number[]} g
+ * @param {number[]} s
+ * @return {number}
+ */
+ var findContentChildren = function(g, s) {
+    // 本题只考虑数量，不考虑质量，那么直接从胃口最小的小孩开始满足，贪心算法
+    const children = g.sort((a, b) => (a - b));
+    const cookies = s.sort((a, b) => (a - b));
+    let j = 0;
+    let result = 0;
+    for (let i = 0; i < children.length; i++) {
+        if (j >= cookies.length) return result;
+        while (children[i] > cookies[j]) { // 不满足
+            j++;
+            if (j >= cookies.length) return result;            
+        }
+        // children[i] <= cookies[j] 得到满足 o(*￣︶￣*)o 
+        result++;
+        j++;
+    }
+    return result;
+};
+// @lc code=end
+
+
+```
+</details>
+
 ### 461.汉明距离<a href="./src/461.汉明距离.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
 
 <details>
@@ -17255,6 +17533,119 @@ var countSubstrings = function(s) {
             6:30s 开始
 */
 
+
+```
+</details>
+
+### 860.柠檬水找零<a href="./src/860.柠檬水找零.js" style="float:right;opacity:0.5;" target="_blank">📝</a>
+
+<details>
+<summary>展开代码、题解</summary>
+
+```js
+/*
+ * @lc app=leetcode.cn id=860 lang=javascript
+ *
+ * [860] 柠檬水找零
+ *
+ * https://leetcode.cn/problems/lemonade-change/description/
+ *
+ * algorithms
+ * Easy (58.48%)
+ * Likes:    384
+ * Dislikes: 0
+ * Total Accepted:    144.2K
+ * Total Submissions: 246.7K
+ * Testcase Example:  '[5,5,5,10,20]'
+ *
+ * 在柠檬水摊上，每一杯柠檬水的售价为 5 美元。顾客排队购买你的产品，（按账单 bills 支付的顺序）一次购买一杯。
+ * 
+ * 每位顾客只买一杯柠檬水，然后向你付 5 美元、10 美元或 20 美元。你必须给每个顾客正确找零，也就是说净交易是每位顾客向你支付 5 美元。
+ * 
+ * 注意，一开始你手头没有任何零钱。
+ * 
+ * 给你一个整数数组 bills ，其中 bills[i] 是第 i 位顾客付的账。如果你能给每位顾客正确找零，返回 true ，否则返回 false
+ * 。
+ * 
+ * 
+ * 
+ * 示例 1：
+ * 
+ * 
+ * 输入：bills = [5,5,5,10,20]
+ * 输出：true
+ * 解释：
+ * 前 3 位顾客那里，我们按顺序收取 3 张 5 美元的钞票。
+ * 第 4 位顾客那里，我们收取一张 10 美元的钞票，并返还 5 美元。
+ * 第 5 位顾客那里，我们找还一张 10 美元的钞票和一张 5 美元的钞票。
+ * 由于所有客户都得到了正确的找零，所以我们输出 true。
+ * 
+ * 
+ * 示例 2：
+ * 
+ * 
+ * 输入：bills = [5,5,10,10,20]
+ * 输出：false
+ * 解释：
+ * 前 2 位顾客那里，我们按顺序收取 2 张 5 美元的钞票。
+ * 对于接下来的 2 位顾客，我们收取一张 10 美元的钞票，然后返还 5 美元。
+ * 对于最后一位顾客，我们无法退回 15 美元，因为我们现在只有两张 10 美元的钞票。
+ * 由于不是每位顾客都得到了正确的找零，所以答案是 false。
+ * 
+ * 
+ * 
+ * 
+ * 提示：
+ * 
+ * 
+ * 1 <= bills.length <= 10^5
+ * bills[i] 不是 5 就是 10 或是 20 
+ * 
+ * 
+ */
+
+// @lc code=start
+/**
+ * @param {number[]} bills
+ * @return {boolean}
+ */
+var lemonadeChange = function(bills) {
+    let fiveCount = 0;
+    let tenCount = 0;
+    let twentyCount = 0;
+    for (let i = 0; i < bills.length; i++) {
+        if (bills[i] === 5) {
+            fiveCount++;
+        } else if (bills[i] === 10) {
+            tenCount++;
+        } else if (bills[i] === 20) {
+            twentyCount++;
+        }
+        let left = bills[i] - 5;
+        while (left) {
+            if (left >= 10) {
+                if (tenCount) {
+                    left = left - 10;
+                    tenCount--;
+                } else if (fiveCount) {
+                    left = left - 5;
+                    fiveCount--;
+                } else {
+                    return false;
+                }
+            } else if (left >= 5) {
+                if (fiveCount) {
+                    left = left - 5;
+                    fiveCount--;
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+};
+// @lc code=end
 
 ```
 </details>

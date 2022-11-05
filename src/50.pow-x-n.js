@@ -56,7 +56,7 @@
 
     普通幂是 n
     快速幂是 log2n
-    使用的是二分法
+    使用的是二分分治法
  */
 // @lc code=start
 /**
@@ -64,15 +64,23 @@
  * @param {number} n
  * @return {number}
  */
+/**
+    n 为负的处理
+    2^-4 = 2^(-2+-2) = 2^(-2) * 2^(-2) = 2^-1 * 2^-1 + 2^-1 * 2^-1
+    2^-3 = 2^(1-4) = 2 * 2^-4 = ...(同上)
+    
+    其中 -3%2 === -1 会正常进入 else
+ */
 var myPow = function(x, n) {
     if(0 === n) {return 1;}
     if(-1 === n) {return 1/x;} // 兼容 n 为负值
     
-    if(n&1) {                // 负值 -3 % 2 === -1， 所以不用 if (n % 2 === 1)
-      return x * myPow(x, n - 1);   
+    if(n % 2 === 0) {
+        const half = myPow(x,n/2);
+        return half*half;
+    } else {
+        return x * myPow(x, n - 1);
     }
-    let half = myPow(x,n/2);
-    return half*half;
 };
 // @lc code=end
 

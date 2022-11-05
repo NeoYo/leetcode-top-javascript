@@ -85,18 +85,15 @@
  * @param {ListNode} head
  * @return {boolean}
  */
-var hasCycle = function (head) {
-    if (!head) return false;
-    let set = new Set();
-    let size = 0;
-    let cur = head;
-    while (cur.next) {
-        set.add(cur.next);
-        size = size + 1;
-        if (set.size !== size) {
-            return true
+var hasCycle = function(head) {
+    const set = new Set();
+    while (head) {
+        if (set.has(head)) {
+            return true;
+        } else {
+            set.add(head);
         }
-        cur = cur.next;
+        head = head.next;
     }
     return false;
 };
